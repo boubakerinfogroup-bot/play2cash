@@ -13,9 +13,9 @@ datasource db {
 // Users table (no passwords, simple registration)
 model User {
   id                String   @id @default(uuid())
-  name              String   @db.VarChar(100)
+  name              String   @unique @db.VarChar(100)
   whatsapp          String   @unique @db.VarChar(20)
-  email             String?  @db.VarChar(100)
+  email             String   @unique @db.VarChar(100)
   balance           Decimal  @default(0.00) @db.Decimal(10, 2)
   accountId         String?  @unique @map("account_id") @db.VarChar(20)
   languagePreference String  @default("fr") @map("language_preference") @db.VarChar(2)
