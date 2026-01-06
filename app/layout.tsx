@@ -26,7 +26,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" dir="ltr" className={`${jakarta.variable} ${cairo.variable}`}>
-      <body className={jakarta.className}>{children}</body>
+      <body className={jakarta.className}>
+        {children}
+        <div style={{ position: 'fixed', bottom: '4px', right: '4px', fontSize: '10px', opacity: 0.3, zIndex: 9999 }}>v2.3</div>
+      </body>
     </html>
   )
 }

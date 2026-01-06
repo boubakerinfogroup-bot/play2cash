@@ -209,15 +209,53 @@ function CreateContent() {
             )}
           </div>
 
-          <MobileNav lang={lang} onToggleLang={toggleLang} />
+          <div className="alert" style={{ background: 'rgba(255, 243, 205, 0.5)', border: '1px solid rgba(255, 193, 7, 0.3)', padding: '16px', marginBottom: '24px', borderRadius: '16px', fontSize: '0.9rem', color: '#856404', display: 'flex', gap: '8px' }}>
+            <span>✨</span>
+            <div>
+              <strong>{lang === 'ar' ? 'تنبيه:' : 'Note:'}</strong>{' '}
+              {lang === 'ar' ? 'يمكنك إلغاء الغرفة بعد دقيقة واحدة.' : 'Annulation possible après 1 minute.'}
+            </div>
+          </div>
+
+          <button
+            onClick={handleSubmit}
+            className="btn"
+            style={{
+              width: '100%',
+              fontSize: '1.1rem',
+              padding: '16px',
+              background: submitting || !stake ? '#cbd5e1' : 'var(--gradient-btn)',
+              transform: submitting || !stake ? 'none' : undefined,
+              boxShadow: submitting || !stake ? 'none' : '0 10px 20px -5px rgba(79, 70, 229, 0.3)'
+            }}
+            disabled={submitting || !stake}
+          >
+            {submitting
+              ? (lang === 'ar' ? 'جارٍ...' : 'Chargement...')
+              : (lang === 'ar' ? 'إنشاء التحدي' : 'Créer le défi')
+            }
+          </button>
         </div>
-        )
+      </div>
+
+      <BottomSheet
+        isOpen={isStakeOpen}
+        onClose={() => setIsStakeOpen(false)}
+        title={lang === 'ar' ? 'اختر مبلغ الرهان' : 'Choisissez la mise'}
+        options={stakeOptions}
+        onSelect={(val) => setStake(val)}
+        selectedValue={stake}
+      />
+
+      <MobileNav lang={lang} onToggleLang={toggleLang} />
+    </div>
+  )
 }
 
-        export default function CreateChallengePage() {
+export default function CreateChallengePage() {
   return (
-        <Suspense fallback={<div className="container flex-center" style={{ minHeight: '80vh' }}><div className="spinner"></div></div>}>
-          <CreateContent />
-        </Suspense>
-        )
+    <Suspense fallback={<div className="container flex-center" style={{ minHeight: '80vh' }}><div className="spinner"></div></div>}>
+      <CreateContent />
+    </Suspense>
+  )
 }
