@@ -5,16 +5,33 @@ import { formatCurrency } from '@/lib/utils'
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<any[]>([])
+  const [filteredUsers, setFilteredUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [topupModal, setTopupModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [topupAmount, setTopupAmount] = useState('')
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [manualAccountId, setManualAccountId] = useState('')
+  const [manualAmount, setManualAmount] = useState('')
 
   useEffect(() => {
     loadUsers()
   }, [])
+
+  useEffect(() => {
+    if (searchTerm) {
+      const filtered = users.filter(user =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.whatsapp.includes(searchTerm) ||
+        (user.accountId && user.accountId.toLowerCase().includes(searchTerm.toLowerCase()))
+      )
+      setFilteredUsers(filtered)
+    } else {
+      setFilteredUsers(users)
+    }
+  }, [searchTerm, users])
 
   const loadUsers = async () => {
     try {
@@ -22,6 +39,7 @@ export default function AdminUsersPage() {
       const data = await response.json()
       if (data.users) {
         setUsers(data.users)
+        setFilteredUsers(data.users)
       }
     } catch (error) {
       console.error('Error loading users:', error)
@@ -65,6 +83,42 @@ export default function AdminUsersPage() {
     }
   }
 
+  const handleManualTopup = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setSuccess('')
+
+    if (!manualAccountId || !manualAmount || parseFloat(manualAmount) <= 0) {
+      setError('Veuillez remplir tous les champs')
+      return
+    }
+
+    try {
+      const response = await fetch('/api/admin/users/manual', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          accountId: manualAccountId,
+          amount: parseFloat(manualAmount),
+          action: 'manual_topup'
+        })
+      })
+
+      const result = await response.json()
+      if (result.success) {
+        setSuccess(result.message || 'Recharge effectuée')
+        setManualAccountId('')
+        setManualAmount('')
+        setTimeout(() => setSuccess(''), 3000)
+        loadUsers()
+      } else {
+        setError(result.error || 'Erreur')
+      }
+    } catch (err: any) {
+      setError(err.message || 'Erreur')
+    }
+  }
+
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
@@ -88,10 +142,11 @@ export default function AdminUsersPage() {
       <div style={{ padding: '16px', maxWidth: '100%' }}>
         <h1 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '8px', color: '#1e293b' }}>
           Gérer les utilisateurs
-          <span style={{ fontSize: '0.8rem', opacity: 0.5, marginLeft: '8px', color: '#64748b' }}>v5.0</span>
+          <span style={{ fontSize: '0.8rem', opacity: 0.5, marginLeft: '8px', color: '#64748b' }}>v5.1</span>
         </h1>
-        <p style={{ color: '#64748b', marginBottom: '24px' }}>Total: {users.length} utilisateurs</p>
+        <p style={{ color: '#64748b', marginBottom: '24px' }}>Total: {filteredUsers.length} utilisateurs</p>
 
+        {/* Success/Error Messages */}
         {success && (
           <div style={{
             background: '#f0fdf4',
@@ -105,9 +160,99 @@ export default function AdminUsersPage() {
           </div>
         )}
 
+        {error && (
+          <div style={{
+            background: '#fef2f2',
+            color: '#dc2626',
+            padding: '12px 16px',
+            borderRadius: '12px',
+            marginBottom: '16px',
+            border: '1px solid #fecaca'
+          }}>
+            ❌ {error}
+          </div>
+        )}
+
+        {/* Manual Top-up by ID */}
+        <div style={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          padding: '24px',
+          borderRadius: '20px',
+          marginBottom: '24px',
+          color: 'white'
+        }}>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '16px' }}>⚡ Recharge Rapide par ID</h2>
+          <form onSubmit={handleManualTopup} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <input
+              type="text"
+              value={manualAccountId}
+              onChange={(e) => setManualAccountId(e.target.value)}
+              placeholder="ID Compte (ex: P2C-00001)"
+              style={{
+                padding: '14px',
+                borderRadius: '12px',
+                border: 'none',
+                fontSize: '1rem',
+                fontWeight: 500
+              }}
+            />
+            <input
+              type="number"
+              value={manualAmount}
+              onChange={(e) => setManualAmount(e.target.value)}
+              placeholder="Montant (TND)"
+              min="0.01"
+              step="0.01"
+              style={{
+                padding: '14px',
+                borderRadius: '12px',
+                border: 'none',
+                fontSize: '1rem',
+                fontWeight: 500
+              }}
+            />
+            <button
+              type="submit"
+              style={{
+                padding: '14px',
+                borderRadius: '12px',
+                background: 'white',
+                color: '#667eea',
+                border: 'none',
+                fontSize: '1rem',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+            >
+              💰 Recharger
+            </button>
+          </form>
+        </div>
+
+        {/* Search Bar */}
+        <div style={{ marginBottom: '24px' }}>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="🔍 Rechercher par nom, téléphone ou ID..."
+            style={{
+              width: '100%',
+              padding: '16px',
+              borderRadius: '16px',
+              border: '2px solid #e2e8f0',
+              fontSize: '1rem',
+              outline: 'none',
+              transition: 'border-color 0.2s'
+            }}
+            onFocus={(e) => e.target.style.borderColor = '#667eea'}
+            onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+          />
+        </div>
+
         {/* Mobile Cards View */}
         <div className="mobile-cards" style={{ flexDirection: 'column', gap: '16px' }}>
-          {users.map((user) => (
+          {filteredUsers.map((user) => (
             <div key={user.id} style={{
               background: 'white',
               borderRadius: '20px',
@@ -115,7 +260,6 @@ export default function AdminUsersPage() {
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
               border: '1px solid #f1f5f9'
             }}>
-              {/* User Header */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #f1f5f9' }}>
                 <div style={{
                   width: '50px',
@@ -141,7 +285,6 @@ export default function AdminUsersPage() {
                 </div>
               </div>
 
-              {/* User Details */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
                 <div>
                   <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
@@ -162,7 +305,6 @@ export default function AdminUsersPage() {
                 </div>
               </div>
 
-              {/* Action Button */}
               <button
                 onClick={() => {
                   setSelectedUser(user)
@@ -200,7 +342,7 @@ export default function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {filteredUsers.map((user) => (
                   <tr key={user.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                     <td style={{ padding: '16px' }}>
                       <div style={{ fontWeight: 600, color: '#1e293b' }}>{user.name}</div>
