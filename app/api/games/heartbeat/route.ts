@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
         if (activeMatch && activeMatch.status === 'ACTIVE') {
           const opponentPlayer = activeMatch.players.find(p => p.userId !== user.id)
           if (opponentPlayer) {
-            const { resolveMatch: resolveMatchFn } = await import('@/lib/matches')
+            const { resolveMatch: resolveMatchFn } = await import('@/lib/wallet')
             await resolveMatchFn(matchId, [
               { userId: opponentPlayer.userId, score: 999999 },
               { userId: user.id, score: 0 }
