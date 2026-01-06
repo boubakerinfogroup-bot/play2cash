@@ -6,6 +6,8 @@ import { useState } from 'react'
 
 export default function AdminSidebar() {
   const pathname = usePathname()
+
+  // We don't use mobileMenuOpen for desktop-first admin, but keeping state if needed for future
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const menuItems = [
@@ -16,7 +18,6 @@ export default function AdminSidebar() {
     { href: '/admin/revenue', label: 'Revenus', icon: '📈' },
   ]
 
-  return (
   return (
     <>
       <div style={{
@@ -106,6 +107,4 @@ export default function AdminSidebar() {
       </div>
     </>
   )
-  )
 }
-
