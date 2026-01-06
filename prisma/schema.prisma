@@ -1,0 +1,235 @@
+// Play to Cash - Prisma Schema
+// Matches PHP database structure exactly
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Change to "mysql" if using MySQL
+  url      = env("DATABASE_URL")
+}
+
+// Users table (no passwords, simple registration)
+model User {
+  id                String   @id @default(uuid())
+  name              String   @db.VarChar(100)
+  whatsapp          String   @unique @db.VarChar(20)
+  email             String?  @db.VarChar(100)
+  balance           Decimal  @default(0.00) @db.Decimal(10, 2)
+  accountId         String?  @unique @map("account_id") @db.VarChar(20)
+  languagePreference String  @default("fr") @map("language_preference") @db.VarChar(2)
+  isAdmin           Boolean  @default(false) @map("is_admin")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  createdMatches    Match[]  @relation("MatchCreator")
+  matchPlayers      MatchPlayer[]
+  transactions      Transaction[]
+  depositRequests   DepositRequest[]
+  withdrawalRequests WithdrawalRequest[]
+  wonMatches        Match[]  @relation("MatchWinner")
+  adminLogs         AdminLog[]
+
+  @@map("users")
+}
+
+// Games table
+model Game {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(100)
+  nameAr      String?  @map("name_ar") @db.VarChar(100)
+  description String?  @db.Text
+  descriptionAr String? @map("description_ar") @db.Text
+  slug        String   @unique @db.VarChar(50)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  matches     Match[]
+
+  @@map("games")
+}
+
+// Matches table
+model Match {
+  id           String    @id @default(uuid())
+  gameId       String    @map("game_id")
+  stake        Decimal   @db.Decimal(10, 2)
+  platformFee  Decimal   @default(0.00) @map("platform_fee") @db.Decimal(10, 2)
+  status       MatchStatus @default(WAITING)
+  winnerId     String?   @map("winner_id")
+  gameData     Json?     @map("game_data")
+  shareLink    String?   @map("share_link") @db.VarChar(100)
+  createdBy    String    @map("created_by")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  startedAt    DateTime? @map("started_at")
+  completedAt  DateTime? @map("completed_at")
+
+  // Relations
+  game         Game      @relation(fields: [gameId], references: [id])
+  creator      User      @relation("MatchCreator", fields: [createdBy], references: [id])
+  winner       User?     @relation("MatchWinner", fields: [winnerId], references: [id])
+  players      MatchPlayer[]
+  transactions Transaction[]
+  revenue      PlatformRevenue[]
+
+  @@index([status])
+  @@index([gameId])
+  @@map("matches")
+}
+
+enum MatchStatus {
+  WAITING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+
+  @@map("match_status")
+}
+
+// Match players table
+model MatchPlayer {
+  id            String    @id @default(uuid())
+  matchId       String    @map("match_id")
+  userId        String    @map("user_id")
+  score         Decimal   @default(0.00) @db.Decimal(10, 2)
+  gameResult    Json?     @map("game_result")
+  joinedAt      DateTime  @default(now()) @map("joined_at")
+  lastHeartbeat DateTime? @map("last_heartbeat")
+  leftGame      Boolean   @default(false) @map("left_game")
+  leftAt        DateTime? @map("left_at")
+
+  // Relations
+  match         Match     @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id])
+
+  @@unique([matchId, userId])
+  @@index([matchId])
+  @@index([userId])
+  @@map("match_players")
+}
+
+// Transactions table
+model Transaction {
+  id            String          @id @default(uuid())
+  userId        String          @map("user_id")
+  matchId       String?         @map("match_id")
+  type          TransactionType
+  amount        Decimal         @db.Decimal(10, 2)
+  balanceBefore Decimal         @map("balance_before") @db.Decimal(10, 2)
+  balanceAfter  Decimal         @map("balance_after") @db.Decimal(10, 2)
+  description   String?         @db.Text
+  createdAt     DateTime        @default(now()) @map("created_at")
+
+  // Relations
+  user          User            @relation(fields: [userId], references: [id])
+  match         Match?          @relation(fields: [matchId], references: [id])
+
+  @@index([userId])
+  @@index([matchId])
+  @@map("transactions")
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  STAKE
+  WIN
+  REFUND
+  FEE
+
+  @@map("transaction_type")
+}
+
+// Withdrawal requests table
+model WithdrawalRequest {
+  id          String                @id @default(uuid())
+  userId      String                @map("user_id")
+  amount      Decimal               @db.Decimal(10, 2)
+  whatsapp    String                @db.VarChar(20)
+  status      RequestStatus         @default(PENDING)
+  adminNotes  String?               @map("admin_notes") @db.Text
+  createdAt   DateTime              @default(now()) @map("created_at")
+  processedAt DateTime?             @map("processed_at")
+  processedBy String?               @map("processed_by")
+
+  // Relations
+  user        User                  @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@map("withdrawal_requests")
+}
+
+// Deposit requests table
+model DepositRequest {
+  id          String                @id @default(uuid())
+  userId      String                @map("user_id")
+  amount      Decimal               @db.Decimal(10, 2)
+  whatsapp    String                @db.VarChar(20)
+  status      RequestStatus         @default(PENDING)
+  adminNotes  String?               @map("admin_notes") @db.Text
+  createdAt   DateTime              @default(now()) @map("created_at")
+  processedAt DateTime?             @map("processed_at")
+  processedBy String?               @map("processed_by")
+
+  // Relations
+  user        User                  @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@map("deposit_requests")
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+
+  @@map("request_status")
+}
+
+// Platform revenue table (for tracking 5% platform fee)
+model PlatformRevenue {
+  id        String   @id @default(uuid())
+  matchId   String   @map("match_id")
+  amount    Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  match     Match    @relation(fields: [matchId], references: [id])
+
+  @@index([matchId])
+  @@map("platform_revenue")
+}
+
+// Admin accounts table (separate from users for admin login)
+model AdminAccount {
+  id           String    @id @default(uuid())
+  username     String    @unique @db.VarChar(50)
+  passwordHash String    @map("password_hash") @db.VarChar(255)
+  lastLogin    DateTime? @map("last_login")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  @@map("admin_accounts")
+}
+
+// Admin logs table
+model AdminLog {
+  id         String   @id @default(uuid())
+  adminId    String   @map("admin_id")
+  action     String   @db.VarChar(100)
+  targetType String?  @map("target_type") @db.VarChar(50)
+  targetId   String?  @map("target_id")
+  details    Json?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  admin      User     @relation(fields: [adminId], references: [id])
+
+  @@index([adminId])
+  @@map("admin_logs")
+}
+

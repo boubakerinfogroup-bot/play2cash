@@ -1,0 +1,351 @@
+/* Play to Cash - Ultra Modern 2026 Design */
+/* Aggressive Gradients, Floating 3D Elements, Glassmorphism */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+:root {
+  /* Ultra Vibrant Palette */
+  --primary: #6366f1;
+  --primary-glow: rgba(99, 102, 241, 0.6);
+  --secondary: #ec4899;
+  --secondary-glow: rgba(236, 72, 153, 0.6);
+  --accent: #06b6d4;
+  --accent-glow: rgba(6, 182, 212, 0.6);
+
+  /* Aggressive Gradients */
+  --gradient-main: linear-gradient(135deg, #4f46e5 0%, #9333ea 50%, #ec4899 100%);
+  --gradient-glass: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.7) 100%);
+  --gradient-btn: linear-gradient(90deg, #4f46e5 0%, #ec4899 100%);
+  --gradient-text: linear-gradient(90deg, #4f46e5 0%, #ec4899 100%);
+
+  /* Text */
+  --text-dark: #0f172a;
+  --text-gray: #64748b;
+
+  /* Radius */
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-jakarta);
+  background: #f8fafc;
+  color: var(--text-color);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  /* Massive padding at bottom for mobile nav */
+  padding-bottom: 140px;
+  direction: ltr !important;
+  /* Force LTR globally */
+}
+
+/* Force LTR on all elements */
+* {
+  direction: ltr !important;
+}
+
+/* Utility for Arabic text to use Cairo */
+[lang="ar"],
+.arabic-text {
+  font-family: var(--font-cairo) !important;
+}
+
+/* Dynamic Background Orbs */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: -1;
+  animation: float-bg 25s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.5;
+}
+
+body::before {
+  width: 60vh;
+  height: 60vh;
+  background: var(--gradient-main);
+  top: -20vh;
+  left: -20vh;
+}
+
+body::after {
+  width: 50vh;
+  height: 50vh;
+  background: linear-gradient(135deg, #06b6d4, #4f46e5);
+  bottom: -10vh;
+  right: -10vh;
+  animation-delay: -10s;
+}
+
+@keyframes float-bg {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(30px, 50px) scale(1.1) rotate(5deg);
+  }
+
+  100% {
+    transform: translate(-30px, 20px) scale(0.9) rotate(-5deg);
+  }
+}
+
+/* Glassmorphism Classes */
+.glass {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.1),
+    0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+  /* Contains children */
+}
+
+.glass-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 35px 60px -15px rgba(79, 70, 229, 0.2),
+    0 10px 20px -5px rgba(79, 70, 229, 0.1);
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Ultra Modern Buttons */
+.btn {
+  background: var(--gradient-btn);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, #ec4899 0%, #4f46e5 100%);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.4);
+}
+
+.btn:hover::before {
+  opacity: 1;
+}
+
+/* Header Specifics */
+.header {
+  position: sticky;
+  top: 10px;
+  margin: 0 16px;
+  z-index: 100;
+  border-radius: 16px;
+  padding: 8px 16px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header.glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+}
+
+.balance-pill {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-weight: 800;
+  color: var(--primary);
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.4rem;
+  border: none;
+  text-shadow: none;
+}
+
+.refresh-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  transition: transform 0.6s ease;
+  /* Fill none for stroke icons, color handles stroke via currentColor */
+  fill: none;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(79, 70, 229, 0.2);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.icon-btn img {
+  width: 24px;
+  height: 24px;
+  filter: none;
+  /* Using CSS filter to make black icons purple if they are simple masks, otherwise just none */
+}
+
+.icon-btn:hover {
+  background: white;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+/* Inputs */
+.form-control {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid transparent;
+  border-radius: 16px;
+  padding: 16px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.form-control:focus {
+  outline: none;
+  background: white;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+/* Layout Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  padding-bottom: 20px;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Game Grid */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 32px;
+  padding: 20px 0;
+}
+
+.game-card .game-icon {
+  filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.1));
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.game-card:hover .game-icon {
+  transform: scale(1.2) rotate(5deg);
+}
+
+/* Mobile Nav */
+.mobile-nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 16px 40px;
+  border-radius: 999px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  gap: 40px;
+  z-index: 999;
+}
+
+.mobile-nav a {
+  color: #94a3b8;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-nav a span {
+  display: none;
+  /* Hide labels */
+}
+
+.mobile-nav a.active {
+  color: #4f46e5;
+  transform: translateY(-4px);
+  filter: drop-shadow(0 4px 6px rgba(79, 70, 229, 0.4));
+}
