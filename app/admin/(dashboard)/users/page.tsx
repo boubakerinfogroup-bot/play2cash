@@ -25,6 +25,7 @@ export default function AdminUsersPage() {
       const filtered = users.filter(user =>
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.whatsapp.includes(searchTerm) ||
+        (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (user.accountId && user.accountId.toLowerCase().includes(searchTerm.toLowerCase()))
       )
       setFilteredUsers(filtered)
@@ -142,7 +143,7 @@ export default function AdminUsersPage() {
       <div style={{ padding: '16px', maxWidth: '100%' }}>
         <h1 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '8px', color: '#1e293b' }}>
           Gérer les utilisateurs
-          <span style={{ fontSize: '0.8rem', opacity: 0.5, marginLeft: '8px', color: '#64748b' }}>v5.1</span>
+          <span style={{ fontSize: '0.8rem', opacity: 0.5, marginLeft: '8px', color: '#64748b' }}>v5.2</span>
         </h1>
         <p style={{ color: '#64748b', marginBottom: '24px' }}>Total: {filteredUsers.length} utilisateurs</p>
 
@@ -235,7 +236,7 @@ export default function AdminUsersPage() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="🔍 Rechercher par nom, téléphone ou ID..."
+            placeholder="🔍 Rechercher par nom, téléphone, email ou ID..."
             style={{
               width: '100%',
               padding: '16px',
@@ -288,10 +289,28 @@ export default function AdminUsersPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
                 <div>
                   <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
+                    ID Compte
+                  </div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#475569', fontFamily: 'monospace', background: '#f8fafc', padding: '6px 10px', borderRadius: '6px', display: 'inline-block' }}>
+                    {user.accountId || 'N/A'}
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
                     WhatsApp
                   </div>
                   <div style={{ fontSize: '1rem', fontWeight: 600, color: '#475569' }}>
-                    {user.whatsapp}
+                    📱 {user.whatsapp}
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
+                    Email
+                  </div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#475569' }}>
+                    {user.email ? `📧 ${user.email}` : '—'}
                   </div>
                 </div>
 
@@ -337,6 +356,7 @@ export default function AdminUsersPage() {
                 <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
                   <th style={{ padding: '16px', textAlign: 'left', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Joueur</th>
                   <th style={{ padding: '16px', textAlign: 'left', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Contact</th>
+                  <th style={{ padding: '16px', textAlign: 'left', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Email</th>
                   <th style={{ padding: '16px', textAlign: 'left', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Solde</th>
                   <th style={{ padding: '16px', textAlign: 'right', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Action</th>
                 </tr>
@@ -346,11 +366,14 @@ export default function AdminUsersPage() {
                   <tr key={user.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                     <td style={{ padding: '16px' }}>
                       <div style={{ fontWeight: 600, color: '#1e293b' }}>{user.name}</div>
-                      <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '2px' }}>
-                        ID: {user.accountId || 'N/A'}
+                      <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '2px', fontFamily: 'monospace' }}>
+                        {user.accountId || 'N/A'}
                       </div>
                     </td>
-                    <td style={{ padding: '16px', color: '#475569' }}>{user.whatsapp}</td>
+                    <td style={{ padding: '16px', color: '#475569' }}>📱 {user.whatsapp}</td>
+                    <td style={{ padding: '16px', color: '#475569', fontSize: '0.9rem' }}>
+                      {user.email ? `📧 ${user.email}` : '—'}
+                    </td>
                     <td style={{ padding: '16px', fontWeight: 700, fontSize: '1.1rem', color: '#10b981' }}>
                       {formatCurrency(user.balance)}
                     </td>
