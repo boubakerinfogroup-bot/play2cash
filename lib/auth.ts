@@ -1,5 +1,7 @@
 // Secure Authentication - NO passwords for users
 // Security Logic: Name + WhatsApp + Email must ALL match to access account
+// - WhatsApp is the PRIMARY unique identifier (enforced in DB)
+// - Name and Email uniqueness is enforced in application logic
 // - If ALL 3 are new → Create new account
 // - If ALL 3 match existing user → Login
 // - If ANY mismatch → Show specific error
@@ -32,40 +34,67 @@ export async function registerOrLogin(
     const trimmedWhatsapp = whatsapp.trim()
     const trimmedEmail = email.trim().toLowerCase()
 
-    // Check if ANY of the identifiers exist in the database
-    const existingByWhatsapp = await prisma.user.findUnique({
-      where: { whatsapp: trimmedWhatsapp }
+    // Find all users that match ANY of the identifiers
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { whatsapp: trimmedWhatsapp },
+          { email: trimmedEmail },
+          { name: trimmedName }
+        ]
+      }
     })
 
-    const existingByEmail = await prisma.user.findUnique({
-      where: { email: trimmedEmail }
-    })
+    // Case 1: No existing users - CREATE NEW ACCOUNT
+    if (users.length === 0) {
+      const accountId = await generateAccountId()
 
-    const existingByName = await prisma.user.findUnique({
-      where: { name: trimmedName }
-    })
-
-    // Case 1: All three match the same user - ALLOW LOGIN
-    if (existingByWhatsapp && existingByEmail && existingByName) {
-      // Check if they all belong to the same user
-      if (
-        existingByWhatsapp.id === existingByEmail.id &&
-        existingByEmail.id === existingByName.id
-      ) {
-        // Perfect match - login the user
-        const user = formatUser(existingByWhatsapp)
-        await createSession(user.id, language)
-        return {
-          success: true,
-          user
+      const newUser = await prisma.user.create({
+        data: {
+          name: trimmedName,
+          whatsapp: trimmedWhatsapp,
+          email: trimmedEmail,
+          balance: 0.00,
+          accountId: accountId,
+          languagePreference: language,
         }
+      })
+
+      const user = formatUser(newUser)
+      await createSession(user.id, language)
+
+      return {
+        success: true,
+        user
       }
     }
 
-    // Case 2: ANY identifier exists but not all match - DENY with specific error
-    if (existingByWhatsapp) {
-      // WhatsApp exists, check if other fields match
-      if (existingByWhatsapp.name !== trimmedName) {
+    // Case 2: Check if all three identifiers match THE SAME user
+    const exactMatch = users.find(
+      u => u.name === trimmedName &&
+        u.whatsapp === trimmedWhatsapp &&
+        u.email === trimmedEmail
+    )
+
+    if (exactMatch) {
+      // Perfect match - login
+      const user = formatUser(exactMatch)
+      await createSession(user.id, language)
+      return {
+        success: true,
+        user
+      }
+    }
+
+    // Case 3: Partial match - someone is trying to access with wrong credentials
+    // Find which field(s) are wrong
+    const userByWhatsapp = users.find(u => u.whatsapp === trimmedWhatsapp)
+    const userByEmail = users.find(u => u.email === trimmedEmail)
+    const userByName = users.find(u => u.name === trimmedName)
+
+    if (userByWhatsapp) {
+      // WhatsApp exists but other fields don't match
+      if (userByWhatsapp.name !== trimmedName) {
         return {
           success: false,
           user: null,
@@ -74,7 +103,7 @@ export async function registerOrLogin(
             : 'اسم المستخدم غير صحيح لرقم الواتساب هذا'
         }
       }
-      if (existingByWhatsapp.email !== trimmedEmail) {
+      if (userByWhatsapp.email !== trimmedEmail) {
         return {
           success: false,
           user: null,
@@ -85,9 +114,9 @@ export async function registerOrLogin(
       }
     }
 
-    if (existingByEmail) {
-      // Email exists, check if other fields match
-      if (existingByEmail.whatsapp !== trimmedWhatsapp) {
+    if (userByEmail) {
+      // Email exists but other fields don't match
+      if (userByEmail.whatsapp !== trimmedWhatsapp) {
         return {
           success: false,
           user: null,
@@ -96,7 +125,7 @@ export async function registerOrLogin(
             : 'رقم الواتساب غير صحيح لهذا البريد الإلكتروني'
         }
       }
-      if (existingByEmail.name !== trimmedName) {
+      if (userByEmail.name !== trimmedName) {
         return {
           success: false,
           user: null,
@@ -107,9 +136,9 @@ export async function registerOrLogin(
       }
     }
 
-    if (existingByName) {
-      // Name exists, check if other fields match
-      if (existingByName.whatsapp !== trimmedWhatsapp) {
+    if (userByName) {
+      // Name exists but other fields don't match
+      if (userByName.whatsapp !== trimmedWhatsapp) {
         return {
           success: false,
           user: null,
@@ -118,7 +147,7 @@ export async function registerOrLogin(
             : 'رقم الواتساب غير صحيح لاسم المستخدم هذا'
         }
       }
-      if (existingByName.email !== trimmedEmail) {
+      if (userByName.email !== trimmedEmail) {
         return {
           success: false,
           user: null,
@@ -129,59 +158,25 @@ export async function registerOrLogin(
       }
     }
 
-    // Case 3: None of the identifiers exist - CREATE NEW ACCOUNT
-    const accountId = await generateAccountId()
-
-    const newUser = await prisma.user.create({
-      data: {
-        name: trimmedName,
-        whatsapp: trimmedWhatsapp,
-        email: trimmedEmail,
-        balance: 0.00,
-        accountId: accountId,
-        languagePreference: language,
-      }
-    })
-
-    const user = formatUser(newUser)
-    await createSession(user.id, language)
-
+    // Shouldn't reach here, but just in case
     return {
-      success: true,
-      user
+      success: false,
+      user: null,
+      error: language === 'fr'
+        ? 'Erreur d\'authentification. Vérifiez vos informations.'
+        : 'خطأ في المصادقة. تحقق من معلوماتك.'
     }
   } catch (error: any) {
     console.error('Authentication error:', error)
 
-    // Handle unique constraint violations
+    // Handle unique constraint violations (for WhatsApp which is unique in DB)
     if (error.code === 'P2002') {
-      const field = error.meta?.target?.[0]
-      if (field === 'whatsapp') {
-        return {
-          success: false,
-          user: null,
-          error: language === 'fr'
-            ? 'Ce numéro WhatsApp est déjà utilisé'
-            : 'رقم الواتساب مستخدم بالفعل'
-        }
-      }
-      if (field === 'email') {
-        return {
-          success: false,
-          user: null,
-          error: language === 'fr'
-            ? 'Cet email est déjà utilisé'
-            : 'البريد الإلكتروني مستخدم بالفعل'
-        }
-      }
-      if (field === 'name') {
-        return {
-          success: false,
-          user: null,
-          error: language === 'fr'
-            ? 'Ce nom d\'utilisateur est déjà utilisé'
-            : 'اسم المستخدم مستخدم بالفعل'
-        }
+      return {
+        success: false,
+        user: null,
+        error: language === 'fr'
+          ? 'Ce numéro WhatsApp est déjà utilisé'
+          : 'رقم الواتساب مستخدم بالفعل'
       }
     }
 
