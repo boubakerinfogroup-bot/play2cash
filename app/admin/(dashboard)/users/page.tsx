@@ -136,7 +136,10 @@ export default function AdminUsersPage() {
 
   return (
     <div className="container">
-      <h1 className="page-title">Gérer les utilisateurs</h1>
+      <h1 className="page-title">
+        Gérer les utilisateurs
+        <span style={{ fontSize: '0.8rem', opacity: 0.5, marginLeft: '8px' }}>v2.5</span>
+      </h1>
 
       {/* Manual Top-up/Withdraw by Account ID */}
       <div className="card" style={{ marginBottom: '24px', background: 'var(--primary-color)', color: 'white' }}>
@@ -212,29 +215,42 @@ export default function AdminUsersPage() {
       {/* Mobile View (Cards) */}
       <div className="mobile-only-cards">
         <style jsx>{`
-            .desktop-table { display: block; }
-            .mobile-only-cards { display: none; }
-            @media (max-width: 768px) {
-              .desktop-table { display: none !important; }
-              .mobile-only-cards { display: flex !important; flexDirection: column; gap: 12px; }
-            }
-          `}</style>
+          .desktop-table { display: block; }
+          .mobile-only-cards { display: none; }
+          @media (max-width: 768px) {
+            .desktop-table { display: none !important; }
+            .mobile-only-cards { display: flex !important; flexDirection: column; gap: 16px; }
+          }
+        `}</style>
 
         {users.map((user) => (
-          <div key={user.id} style={{ background: 'white', borderRadius: '12px', padding: '16px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1e293b' }}>{user.name}</div>
-                <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '4px' }}>
-                  <span style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px' }}>{user.accountId || 'ID?'}</span>
+          <div key={user.id} style={{
+            background: 'rgba(255, 255, 255, 0.9)',
+            borderRadius: '20px',
+            padding: '20px',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.8)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--gradient-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '1.2rem' }}>
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#1e293b' }}>{user.name}</div>
+                  <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '4px' }}>
+                    <span style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '6px', fontWeight: 600 }}>{user.accountId || 'ID?'}</span>
+                  </div>
                 </div>
               </div>
-              <div style={{ fontWeight: 800, color: '#10b981' }}>{formatCurrency(user.balance)}</div>
+              <div style={{ fontWeight: 900, fontSize: '1.2rem', background: 'linear-gradient(90deg, #10b981 0%, #059669 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                {formatCurrency(user.balance)}
+              </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', fontSize: '0.9rem', color: '#475569' }}>
-              <span>📞</span>
-              <span>{user.whatsapp}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px', padding: '12px', background: '#f8fafc', borderRadius: '12px' }}>
+              <span style={{ fontSize: '1.2rem' }}>📱</span>
+              <span style={{ fontWeight: 600, color: '#475569' }}>{user.whatsapp}</span>
             </div>
 
             <button
@@ -242,17 +258,18 @@ export default function AdminUsersPage() {
                 setSelectedUser(user)
                 setTopupModal(true)
               }}
+              className="btn"
               style={{
                 width: '100%',
-                padding: '12px',
-                borderRadius: '8px',
-                background: 'var(--gradient-btn)',
-                color: 'white',
-                border: 'none',
-                fontWeight: 600
+                borderRadius: '16px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.25)'
               }}
             >
-              Recharger
+              <span>💰</span> Recharger le compte
             </button>
           </div>
         ))}
