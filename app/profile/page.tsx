@@ -25,6 +25,8 @@ export default function ProfilePage() {
   const [withdrawalAmount, setWithdrawalAmount] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
 
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error', message: string } | null>(null)
+
   useEffect(() => {
     const userStr = localStorage.getItem('user')
     const langStr = localStorage.getItem('language') || 'fr'
@@ -83,14 +85,23 @@ export default function ProfilePage() {
 
       const result = await response.json()
       if (result.success) {
-        alert(lang === 'ar' ? 'تم إرسال طلب الإيداع' : 'Demande de dépôt envoyée')
         setDepositModal(false)
         setDepositAmount('')
+        setFeedback({
+          type: 'success',
+          message: lang === 'ar' ? 'تم إرسال طلب الإيداع بنجاح' : 'Demande de dépôt envoyée avec succès'
+        })
       } else {
-        alert(result.error || (lang === 'ar' ? 'خطأ' : 'Erreur'))
+        setFeedback({
+          type: 'error',
+          message: result.error || (lang === 'ar' ? 'حدث خطأ' : 'Une erreur est survenue')
+        })
       }
     } catch (err: any) {
-      alert(err.message || (lang === 'ar' ? 'خطأ' : 'Erreur'))
+      setFeedback({
+        type: 'error',
+        message: err.message || (lang === 'ar' ? 'حدث خطأ' : 'Une erreur est survenue')
+      })
     }
   }
 
@@ -105,15 +116,24 @@ export default function ProfilePage() {
 
       const result = await response.json()
       if (result.success) {
-        alert(lang === 'ar' ? 'تم إرسال طلب السحب' : 'Demande de retrait envoyée')
         setWithdrawalModal(false)
         setWithdrawalAmount('')
         loadData() // Refresh balance
+        setFeedback({
+          type: 'success',
+          message: lang === 'ar' ? 'تم إرسال طلب السحب بنجاح' : 'Demande de retrait envoyée avec succès'
+        })
       } else {
-        alert(result.error || (lang === 'ar' ? 'خطأ' : 'Erreur'))
+        setFeedback({
+          type: 'error',
+          message: result.error || (lang === 'ar' ? 'حدث خطأ' : 'Une erreur est survenue')
+        })
       }
     } catch (err: any) {
-      alert(err.message || (lang === 'ar' ? 'خطأ' : 'Erreur'))
+      setFeedback({
+        type: 'error',
+        message: err.message || (lang === 'ar' ? 'حدث خطأ' : 'Une erreur est survenue')
+      })
     }
   }
 
@@ -185,7 +205,7 @@ export default function ProfilePage() {
           {/* Actions */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <button
-              onClick={() => { console.log('Deposit clicked'); setDepositModal(true); }}
+              onClick={() => setDepositModal(true)}
               className="btn btn-success"
               style={{ padding: '16px', borderRadius: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', boxShadow: '0 10px 20px rgba(16, 185, 129, 0.2)' }}
             >
@@ -193,7 +213,7 @@ export default function ProfilePage() {
               <span>{lang === 'ar' ? 'إيداع' : 'Dépôt'}</span>
             </button>
             <button
-              onClick={() => { console.log('Withdrawal clicked'); setWithdrawalModal(true); }}
+              onClick={() => setWithdrawalModal(true)}
               className="btn btn-danger"
               style={{ padding: '16px', borderRadius: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', boxShadow: '0 10px 20px rgba(239, 68, 68, 0.2)' }}
             >
@@ -312,15 +332,26 @@ export default function ProfilePage() {
         selectedValue={filter}
       />
 
-      {/* Reusing existing Modals (they will inherit some global styles) */}
+      {/* Deposit Modal */}
       <Modal
         isOpen={depositModal}
         onClose={() => setDepositModal(false)}
         title={lang === 'ar' ? 'طلب إيداع' : 'Demande de dépôt'}
       >
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <img src="/assets/deposit.png" alt="Deposit" width="64" height="64" style={{ marginBottom: '16px' }} />
+          <p style={{ color: '#64748b' }}>
+            {lang === 'ar'
+              ? 'أدخل المبلغ الذي تريد إيداعه ورقم الواتساب للتواصل.'
+              : 'Entrez le montant à déposer et votre numéro WhatsApp.'}
+          </p>
+        </div>
+
         <form onSubmit={handleDeposit}>
-          <div className="form-group">
-            <label>{lang === 'ar' ? 'رقم الواتساب' : 'Numéro WhatsApp'} *</label>
+          <div className="form-group" style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>
+              {lang === 'ar' ? 'رقم الواتساب' : 'Numéro WhatsApp'}
+            </label>
             <input
               type="tel"
               className="form-control"
@@ -328,35 +359,60 @@ export default function ProfilePage() {
               onChange={(e) => setWhatsapp(e.target.value)}
               required
               placeholder="+216XXXXXXXX"
+              style={{ fontSize: '1.1rem' }}
             />
           </div>
-          <div className="form-group">
-            <label>{lang === 'ar' ? 'المبلغ' : 'Montant'} (TND) *</label>
-            <input
-              type="number"
-              className="form-control"
-              min="1"
-              step="0.01"
-              value={depositAmount}
-              onChange={(e) => setDepositAmount(e.target.value)}
-              required
-            />
+          <div className="form-group" style={{ marginBottom: '24px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>
+              {lang === 'ar' ? 'المبلغ (د.ت)' : 'Montant (TND)'}
+            </label>
+            <div style={{ position: 'relative' }}>
+              <input
+                type="number"
+                className="form-control"
+                min="1"
+                step="0.01"
+                value={depositAmount}
+                onChange={(e) => setDepositAmount(e.target.value)}
+                required
+                style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#4f46e5', paddingLeft: lang === 'ar' ? '16px' : '48px', paddingRight: lang === 'ar' ? '48px' : '16px' }}
+              />
+              <span style={{ position: 'absolute', [lang === 'ar' ? 'right' : 'left']: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '1.2rem', color: '#94a3b8' }}>
+                $
+              </span>
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-            <button type="submit" className="btn btn-success" style={{ flex: 1 }}>{lang === 'ar' ? 'إرسال' : 'Envoyer'}</button>
-            <button type="button" onClick={() => setDepositModal(false)} className="btn" style={{ flex: 1, background: '#e2e8f0', color: '#334155', boxShadow: 'none' }}>{lang === 'ar' ? 'إلغاء' : 'Annuler'}</button>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button type="submit" className="btn btn-success" style={{ flex: 1, padding: '16px' }}>
+              {lang === 'ar' ? 'تأكيد الطلب' : 'Confirmer la demande'}
+            </button>
+            <button type="button" onClick={() => setDepositModal(false)} className="btn" style={{ flex: 1, background: '#f1f5f9', color: '#334155', boxShadow: 'none' }}>
+              {lang === 'ar' ? 'إلغاء' : 'Annuler'}
+            </button>
           </div>
         </form>
       </Modal>
 
+      {/* Withdrawal Modal */}
       <Modal
         isOpen={withdrawalModal}
         onClose={() => setWithdrawalModal(false)}
         title={lang === 'ar' ? 'طلب سحب' : 'Demande de retrait'}
       >
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <img src="/assets/withdraw.png" alt="Withdraw" width="64" height="64" style={{ marginBottom: '16px' }} />
+          <p style={{ color: '#64748b' }}>
+            {lang === 'ar'
+              ? 'أدخل المبلغ الذي تريد سحبه. سيتم خصمه من رصيدك.'
+              : 'Entrez le montant à retirer. Il sera déduit de votre solde.'}
+          </p>
+        </div>
+
         <form onSubmit={handleWithdrawal}>
-          <div className="form-group">
-            <label>{lang === 'ar' ? 'رقم الواتساب' : 'Numéro WhatsApp'} *</label>
+          <div className="form-group" style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>
+              {lang === 'ar' ? 'رقم الواتساب' : 'Numéro WhatsApp'}
+            </label>
             <input
               type="tel"
               className="form-control"
@@ -364,32 +420,73 @@ export default function ProfilePage() {
               onChange={(e) => setWhatsapp(e.target.value)}
               required
               placeholder="+216XXXXXXXX"
+              style={{ fontSize: '1.1rem' }}
             />
           </div>
-          <div className="form-group">
-            <label>{lang === 'ar' ? 'المبلغ' : 'Montant'} (TND) *</label>
-            <input
-              type="number"
-              className="form-control"
-              min="1"
-              step="0.01"
-              max={user?.balance || 0}
-              value={withdrawalAmount}
-              onChange={(e) => setWithdrawalAmount(e.target.value)}
-              required
-            />
+          <div className="form-group" style={{ marginBottom: '24px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>
+              {lang === 'ar' ? 'المبلغ (د.ت)' : 'Montant (TND)'}
+            </label>
+            <div style={{ position: 'relative' }}>
+              <input
+                type="number"
+                className="form-control"
+                min="1"
+                step="0.01"
+                max={user?.balance || 0}
+                value={withdrawalAmount}
+                onChange={(e) => setWithdrawalAmount(e.target.value)}
+                required
+                style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ef4444', paddingLeft: lang === 'ar' ? '16px' : '48px', paddingRight: lang === 'ar' ? '48px' : '16px' }}
+              />
+              <span style={{ position: 'absolute', [lang === 'ar' ? 'right' : 'left']: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '1.2rem', color: '#94a3b8' }}>
+                $
+              </span>
+            </div>
             {user && (
-              <small style={{ color: 'var(--text-light)', fontSize: '14px', marginTop: '4px', display: 'block' }}>
-                {lang === 'ar' ? 'الحد الأقصى: ' : 'Maximum: '}
-                {formatCurrency(user.balance, lang)}
-              </small>
+              <div style={{ marginTop: '8px', textAlign: lang === 'ar' ? 'left' : 'right', fontSize: '0.9rem', color: '#64748b' }}>
+                {lang === 'ar' ? 'الرصيد المتاح: ' : 'Solde disponible: '}
+                <span style={{ fontWeight: 'bold', color: '#0f172a' }}>{formatCurrency(user.balance, lang)}</span>
+              </div>
             )}
           </div>
-          <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-            <button type="submit" className="btn btn-danger" style={{ flex: 1 }}>{lang === 'ar' ? 'إرسال' : 'Envoyer'}</button>
-            <button type="button" onClick={() => setWithdrawalModal(false)} className="btn" style={{ flex: 1, background: '#e2e8f0', color: '#334155', boxShadow: 'none' }}>{lang === 'ar' ? 'إلغاء' : 'Annuler'}</button>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button type="submit" className="btn btn-danger" style={{ flex: 1, padding: '16px' }}>
+              {lang === 'ar' ? 'تأكيد السحب' : 'Confirmer le retrait'}
+            </button>
+            <button type="button" onClick={() => setWithdrawalModal(false)} className="btn" style={{ flex: 1, background: '#f1f5f9', color: '#334155', boxShadow: 'none' }}>
+              {lang === 'ar' ? 'إلغاء' : 'Annuler'}
+            </button>
           </div>
         </form>
+      </Modal>
+
+      {/* Feedback Modal (Replacement for Alert) */}
+      <Modal
+        isOpen={!!feedback}
+        onClose={() => setFeedback(null)}
+        title={feedback?.type === 'success' ? (lang === 'ar' ? 'حسناً!' : 'Succès!') : (lang === 'ar' ? 'خطأ' : 'Erreur')}
+      >
+        <div style={{ textAlign: 'center', padding: '10px 0 20px' }}>
+          <div className={`modal-feedback-icon ${feedback?.type === 'success' ? 'feedback-success' : 'feedback-error'}`}>
+            {feedback?.type === 'success' ? '✓' : '✕'}
+          </div>
+          <h3 style={{ fontSize: '1.25rem', marginBottom: '12px', fontWeight: 800 }}>
+            {feedback?.type === 'success'
+              ? (lang === 'ar' ? 'تمت العملية بنجاح' : 'Opération réussie')
+              : (lang === 'ar' ? 'فشلت العملية' : 'Échec de l\'opération')}
+          </h3>
+          <p style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '32px' }}>
+            {feedback?.message}
+          </p>
+          <button
+            onClick={() => setFeedback(null)}
+            className="btn"
+            style={{ width: '100%', background: feedback?.type === 'success' ? '#10b981' : '#ef4444' }}
+          >
+            {lang === 'ar' ? 'حسناً' : 'Compris'}
+          </button>
+        </div>
       </Modal>
 
       <MobileNav lang={lang} onToggleLang={toggleLang} />
