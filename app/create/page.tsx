@@ -10,6 +10,8 @@ import MobileNav from '@/components/MobileNav'
 import BottomSheet from '@/components/BottomSheet'
 
 import { Suspense } from 'react'
+import PopupModal from '@/components/PopupModal'
+import ConfirmModal from '@/components/ConfirmModal'
 
 function CreateContent() {
   const router = useRouter()
@@ -24,6 +26,7 @@ function CreateContent() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const allowedStakes = getAllowedStakes()
 
@@ -82,11 +85,8 @@ function CreateContent() {
       return
     }
 
-    // Interactive confirmation via native confirm for now, can be modalized later
-    const stakeText = formatCurrency(Number(stake))
-    if (!confirm(lang === 'ar' ? `إنشاء غرفة بـ ${stakeText}؟` : `Créer une salle pour ${stakeText}?`)) return
-
-    createMatch()
+    // Show confirmation popup instead of browser confirm
+    setShowConfirm(true)
   }
 
   const createMatch = async () => {
@@ -243,6 +243,17 @@ function CreateContent() {
         options={stakeOptions}
         onSelect={(val) => setStake(val)}
         selectedValue={stake}
+      />
+
+      <ConfirmModal
+        isOpen={showConfirm}
+        onConfirm={createMatch}
+        onCancel={() => setShowConfirm(false)}
+        title={lang === 'ar' ? 'تأكيد' : 'Confirmation'}
+        message={lang === 'ar' ? 'هل تريد إنشاء غرفة بهذا المبلغ؟' : 'Créer une salle avec cette mise ?'}
+        confirmText={lang === 'ar' ? 'نعم، إنشاء' : 'Oui, créer'}
+        cancelText={lang === 'ar' ? 'إلغاء' : 'Annuler'}
+        stake={Number(stake)}
       />
 
       <MobileNav lang={lang} onToggleLang={toggleLang} />
