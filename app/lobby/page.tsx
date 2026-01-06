@@ -10,6 +10,7 @@ import MobileNav from '@/components/MobileNav'
 import BottomSheet from '@/components/BottomSheet'
 
 import { Suspense } from 'react'
+import PopupModal from '@/components/PopupModal'
 
 function LobbyContent() {
   const router = useRouter()
@@ -23,6 +24,20 @@ function LobbyContent() {
   const [stakeFilter, setStakeFilter] = useState<number | ''>('')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [pendingJoinRequest, setPendingJoinRequest] = useState<{ matchId: string; requestId: string } | null>(null)
+
+  // Popup modal state
+  const [popup, setPopup] = useState<{
+    isOpen: boolean
+    title: string
+    message: string
+    type: 'success' | 'error' | 'info' | 'warning'
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info'
+  })
 
   const allowedStakes = getAllowedStakes()
 
@@ -82,6 +97,7 @@ function LobbyContent() {
     }
   }
 
+  // Refresh matches every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       loadMatches()
@@ -89,6 +105,35 @@ function LobbyContent() {
 
     return () => clearInterval(interval)
   }, [game, stakeFilter, user])
+
+  // Poll for join request status if we have a pending request
+  useEffect(() => {
+    if (!pendingJoinRequest) return
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const response = await fetch(`/api/matches/${pendingJoinRequest.matchId}/poll`)
+        const data = await response.json()
+
+        if (data.success && data.match) {
+          // Check if our join request was accepted
+          const acceptedRequest = data.match.joinRequests?.find(
+            (r: any) => r.id === pendingJoinRequest.requestId && r.status === 'ACCEPTED'
+          )
+
+          if (acceptedRequest || data.match.status === 'COUNTDOWN' || data.match.status === 'ACTIVE') {
+            // We were accepted! Redirect to match page
+            clearInterval(pollInterval)
+            router.push(`/match/${pendingJoinRequest.matchId}`)
+          }
+        }
+      } catch (err) {
+        console.error('Poll error:', err)
+      }
+    }, 2000) // Poll every 2 seconds
+
+    return () => clearInterval(pollInterval)
+  }, [pendingJoinRequest])
 
   const toggleLang = () => {
     const newLang = lang === 'fr' ? 'ar' : 'fr'
@@ -192,12 +237,34 @@ function LobbyContent() {
                         })
                         const data = await response.json()
                         if (data.success) {
-                          alert(lang === 'ar' ? 'تم إرسال طلبك! في انتظار قبول المنشئ...' : 'Demande envoyée ! En attente d\'acceptation...')
+                          // Set pending join request to start polling
+                          setPendingJoinRequest({
+                            matchId: match.id,
+                            requestId: data.requestId
+                          })
+
+                          // Show success popup
+                          setPopup({
+                            isOpen: true,
+                            title: lang === 'ar' ? 'طلب مرسل!' : 'Demande envoyée !',
+                            message: lang === 'ar' ? 'في انتظار قبول المنشئ... سيتم توجيهك تلقائيًا عند القبول.' : 'En attente d\'acceptation... Vous serez redirigé automatiquement.',
+                            type: 'success'
+                          })
                         } else {
-                          alert(data.error || (lang === 'ar' ? 'خطأ' : 'Erreur'))
+                          setPopup({
+                            isOpen: true,
+                            title: lang === 'ar' ? 'خطأ' : 'Erreur',
+                            message: data.error || (lang === 'ar' ? 'فشل الانضمام' : 'Échec de la demande'),
+                            type: 'error'
+                          })
                         }
                       } catch (err) {
-                        alert(lang === 'ar' ? 'خطأ في الانضمام' : 'Erreur lors de la demande')
+                        setPopup({
+                          isOpen: true,
+                          title: lang === 'ar' ? 'خطأ' : 'Erreur',
+                          message: lang === 'ar' ? 'خطأ في الانضمام' : 'Erreur lors de la demande',
+                          type: 'error'
+                        })
                       }
                     }}
                     className="btn"
@@ -219,6 +286,14 @@ function LobbyContent() {
         options={filterOptions}
         onSelect={(val) => setStakeFilter(val)}
         selectedValue={stakeFilter}
+      />
+
+      <PopupModal
+        isOpen={popup.isOpen}
+        onClose={() => setPopup({ ...popup, isOpen: false })}
+        title={popup.title}
+        message={popup.message}
+        type={popup.type}
       />
 
       <MobileNav lang={lang} onToggleLang={toggleLang} />
