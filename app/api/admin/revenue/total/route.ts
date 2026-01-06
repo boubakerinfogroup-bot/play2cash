@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 export async function GET() {
     try {
         // Get all completed revenue records (5% platform commission)
-        const result = await prisma.revenue.aggregate({
+        const result = await prisma.platformRevenue.aggregate({
             _sum: {
                 amount: true
             }
