@@ -31,6 +31,7 @@ model User {
   withdrawalRequests WithdrawalRequest[]
   wonMatches        Match[]  @relation("MatchWinner")
   adminLogs         AdminLog[]
+  joinRequests      JoinRequest[]
 
   @@map("users")
 }
@@ -74,6 +75,7 @@ model Match {
   players      MatchPlayer[]
   transactions Transaction[]
   revenue      PlatformRevenue[]
+  joinRequests JoinRequest[]
 
   @@index([status])
   @@index([gameId])
@@ -81,10 +83,12 @@ model Match {
 }
 
 enum MatchStatus {
-  WAITING
-  ACTIVE
-  COMPLETED
-  CANCELLED
+  WAITING            // Room created, waiting for opponent
+  PENDING_ACCEPTANCE // Someone requested to join, waiting for creator approval
+  COUNTDOWN          // Both accepted, 10-second countdown before start
+  ACTIVE             // Game in progress
+  COMPLETED          // Game finished
+  CANCELLED          // Creator cancelled
 
   @@map("match_status")
 }
@@ -214,6 +218,34 @@ model AdminAccount {
   createdAt    DateTime  @default(now()) @map("created_at")
 
   @@map("admin_accounts")
+}
+
+// Join requests for matches
+model JoinRequest {
+  id        String            @id @default(uuid())
+  matchId   String            @map("match_id")
+  userId    String            @map("user_id")
+  status    JoinRequestStatus @default(PENDING)
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+
+  // Relations
+  match     Match             @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  user      User              @relation(fields: [userId], references: [id])
+
+  @@unique([matchId, userId])
+  @@index([matchId])
+  @@index([userId])
+  @@index([status])
+  @@map("join_requests")
+}
+
+enum JoinRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+
+  @@map("join_request_status")
 }
 
 // Admin logs table
