@@ -28,10 +28,11 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
     const [matchedPairs, setMatchedPairs] = useState(0)
     const [startTime, setStartTime] = useState<number | null>(null)
     const [isChecking, setIsChecking] = useState(false)
+    const [isCompleted, setIsCompleted] = useState(false)
 
     // Initialize game
     useEffect(() => {
-        if (isActive) {
+        if (isActive && !isCompleted) {
             initializeGame()
             setStartTime(Date.now())
         }
@@ -50,10 +51,11 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
         setFlippedCards([])
         setMoves(0)
         setMatchedPairs(0)
+        setIsCompleted(false)
     }
 
     const handleCardClick = (id: number) => {
-        if (isChecking) return
+        if (isChecking || isCompleted) return
         if (flippedCards.length >= 2) return
         if (flippedCards.includes(id)) return
         if (cards.find(c => c.id === id)?.isMatched) return
@@ -76,28 +78,27 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
             const secondCard = cards.find(c => c.id === second)
 
             if (firstCard?.emoji === secondCard?.emoji) {
-                // Match found!
-                setTimeout(() => {
-                    setCards(cards.map(card =>
-                        newFlippedCards.includes(card.id)
-                            ? { ...card, isMatched: true }
-                            : card
-                    ))
-                    setMatchedPairs(p => {
-                        const newPairs = p + 1
-                        if (newPairs === EMOJIS.length) {
-                            // Game complete!
-                            const timeTaken = Date.now() - (startTime || Date.now())
-                            const score = Math.max(1000 - moves * 10 - timeTaken / 100, 100)
-                            setTimeout(() => onComplete(score), 500)
-                        }
-                        return newPairs
-                    })
-                    setFlippedCards([])
-                    setIsChecking(false)
-                }, 600)
+                // Match found! - No delay for mobile speed
+                setCards(cards.map(card =>
+                    newFlippedCards.includes(card.id)
+                        ? { ...card, isMatched: true }
+                        : card
+                ))
+                setMatchedPairs(p => {
+                    const newPairs = p + 1
+                    if (newPairs === EMOJIS.length && !isCompleted) {
+                        // Game complete!
+                        setIsCompleted(true)
+                        const timeTaken = Date.now() - (startTime || Date.now())
+                        const score = Math.max(1000 - moves * 10 - timeTaken / 100, 100)
+                        onComplete(score)
+                    }
+                    return newPairs
+                })
+                setFlippedCards([])
+                setIsChecking(false)
             } else {
-                // No match
+                // No match - quick flip back for mobile
                 setTimeout(() => {
                     setCards(cards.map(card =>
                         newFlippedCards.includes(card.id)
@@ -106,7 +107,7 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
                     ))
                     setFlippedCards([])
                     setIsChecking(false)
-                }, 1000)
+                }, 600)
             }
         }
     }
@@ -115,60 +116,59 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
 
     return (
         <div style={{
-            padding: '20px',
-            maxWidth: '1000px',
-            margin: '0 auto'
+            padding: '10px',
+            width: '100%',
+            maxWidth: '100vw'
         }}>
-            {/* Game Stats */}
+            {/* Game Stats - Mobile Only */}
             <div style={{
                 display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '20px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '16px',
-                padding: '16px',
-                color: 'white'
+                justifyContent: 'space-around',
+                marginBottom: '15px',
+                background: '#1e293b',
+                borderRadius: '10px',
+                padding: '10px',
+                gap: '10px'
             }}>
-                <div>
-                    <div style={{ fontSize: '0.85rem', opacity: 0.8 }}>Coups</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 800 }}>{moves}</div>
+                <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '2px' }}>COUPS</div>
+                    <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#fff' }}>{moves}</div>
                 </div>
-                <div>
-                    <div style={{ fontSize: '0.85rem', opacity: 0.8 }}>Paires</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 800 }}>{matchedPairs}/{EMOJIS.length}</div>
+                <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '2px' }}>PAIRES</div>
+                    <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#10b981' }}>{matchedPairs}/{EMOJIS.length}</div>
                 </div>
             </div>
 
-            {/* Game Grid - 8x5 grid for 40 cards */}
+            {/* Game Grid - Mobile First: 4 columns for phone screens */}
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(8, 1fr)',
-                gap: '8px',
-                maxWidth: '800px',
+                gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: '6px',
+                width: '100%',
+                maxWidth: '400px',
                 margin: '0 auto'
             }}>
                 {cards.map((card) => (
                     <button
                         key={card.id}
                         onClick={() => handleCardClick(card.id)}
-                        disabled={card.isMatched || isChecking}
+                        disabled={card.isMatched || isChecking || isCompleted}
                         style={{
                             aspectRatio: '1',
-                            borderRadius: '12px',
-                            border: 'none',
-                            background: card.isFlipped || card.isMatched
-                                ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                                : 'rgba(255, 255, 255, 0.2)',
-                            backdropFilter: 'blur(10px)',
-                            fontSize: '2rem',
-                            cursor: card.isMatched ? 'default' : 'pointer',
-                            transition: 'all 0.3s',
-                            transform: card.isFlipped || card.isMatched ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                            opacity: card.isMatched ? 0.5 : 1,
-                            boxShadow: card.isFlipped || card.isMatched
-                                ? '0 4px 12px rgba(102, 126, 234, 0.4)'
-                                : 'none'
+                            borderRadius: '8px',
+                            border: card.isFlipped || card.isMatched ? '3px solid #10b981' : '2px solid #475569',
+                            background: card.isFlipped || card.isMatched ? '#10b981' : '#1e293b',
+                            fontSize: '1.8rem',
+                            cursor: (card.isMatched || isCompleted) ? 'default' : 'pointer',
+                            opacity: card.isMatched ? 0.3 : 1,
+                            WebkitTapHighlightColor: 'transparent',
+                            touchAction: 'manipulation',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            minHeight: '75px',
+                            userSelect: 'none'
                         }}
                     >
                         {(card.isFlipped || card.isMatched) ? card.emoji : '❓'}
@@ -178,13 +178,12 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
 
             {/* Instructions */}
             <div style={{
-                marginTop: '20px',
+                marginTop: '12px',
                 textAlign: 'center',
-                color: 'white',
-                fontSize: '0.9rem',
-                opacity: 0.8
+                color: '#94a3b8',
+                fontSize: '0.8rem'
             }}>
-                💡 Trouvez toutes les paires pour gagner !
+                💡 Trouvez les paires !
             </div>
         </div>
     )

@@ -56,6 +56,7 @@ model Game {
 // Matches table
 model Match {
   id           String    @id @default(uuid())
+  shortId      Int       @unique @default(autoincrement()) @map("short_id")
   gameId       String    @map("game_id")
   stake        Decimal   @db.Decimal(10, 2)
   platformFee  Decimal   @default(0.00) @map("platform_fee") @db.Decimal(10, 2)
