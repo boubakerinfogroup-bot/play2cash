@@ -63,15 +63,16 @@ function LobbyContent() {
       if (game?.id) {
         params.append('gameId', game.id)
       }
-      if (stakeFilter) {
-        params.append('stake', String(stakeFilter))
-      }
 
-      const response = await fetch(`/api/matches/open?${params.toString()}`)
+      const response = await fetch(`/api/matches/live?${params.toString()}`)
       const data = await response.json()
 
-      if (data.matches) {
-        const filtered = data.matches.filter((m: any) => m.createdBy !== user?.id)
+      if (data.success && data.rooms) {
+        // Filter by stake if selected
+        let filtered = data.rooms
+        if (stakeFilter) {
+          filtered = filtered.filter((r: any) => r.stake === Number(stakeFilter))
+        }
         setMatches(filtered)
       }
     } catch (error) {
@@ -178,21 +179,32 @@ function LobbyContent() {
                       VS
                     </div>
                     <div>
-                      <div style={{ fontWeight: 700, color: '#1e293b' }}>{match.createdByName}</div>
+                      <div style={{ fontWeight: 700, color: '#1e293b' }}>{match.creator?.name || 'Joueur'}</div>
                       <div style={{ color: '#6366f1', fontWeight: 600 }}>{formatCurrency(match.stake, lang)}</div>
                     </div>
                   </div>
 
-                  <Link
-                    href={`/join?match=${match.id}`}
-                    onClick={async (e) => {
-                      // Logic handled in join page usually, or here
+                  <button
+                    onClick={async () => {
+                      try {
+                        const response = await fetch(`/api/matches/${match.id}/request-join`, {
+                          method: 'POST'
+                        })
+                        const data = await response.json()
+                        if (data.success) {
+                          alert(lang === 'ar' ? 'تم إرسال طلبك! في انتظار قبول المنشئ...' : 'Demande envoyée ! En attente d\'acceptation...')
+                        } else {
+                          alert(data.error || (lang === 'ar' ? 'خطأ' : 'Erreur'))
+                        }
+                      } catch (err) {
+                        alert(lang === 'ar' ? 'خطأ في الانضمام' : 'Erreur lors de la demande')
+                      }
                     }}
                     className="btn"
                     style={{ padding: '10px 20px', fontSize: '0.9rem' }}
                   >
                     {lang === 'ar' ? 'لعب' : 'Jouer'}
-                  </Link>
+                  </button>
                 </div>
               ))}
             </div>

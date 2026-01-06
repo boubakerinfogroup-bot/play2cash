@@ -27,7 +27,10 @@ export async function POST(request: NextRequest) {
     if (result.success && result.matchId) {
       return NextResponse.json({
         success: true,
-        matchId: result.matchId
+        match: {
+          id: result.matchId,
+          shareLink: result.shareLink
+        }
       })
     } else {
       return NextResponse.json(

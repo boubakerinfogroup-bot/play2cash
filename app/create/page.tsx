@@ -103,12 +103,10 @@ function CreateContent() {
 
       const result = await response.json()
 
-      if (result.success && result.matchId) {
-        if (user) {
-          const updatedUser = { ...user, balance: user.balance - Number(stake) }
-          localStorage.setItem('user', JSON.stringify(updatedUser))
-        }
-        router.push(`/waiting?match=${result.matchId}`)
+      if (result.success && result.match) {
+        // NOTE: Balance is NOT deducted here - only when match starts
+        // Redirect to waiting room
+        router.push(`/waiting-room/${result.match.id}`)
       } else {
         setError(result.error || (lang === 'ar' ? 'خطأ في إنشاء التحدي' : 'Erreur lors de la création du défi'))
       }
