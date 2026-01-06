@@ -72,14 +72,68 @@ export default function AdminWithdrawalsPage() {
 
   return (
     <div className="container">
-        <h1 className="page-title">Demandes de retrait</h1>
+      <h1 className="page-title">Demandes de retrait</h1>
 
-        {withdrawals.length === 0 ? (
-          <div className="card">
-            <p className="text-center">Aucune demande en attente</p>
+      {withdrawals.length === 0 ? (
+        <div className="card">
+          <p className="text-center">Aucune demande en attente</p>
+        </div>
+      ) : (
+        <>
+          {/* Mobile View (Cards) */}
+          <div className="mobile-only-cards">
+            <style jsx>{`
+              .desktop-table { display: block; }
+              .mobile-only-cards { display: none; }
+              @media (max-width: 768px) {
+                .desktop-table { display: none !important; }
+                .mobile-only-cards { display: flex !important; flexDirection: column; gap: 12px; }
+              }
+            `}</style>
+
+            {withdrawals.map((withdrawal) => (
+              <div key={withdrawal.id} style={{ background: 'white', borderRadius: '12px', padding: '16px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1e293b' }}>{withdrawal.userName}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '4px' }}>
+                      Solde: {formatCurrency(withdrawal.userBalance)}
+                    </div>
+                  </div>
+                  <div style={{ fontWeight: 800, color: '#ef4444', fontSize: '1.2rem' }}>{formatCurrency(withdrawal.amount)}</div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', fontSize: '0.9rem', color: '#475569' }}>
+                  <span>📞</span>
+                  <span>{withdrawal.whatsapp}</span>
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '16px' }}>
+                  {new Date(withdrawal.createdAt).toLocaleString('fr-FR')}
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <button
+                    onClick={() => handleAction(withdrawal.id, 'approve')}
+                    style={{
+                      padding: '12px', borderRadius: '8px', background: 'var(--success-color)', color: 'white', border: 'none', fontWeight: 600
+                    }}
+                  >
+                    Approuver
+                  </button>
+                  <button
+                    onClick={() => handleAction(withdrawal.id, 'reject')}
+                    style={{
+                      padding: '12px', borderRadius: '8px', background: 'var(--danger-color)', color: 'white', border: 'none', fontWeight: 600
+                    }}
+                  >
+                    Rejeter
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        ) : (
-          <div className="table-responsive">
+
+          <div className="desktop-table table-responsive">
             <table>
               <thead>
                 <tr>
@@ -122,8 +176,9 @@ export default function AdminWithdrawalsPage() {
               </tbody>
             </table>
           </div>
-        )}
-      </div>
+        </>
+      )}
+    </div>
   )
 }
 

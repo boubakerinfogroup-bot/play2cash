@@ -78,47 +78,103 @@ export default function AdminDepositsPage() {
           <p className="text-center">Aucune demande en attente</p>
         </div>
       ) : (
-        <div className="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>Utilisateur</th>
-                <th>ID Compte</th>
-                <th>Montant</th>
-                <th>WhatsApp</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {deposits.map((deposit) => (
-                <tr key={deposit.id}>
-                  <td>{deposit.userName}</td>
-                  <td>{deposit.accountId || 'N/A'}</td>
-                  <td>{formatCurrency(deposit.amount)}</td>
-                  <td>{deposit.whatsapp}</td>
-                  <td>{new Date(deposit.createdAt).toLocaleString('fr-FR')}</td>
-                  <td>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <button
-                        onClick={() => handleAction(deposit.id, 'approve')}
-                        className="btn btn-success btn-small"
-                      >
-                        Approuver
-                      </button>
-                      <button
-                        onClick={() => handleAction(deposit.id, 'reject')}
-                        className="btn btn-danger btn-small"
-                      >
-                        Rejeter
-                      </button>
+        <>
+          {/* Mobile View (Cards) */}
+          <div className="mobile-only-cards">
+            <style jsx>{`
+              .desktop-table { display: block; }
+              .mobile-only-cards { display: none; }
+              @media (max-width: 768px) {
+                .desktop-table { display: none !important; }
+                .mobile-only-cards { display: flex !important; flexDirection: column; gap: 12px; }
+              }
+            `}</style>
+
+            {deposits.map((deposit) => (
+              <div key={deposit.id} style={{ background: 'white', borderRadius: '12px', padding: '16px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1e293b' }}>{deposit.userName}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '4px' }}>
+                      ID: <span style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px' }}>{deposit.accountId || 'N/A'}</span>
                     </div>
-                  </td>
+                  </div>
+                  <div style={{ fontWeight: 800, color: '#10b981', fontSize: '1.2rem' }}>{formatCurrency(deposit.amount)}</div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', fontSize: '0.9rem', color: '#475569' }}>
+                  <span>📞</span>
+                  <span>{deposit.whatsapp}</span>
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '16px' }}>
+                  {new Date(deposit.createdAt).toLocaleString('fr-FR')}
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <button
+                    onClick={() => handleAction(deposit.id, 'approve')}
+                    style={{
+                      padding: '12px', borderRadius: '8px', background: 'var(--success-color)', color: 'white', border: 'none', fontWeight: 600
+                    }}
+                  >
+                    Approuver
+                  </button>
+                  <button
+                    onClick={() => handleAction(deposit.id, 'reject')}
+                    style={{
+                      padding: '12px', borderRadius: '8px', background: 'var(--danger-color)', color: 'white', border: 'none', fontWeight: 600
+                    }}
+                  >
+                    Rejeter
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop View (Table) */}
+          <div className="desktop-table table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Utilisateur</th>
+                  <th>ID Compte</th>
+                  <th>Montant</th>
+                  <th>WhatsApp</th>
+                  <th>Date</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {deposits.map((deposit) => (
+                  <tr key={deposit.id}>
+                    <td>{deposit.userName}</td>
+                    <td>{deposit.accountId || 'N/A'}</td>
+                    <td>{formatCurrency(deposit.amount)}</td>
+                    <td>{deposit.whatsapp}</td>
+                    <td>{new Date(deposit.createdAt).toLocaleString('fr-FR')}</td>
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <button
+                          onClick={() => handleAction(deposit.id, 'approve')}
+                          className="btn btn-success btn-small"
+                        >
+                          Approuver
+                        </button>
+                        <button
+                          onClick={() => handleAction(deposit.id, 'reject')}
+                          className="btn btn-danger btn-small"
+                        >
+                          Rejeter
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
       {/* Action Modal */}
