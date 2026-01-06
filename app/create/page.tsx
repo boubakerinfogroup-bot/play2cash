@@ -170,61 +170,54 @@ function CreateContent() {
           </div>
 
           <div className="form-group" style={{ marginBottom: '24px' }}>
-            <div
-              onClick={() => setIsStakeOpen(true)}
-              className="form-control"
-              style={{
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '16px 20px',
-                fontSize: '1.1rem',
-                border: '2px solid #e2e8f0'
-              }}
-            >
-              <span>{stake ? formatCurrency(Number(stake), lang) : (lang === 'ar' ? 'اختر المبلغ' : 'Sélectionner le montant')}</span>
-              <span style={{ color: '#6366f1' }}>▼</span>
+            <label style={{ display: 'block', marginBottom: '16px', fontWeight: 600, color: '#1e293b' }}>
+              {lang === 'ar' ? 'المبلغ (د.ت)' : 'Montant (TND)'}
+            </label>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+              {allowedStakes.map((s) => {
+                const isSelected = stake === s
+                const isDisabled = user ? user.balance < s : true
+                return (
+                  <button
+                    key={s}
+                    onClick={() => setStake(s)}
+                    disabled={isDisabled}
+                    style={{
+                      padding: '16px 8px',
+                      borderRadius: '16px',
+                      border: isSelected ? '2px solid #6366f1' : '1px solid #e2e8f0',
+                      background: isSelected ? 'rgba(99, 102, 241, 0.1)' : (isDisabled ? '#f1f5f9' : 'white'),
+                      color: isSelected ? '#4f46e5' : (isDisabled ? '#94a3b8' : '#334155'),
+                      fontWeight: 700,
+                      fontSize: '1.1rem',
+                      cursor: isDisabled ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      transform: isSelected ? 'scale(1.05)' : 'scale(1)',
+                      opacity: isDisabled ? 0.7 : 1
+                    }}
+                  >
+                    {s}
+                  </button>
+                )
+              })}
             </div>
+            {user && stake && user.balance < Number(stake) && (
+              <p style={{ color: '#ef4444', fontSize: '0.9rem', marginTop: '8px', fontWeight: 500 }}>
+                {lang === 'ar' ? 'رصيد غير كافٍ' : 'Solde insuffisant'}
+              </p>
+            )}
           </div>
 
-          <div className="alert" style={{ background: 'rgba(255, 243, 205, 0.5)', border: '1px solid rgba(255, 193, 7, 0.3)', padding: '16px', marginBottom: '24px', borderRadius: '16px', fontSize: '0.9rem', color: '#856404' }}>
-            <strong>✨ {lang === 'ar' ? 'تنبيه:' : 'Note:'}</strong>{' '}
-            {lang === 'ar' ? 'يمكنك إلغاء الغرفة بعد دقيقة واحدة.' : 'Annulation possible après 1 minute.'}
-          </div>
-
-          <button
-            onClick={handleSubmit}
-            className="btn"
-            style={{ width: '100%', fontSize: '1.1rem', padding: '16px' }}
-            disabled={submitting || !stake}
-          >
-            {submitting
-              ? (lang === 'ar' ? 'جارٍ...' : 'Chargement...')
-              : (lang === 'ar' ? 'إنشاء التحدي' : 'Créer le défi')
-            }
-          </button>
+          <MobileNav lang={lang} onToggleLang={toggleLang} />
         </div>
-      </div>
-
-      <BottomSheet
-        isOpen={isStakeOpen}
-        onClose={() => setIsStakeOpen(false)}
-        title={lang === 'ar' ? 'اختر مبلغ الرهان' : 'Choisissez la mise'}
-        options={stakeOptions}
-        onSelect={(val) => setStake(val)}
-        selectedValue={stake}
-      />
-
-      <MobileNav lang={lang} onToggleLang={toggleLang} />
-    </div>
-  )
+        )
 }
 
-export default function CreateChallengePage() {
+        export default function CreateChallengePage() {
   return (
-    <Suspense fallback={<div className="container flex-center" style={{ minHeight: '80vh' }}><div className="spinner"></div></div>}>
-      <CreateContent />
-    </Suspense>
-  )
+        <Suspense fallback={<div className="container flex-center" style={{ minHeight: '80vh' }}><div className="spinner"></div></div>}>
+          <CreateContent />
+        </Suspense>
+        )
 }

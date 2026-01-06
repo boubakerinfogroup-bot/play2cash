@@ -90,22 +90,80 @@ function GameContent() {
           {lang === 'ar' && game.nameAr ? game.nameAr : game.name}
         </h1>
 
-        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-          <div className="card">
-            <h2 style={{ marginBottom: '24px', textAlign: 'center', fontSize: '22px' }}>
-              {lang === 'ar' ? 'كيف تريد اللعب؟' : 'Comment voulez-vous jouer?'}
-            </h2>
+        <div style={{ maxWidth: '800px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <Link href={`/create?game=${game.slug}`} className="btn btn-success" style={{ textDecoration: 'none' }}>
+          {/* Create Option */}
+          <Link href={`/create?game=${game.slug}`} style={{ textDecoration: 'none' }}>
+            <div className="glass-card" style={{
+              padding: '32px',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}>
+              <div style={{
+                width: '80px', height: '80px',
+                borderRadius: '50%',
+                background: 'rgba(16, 185, 129, 0.1)',
+                color: '#10b981',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '40px', marginBottom: '24px'
+              }}>
+                +
+              </div>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '12px', color: '#1e293b' }}>
                 {t('create_challenge', lang)}
-              </Link>
-
-              <Link href={`/lobby?game=${game.slug}`} className="btn" style={{ textDecoration: 'none' }}>
-                {t('join_lobby', lang)}
-              </Link>
+              </h2>
+              <p style={{ color: '#64748b', fontSize: '1rem', lineHeight: '1.5' }}>
+                {lang === 'ar'
+                  ? 'أنشئ غرفتك الخاصة، اختر المبلغ وانتظر منافساً.'
+                  : 'Créez votre propre salle, choisissez le montant et attendez un adversaire.'}
+              </p>
+              <div className="btn btn-success" style={{ marginTop: '24px', width: '100%' }}>
+                {lang === 'ar' ? 'إنشاء' : 'Créer'}
+              </div>
             </div>
-          </div>
+          </Link>
+
+          {/* Join Option */}
+          <Link href={`/lobby?game=${game.slug}`} style={{ textDecoration: 'none' }}>
+            <div className="glass-card" style={{
+              padding: '32px',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}>
+              <div style={{
+                width: '80px', height: '80px',
+                borderRadius: '50%',
+                background: 'rgba(99, 102, 241, 0.1)',
+                color: '#4f46e5',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '40px', marginBottom: '24px'
+              }}>
+                ⚔️
+              </div>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '12px', color: '#1e293b' }}>
+                {t('join_lobby', lang)}
+              </h2>
+              <p style={{ color: '#64748b', fontSize: '1rem', lineHeight: '1.5' }}>
+                {lang === 'ar'
+                  ? 'تصفح الغرف المتاحة وانضم لتحدي لاعبين آخرين.'
+                  : 'Parcourez les salles disponibles et défiez d\'autres joueurs.'}
+              </p>
+              <div className="btn" style={{ marginTop: '24px', width: '100%', background: 'var(--gradient-btn)' }}>
+                {lang === 'ar' ? 'انضمام' : 'Rejoindre'}
+              </div>
+            </div>
+          </Link>
+
         </div>
       </div>
 
