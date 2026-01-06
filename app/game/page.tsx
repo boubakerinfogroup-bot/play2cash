@@ -8,7 +8,9 @@ import type { User } from '@/lib/auth'
 import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
 
-export default function GamePage() {
+import { Suspense } from 'react'
+
+function GameContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const slug = searchParams.get('slug')
@@ -109,5 +111,13 @@ export default function GamePage() {
 
       <MobileNav lang={lang} onToggleLang={toggleLang} />
     </div>
+  )
+}
+
+export default function GamePage() {
+  return (
+    <Suspense fallback={<div className="container"><div className="spinner"></div></div>}>
+      <GameContent />
+    </Suspense>
   )
 }
