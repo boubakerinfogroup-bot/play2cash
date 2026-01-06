@@ -185,7 +185,7 @@ export default function ProfilePage() {
           {/* Actions */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <button
-              onClick={() => setDepositModal(true)}
+              onClick={() => { console.log('Deposit clicked'); setDepositModal(true); }}
               className="btn btn-success"
               style={{ padding: '16px', borderRadius: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', boxShadow: '0 10px 20px rgba(16, 185, 129, 0.2)' }}
             >
@@ -193,7 +193,7 @@ export default function ProfilePage() {
               <span>{lang === 'ar' ? 'إيداع' : 'Dépôt'}</span>
             </button>
             <button
-              onClick={() => setWithdrawalModal(true)}
+              onClick={() => { console.log('Withdrawal clicked'); setWithdrawalModal(true); }}
               className="btn btn-danger"
               style={{ padding: '16px', borderRadius: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', boxShadow: '0 10px 20px rgba(239, 68, 68, 0.2)' }}
             >
