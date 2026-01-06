@@ -17,68 +17,95 @@ export default function AdminSidebar() {
   ]
 
   return (
+  return (
     <>
-      {/* Mobile Hamburger Button */}
-      <button
-        className="admin-mobile-menu-btn"
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        aria-label="Toggle menu"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-      {/* Sidebar */}
-      <aside className={`admin-sidebar ${mobileMenuOpen ? 'open' : ''}`}>
-        <div className="admin-sidebar-header">
-          <h2>Admin Panel</h2>
-          <button
-            className="admin-sidebar-close"
-            onClick={() => setMobileMenuOpen(false)}
-            aria-label="Close menu"
-          >
-            ×
-          </button>
+      <div style={{
+        width: '280px',
+        background: 'rgba(255, 255, 255, 0.8)',
+        backdropFilter: 'blur(20px)',
+        borderRight: '1px solid rgba(255, 255, 255, 0.5)',
+        height: '100vh',
+        position: 'fixed',
+        left: 0,
+        top: 0,
+        padding: '32px 20px',
+        display: 'flex',
+        flexDirection: 'column',
+        zIndex: 50,
+        boxShadow: '10px 0 30px rgba(0,0,0,0.02)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '48px', paddingLeft: '12px' }}>
+          <div style={{
+            width: '40px', height: '40px',
+            background: 'var(--gradient-main)',
+            borderRadius: '10px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: 'white', fontWeight: 'bold'
+          }}>
+            A
+          </div>
+          <span className="gradient-text" style={{ fontSize: '1.25rem', fontWeight: 800 }}>Admin Panel</span>
         </div>
-        <nav className="admin-sidebar-nav">
+
+        <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {menuItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href))
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`admin-sidebar-link ${isActive ? 'active' : ''}`}
-                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '14px 16px',
+                  borderRadius: '12px',
+                  textDecoration: 'none',
+                  color: isActive ? '#4f46e5' : '#64748b',
+                  background: isActive ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
+                  fontWeight: isActive ? 600 : 500,
+                  transition: 'all 0.2s ease',
+                  border: isActive ? '1px solid rgba(99, 102, 241, 0.1)' : '1px solid transparent'
+                }}
               >
-                <span className="admin-sidebar-icon">{item.icon}</span>
+                <span>{item.icon}</span>
                 <span>{item.label}</span>
               </Link>
             )
           })}
         </nav>
-        <div className="admin-sidebar-footer">
-          <Link href="/" className="admin-sidebar-link">
-            <span className="admin-sidebar-icon">🏠</span>
+
+        <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <Link href="/" style={{ textDecoration: 'none', color: '#64748b', padding: '12px 16px', borderRadius: '8px', display: 'flex', gap: '12px', fontSize: '0.9rem' }}>
+            <span>🏠</span>
             <span>Retour au site</span>
           </Link>
-          <form action="/api/admin/logout" method="POST">
-            <button type="submit" className="admin-sidebar-link admin-sidebar-logout">
-              <span className="admin-sidebar-icon">🚪</span>
-              <span>Déconnexion</span>
-            </button>
-          </form>
-        </div>
-      </aside>
 
-      {/* Mobile Overlay */}
-      {mobileMenuOpen && (
-        <div
-          className="admin-sidebar-overlay"
-          onClick={() => setMobileMenuOpen(false)}
-        />
-      )}
+          <button
+            onClick={async () => {
+              await fetch('/api/admin/logout', { method: 'POST' });
+              window.location.href = '/admin/login';
+            }}
+            style={{
+              background: 'none', border: 'none',
+              color: '#ef4444',
+              padding: '12px 16px',
+              borderRadius: '8px',
+              display: 'flex', gap: '12px',
+              fontSize: '0.9rem',
+              cursor: 'pointer',
+              width: '100%',
+              textAlign: 'left',
+              alignItems: 'center'
+            }}
+          >
+            <span>🚪</span>
+            <span>Déconnexion</span>
+          </button>
+        </div>
+      </div>
     </>
+  )
   )
 }
 

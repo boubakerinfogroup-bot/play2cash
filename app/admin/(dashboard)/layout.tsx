@@ -14,18 +14,13 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="admin-panel">
-      <div className="header">
-        <div className="header-content">
-          <div className="logo">Admin Panel</div>
-        </div>
-      </div>
-      <div className="admin-panel-main">
-        <AdminSidebar />
-        <main className="admin-content">
+    <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
+      <AdminSidebar />
+      <main style={{ marginLeft: '280px', padding: '40px', minHeight: '100vh' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           {children}
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   )
 }

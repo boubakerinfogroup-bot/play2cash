@@ -10,10 +10,14 @@ export default async function AdminDashboard() {
 
   return (
     <>
-      <h1 className="page-title">Tableau de bord</h1>
-      <div style={{ marginTop: '30px' }}>
-        <p style={{ fontSize: '1.125rem', color: 'var(--text-secondary)', marginBottom: '24px' }}>
-          Bienvenue dans le panneau d'administration. Utilisez le menu de gauche pour naviguer.
+      <h1 className="gradient-text" style={{ fontSize: '2.5rem', marginBottom: '8px' }}>Tableau de bord</h1>
+      <p style={{ color: '#64748b', marginBottom: '40px' }}>Bienvenue dans votre espace d'administration.</p>
+
+      <div className="glass-card" style={{ padding: '40px', textAlign: 'center', background: 'white' }}>
+        <div style={{ fontSize: '4rem', marginBottom: '16px' }}>👋</div>
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '16px' }}>Bienvenue, Admin</h2>
+        <p style={{ color: '#64748b', maxWidth: '600px', margin: '0 auto' }}>
+          Utilisez le menu latéral pour gérer les utilisateurs, valider les dépôts et traiter les demandes de retrait.
         </p>
       </div>
     </>
