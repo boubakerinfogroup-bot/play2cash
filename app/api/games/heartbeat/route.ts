@@ -125,11 +125,18 @@ export async function POST(request: NextRequest) {
         if (activeMatch && activeMatch.status === 'ACTIVE') {
           const opponentPlayer = activeMatch.players.find(p => p.userId !== user.id)
           if (opponentPlayer) {
+            // Manually set scores to forfeit the leaver
+            await prisma.matchPlayer.updateMany({
+              where: { matchId, userId: opponentPlayer.userId },
+              data: { score: 999999, gameResult: { status: 'win_by_forfeit' } }
+            })
+            await prisma.matchPlayer.updateMany({
+              where: { matchId, userId: user.id },
+              data: { score: 0, gameResult: { status: 'forfeit' } }
+            })
+
             const { resolveMatch: resolveMatchFn } = await import('@/lib/wallet')
-            await resolveMatchFn(matchId, [
-              { userId: opponentPlayer.userId, score: 999999 },
-              { userId: user.id, score: 0 }
-            ])
+            await resolveMatchFn(matchId)
           }
         }
 

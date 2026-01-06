@@ -1,0 +1,5 @@
+DATABASE_URL   postgres://f36c271cc152972d5a83716365cdd81dca149cf9ecd5bd712ceea77407f6ff35:sk_wUSuaKA9ekKEKMDkf0Yqi@db.prisma.io:5432/postgres?sslmode=require
+
+
+JWT_SECRET
+my-secure-app-password-2026
