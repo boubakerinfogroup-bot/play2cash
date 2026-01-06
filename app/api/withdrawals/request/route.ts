@@ -13,9 +13,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { amount, whatsapp } = await request.json()
+    const { amount: rawAmount, whatsapp } = await request.json()
+    const amountStr = rawAmount ? String(rawAmount).replace(',', '.') : '0'
+    const amount = parseFloat(amountStr)
 
-    if (!amount || amount <= 0) {
+    if (isNaN(amount) || amount <= 0) {
       return NextResponse.json(
         { success: false, error: 'Invalid amount' },
         { status: 400 }
@@ -56,7 +58,7 @@ export async function POST(request: NextRequest) {
     await prisma.withdrawalRequest.create({
       data: {
         userId: user.id,
-        amount: parseFloat(amount),
+        amount: amount,
         whatsapp: whatsapp.trim()
       }
     })
