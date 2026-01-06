@@ -242,48 +242,66 @@ export default function MatchPage({ params }: { params: { id: string } }) {
                     </div>
 
                     {/* Game Interface - Memory Game */}
-                    {match.gameSlug === 'memory' ? (
-                        <MemoryGame
-                            isActive={true}
-                            onComplete={(score) => {
-                                handleFinishGame(score)
-                            }}
-                        />
-                    ) : (
-                        /* Placeholder for other games */
-                        <div style={{
-                            background: 'rgba(255,255,255,0.05)',
-                            borderRadius: '24px',
-                            padding: '60px 40px',
-                            textAlign: 'center',
-                            marginBottom: '20px'
-                        }}>
-                            <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🎮</div>
-                            <h2 style={{ color: 'white', fontSize: '1.8rem', fontWeight: 800, marginBottom: '16px' }}>
-                                {match.gameName}
-                            </h2>
-                            <p style={{ color: '#94a3b8', marginBottom: '32px' }}>
-                                Le jeu se joue ici...
-                            </p>
+                    {(() => {
+                        console.log('Game Debug:', { 
+                            gameSlug: match.gameSlug, 
+                            gameName: match.gameName,
+                            gameId: match.gameId 
+                        })
+                        
+                        // Check if this is memory game (case-insensitive)
+                        const isMemoryGame = 
+                            match.gameSlug?.toLowerCase().includes('memory') || 
+                            match.gameName?.toLowerCase().includes('memory') ||
+                            match.gameName?.toLowerCase().includes('mémoire')
+                        
+                        if (isMemoryGame) {
+                            return (
+                                <MemoryGame 
+                                    isActive={true}
+                                    onComplete={(score) => {
+                                        handleFinishGame(score)
+                                    }}
+                                />
+                            )
+                        }
+                        
+                        // Placeholder for other games
+                        return (
+                            <div style={{
+                                background: 'rgba(255,255,255,0.05)',
+                                borderRadius: '24px',
+                                padding: '60px 40px',
+                                textAlign: 'center',
+                                marginBottom: '20px'
+                            }}>
+                                <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🎮</div>
+                                <h2 style={{ color: 'white', fontSize: '1.8rem', fontWeight: 800, marginBottom: '16px' }}>
+                                    {match.gameName}
+                                </h2>
+                                <p style={{ color: '#94a3b8', marginBottom: '32px' }}>
+                                    Le jeu se joue ici...
+                                </p>
 
-                            {/* Finish Button (simplified - real game would have actual gameplay) */}
-                            <button
-                                onClick={() => handleFinishGame(100)}
-                                style={{
-                                    padding: '16px 40px',
-                                    borderRadius: '12px',
-                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                                    color: 'white',
-                                    border: 'none',
-                                    fontSize: '1.1rem',
-                                    fontWeight: 700,
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                ✓ Terminer
-                            </button>
-                        </div>
-                    )}
+                                {/* Finish Button (simplified - real game would have actual gameplay) */}
+                                <button
+                                    onClick={() => handleFinishGame(100)}
+                                    style={{
+                                        padding: '16px 40px',
+                                        borderRadius: '12px',
+                                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                        color: 'white',
+                                        border: 'none',
+                                        fontSize: '1.1rem',
+                                        fontWeight: 700,
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    ✓ Terminer
+                                </button>
+                            </div>
+                        )
+                    })()}
 
                     <div style={{ textAlign: 'center', color: '#64748b', fontSize: '0.9rem' }}>
                         💡 Le premier à terminer gagne tout !
