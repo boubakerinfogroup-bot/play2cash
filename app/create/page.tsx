@@ -9,7 +9,9 @@ import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
 import BottomSheet from '@/components/BottomSheet'
 
-export default function CreateChallengePage() {
+import { Suspense } from 'react'
+
+function CreateContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const gameSlug = searchParams.get('game')
@@ -216,5 +218,13 @@ export default function CreateChallengePage() {
 
       <MobileNav lang={lang} onToggleLang={toggleLang} />
     </div>
+  )
+}
+
+export default function CreateChallengePage() {
+  return (
+    <Suspense fallback={<div className="container flex-center" style={{ minHeight: '80vh' }}><div className="spinner"></div></div>}>
+      <CreateContent />
+    </Suspense>
   )
 }

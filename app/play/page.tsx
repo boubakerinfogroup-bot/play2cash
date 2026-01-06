@@ -7,7 +7,9 @@ import { formatCurrency } from '@/lib/utils'
 import type { User } from '@/lib/auth'
 import GameWrapper from '@/components/games/GameWrapper'
 
-export default function PlayPage() {
+import { Suspense } from 'react'
+
+function PlayContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const matchId = searchParams.get('match')
@@ -220,6 +222,14 @@ export default function PlayPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function PlayPage() {
+  return (
+    <Suspense fallback={<div className="container flex-center" style={{ minHeight: '80vh' }}><div className="spinner"></div></div>}>
+      <PlayContent />
+    </Suspense>
   )
 }
 

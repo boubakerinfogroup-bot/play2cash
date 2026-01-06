@@ -9,7 +9,9 @@ import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
 import BottomSheet from '@/components/BottomSheet'
 
-export default function LobbyPage() {
+import { Suspense } from 'react'
+
+function LobbyContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const gameSlug = searchParams.get('game')
@@ -209,5 +211,13 @@ export default function LobbyPage() {
 
       <MobileNav lang={lang} onToggleLang={toggleLang} />
     </div>
+  )
+}
+
+export default function LobbyPage() {
+  return (
+    <Suspense fallback={<div className="container flex-center" style={{ minHeight: '80vh' }}><div className="spinner"></div></div>}>
+      <LobbyContent />
+    </Suspense>
   )
 }

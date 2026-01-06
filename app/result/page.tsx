@@ -8,7 +8,9 @@ import type { User } from '@/lib/auth'
 import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
 
-export default function ResultPage() {
+import { Suspense } from 'react'
+
+function ResultContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const matchId = searchParams.get('match')
@@ -178,5 +180,13 @@ export default function ResultPage() {
 
       <MobileNav lang={lang} onToggleLang={toggleLang} />
     </div>
+  )
+}
+
+export default function ResultPage() {
+  return (
+    <Suspense fallback={<div className="container flex-center" style={{ minHeight: '80vh' }}><div className="spinner"></div></div>}>
+      <ResultContent />
+    </Suspense>
   )
 }

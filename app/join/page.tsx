@@ -3,7 +3,9 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function JoinPage() {
+import { Suspense } from 'react'
+
+function JoinContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const matchId = searchParams.get('match')
@@ -56,5 +58,13 @@ export default function JoinPage() {
   }
 
   return null
+}
+
+export default function JoinPage() {
+  return (
+    <Suspense fallback={<div className="container flex-center" style={{ minHeight: '80vh' }}><div className="spinner"></div></div>}>
+      <JoinContent />
+    </Suspense>
+  )
 }
 

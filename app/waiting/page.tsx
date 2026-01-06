@@ -7,7 +7,9 @@ import { formatCurrency, t } from '@/lib/utils'
 import type { User } from '@/lib/auth'
 import Header from '@/components/Header'
 
-export default function WaitingPage() {
+import { Suspense } from 'react'
+
+function WaitingContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const matchId = searchParams.get('match')
@@ -312,6 +314,14 @@ export default function WaitingPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function WaitingPage() {
+  return (
+    <Suspense fallback={<div className="container flex-center" style={{ minHeight: '80vh' }}><div className="spinner"></div></div>}>
+      <WaitingContent />
+    </Suspense>
   )
 }
 
