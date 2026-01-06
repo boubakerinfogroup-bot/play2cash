@@ -99,8 +99,8 @@ export async function registerOrLogin(
           success: false,
           user: null,
           error: language === 'fr'
-            ? 'Nom d\'utilisateur incorrect pour ce numéro WhatsApp'
-            : 'اسم المستخدم غير صحيح لرقم الواتساب هذا'
+            ? 'Nom incorrect. Ce numéro WhatsApp est déjà utilisé avec un autre nom. Vérifiez vos informations ou utilisez un autre numéro pour créer un nouveau compte.'
+            : 'اسم غير صحيح. رقم الواتساب هذا مستخدم بالفعل باسم آخر. تحقق من معلوماتك أو استخدم رقمًا آخر لإنشاء حساب جديد.'
         }
       }
       if (userByWhatsapp.email !== trimmedEmail) {
@@ -108,8 +108,8 @@ export async function registerOrLogin(
           success: false,
           user: null,
           error: language === 'fr'
-            ? 'Email incorrect pour ce numéro WhatsApp'
-            : 'البريد الإلكتروني غير صحيح لرقم الواتساب هذا'
+            ? 'Email incorrect. Ce numéro WhatsApp est déjà utilisé avec un autre email. Vérifiez vos informations ou utilisez un autre numéro pour créer un nouveau compte.'
+            : 'بريد غير صحيح. رقم الواتساب هذا مستخدم بالفعل ببريد آخر. تحقق من معلوماتك أو استخدم رقمًا آخر لإنشاء حساب جديد.'
         }
       }
     }
@@ -121,8 +121,8 @@ export async function registerOrLogin(
           success: false,
           user: null,
           error: language === 'fr'
-            ? 'Numéro WhatsApp incorrect pour cet email'
-            : 'رقم الواتساب غير صحيح لهذا البريد الإلكتروني'
+            ? 'Numéro WhatsApp incorrect. Cet email est déjà utilisé avec un autre numéro. Vérifiez vos informations ou utilisez un autre email pour créer un nouveau compte.'
+            : 'رقم واتساب غير صحيح. هذا البريد مستخدم بالفعل برقم آخر. تحقق من معلوماتك أو استخدم بريدًا آخر لإنشاء حساب جديد.'
         }
       }
       if (userByEmail.name !== trimmedName) {
@@ -130,8 +130,8 @@ export async function registerOrLogin(
           success: false,
           user: null,
           error: language === 'fr'
-            ? 'Nom d\'utilisateur incorrect pour cet email'
-            : 'اسم المستخدم غير صحيح لهذا البريد الإلكتروني'
+            ? 'Nom incorrect. Cet email est déjà utilisé avec un autre nom. Vérifiez vos informations ou utilisez un autre email pour créer un nouveau compte.'
+            : 'اسم غير صحيح. هذا البريد مستخدم بالفعل باسم آخر. تحقق من معلوماتك أو استخدم بريدًا آخر لإنشاء حساب جديد.'
         }
       }
     }
@@ -143,8 +143,8 @@ export async function registerOrLogin(
           success: false,
           user: null,
           error: language === 'fr'
-            ? 'Numéro WhatsApp incorrect pour ce nom d\'utilisateur'
-            : 'رقم الواتساب غير صحيح لاسم المستخدم هذا'
+            ? 'Numéro WhatsApp incorrect. Ce nom est déjà utilisé avec un autre numéro. Vérifiez vos informations ou utilisez un autre nom pour créer un nouveau compte.'
+            : 'رقم واتساب غير صحيح. هذا الاسم مستخدم بالفعل برقم آخر. تحقق من معلوماتك أو استخدم اسمًا آخر لإنشاء حساب جديد.'
         }
       }
       if (userByName.email !== trimmedEmail) {
@@ -152,8 +152,8 @@ export async function registerOrLogin(
           success: false,
           user: null,
           error: language === 'fr'
-            ? 'Email incorrect pour ce nom d\'utilisateur'
-            : 'البريد الإلكتروني غير صحيح لاسم المستخدم هذا'
+            ? 'Email incorrect. Ce nom est déjà utilisé avec un autre email. Vérifiez vos informations ou utilisez un autre nom pour créer un nouveau compte.'
+            : 'بريد غير صحيح. هذا الاسم مستخدم بالفعل ببريد آخر. تحقق من معلوماتك أو استخدم اسمًا آخر لإنشاء حساب جديد.'
         }
       }
     }

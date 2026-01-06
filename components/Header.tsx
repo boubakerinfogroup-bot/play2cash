@@ -3,22 +3,36 @@
 import Link from 'next/link'
 import { formatCurrency } from '@/lib/utils'
 import type { User } from '@/lib/auth'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 interface HeaderProps {
   user: User | null
   lang?: 'fr' | 'ar'
+  onBalanceUpdate?: (newBalance: number) => void
 }
 
-export default function Header({ user, lang = 'fr' }: HeaderProps) {
-  const router = useRouter()
+export default function Header({ user, lang = 'fr', onBalanceUpdate }: HeaderProps) {
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [currentBalance, setCurrentBalance] = useState(user?.balance || 0)
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
+    if (!user) return
+
     setIsRefreshing(true)
-    router.refresh()
-    setTimeout(() => setIsRefreshing(false), 1000)
+    try {
+      const response = await fetch('/api/user/balance')
+      const data = await response.json()
+      if (data.success && data.balance !== undefined) {
+        setCurrentBalance(data.balance)
+        if (onBalanceUpdate) {
+          onBalanceUpdate(data.balance)
+        }
+      }
+    } catch (error) {
+      console.error('Error refreshing balance:', error)
+    } finally {
+      setTimeout(() => setIsRefreshing(false), 1000)
+    }
   }
 
   return (
@@ -37,7 +51,7 @@ export default function Header({ user, lang = 'fr' }: HeaderProps) {
           zIndex: 1
         }}>
           <div className="balance-pill">
-            <span>{formatCurrency(user.balance, lang)}</span>
+            <span>{formatCurrency(currentBalance, lang)}</span>
             <svg
               onClick={handleRefresh}
               className="refresh-icon"

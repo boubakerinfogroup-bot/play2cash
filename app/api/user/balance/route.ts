@@ -26,6 +26,7 @@ export async function GET() {
     }
 
     return NextResponse.json({
+      success: true,
       balance: parseFloat(dbUser.balance.toString())
     })
   } catch (error: any) {
