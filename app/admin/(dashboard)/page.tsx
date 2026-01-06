@@ -12,44 +12,101 @@ export default async function AdminDashboard() {
   return (
     <>
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <h1 className="gradient-text" style={{ fontSize: '2.5rem', marginBottom: '8px' }}>Tableau de bord</h1>
+        <h1 className="gradient-text" style={{ fontSize: '2.5rem', marginBottom: '8px' }}>
+          Tableau de bord <span style={{ fontSize: '1rem', opacity: 0.5, color: '#64748b' }}>v3.0</span>
+        </h1>
         <p style={{ color: '#64748b' }}>Bienvenue, Admin. Que voulez-vous gérer ?</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
-        <a href="/admin/deposits" style={{ textDecoration: 'none' }}>
-          <div className="glass-card" style={{ padding: '32px', textAlign: 'center', transition: 'transform 0.2s', background: 'white', cursor: 'pointer' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '16px' }}>💰</div>
-            <h3 style={{ fontSize: '1.25rem', color: '#1e293b', marginBottom: '8px' }}>Dépôts</h3>
-            <p style={{ fontSize: '0.9rem', color: '#64748b' }}>Gérer les demandes</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '600px', margin: '0 auto' }}>
+        <Link href="/admin/deposits" style={{ textDecoration: 'none' }}>
+          <div className="glass-card" style={{
+            padding: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'white',
+            borderRadius: '24px',
+            boxShadow: '0 10px 20px -5px rgba(0, 0, 0, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.8)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{ fontSize: '2rem', width: '60px', height: '60px', borderRadius: '16px', background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>💰</div>
+              <div>
+                <h3 style={{ fontSize: '1.25rem', color: '#1e293b', margin: 0, fontWeight: 700 }}>Dépôts</h3>
+                <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Gérer et valider les demandes</span>
+              </div>
+            </div>
+            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e1' }}>›</div>
           </div>
-        </a>
+        </Link>
 
-        <a href="/admin/withdrawals" style={{ textDecoration: 'none' }}>
-          <div className="glass-card" style={{ padding: '32px', textAlign: 'center', transition: 'transform 0.2s', background: 'white', cursor: 'pointer' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '16px' }}>💸</div>
-            <h3 style={{ fontSize: '1.25rem', color: '#1e293b', marginBottom: '8px' }}>Retraits</h3>
-            <p style={{ fontSize: '0.9rem', color: '#64748b' }}>Valider les paiements</p>
+        <Link href="/admin/withdrawals" style={{ textDecoration: 'none' }}>
+          <div className="glass-card" style={{
+            padding: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'white',
+            borderRadius: '24px',
+            boxShadow: '0 10px 20px -5px rgba(0, 0, 0, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.8)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{ fontSize: '2rem', width: '60px', height: '60px', borderRadius: '16px', background: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>💸</div>
+              <div>
+                <h3 style={{ fontSize: '1.25rem', color: '#1e293b', margin: 0, fontWeight: 700 }}>Retraits</h3>
+                <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Valider les paiements sortants</span>
+              </div>
+            </div>
+            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e1' }}>›</div>
           </div>
-        </a>
+        </Link>
 
-        <a href="/admin/users" style={{ textDecoration: 'none' }}>
-          <div className="glass-card" style={{ padding: '32px', textAlign: 'center', transition: 'transform 0.2s', background: 'white', cursor: 'pointer' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '16px' }}>👥</div>
-            <h3 style={{ fontSize: '1.25rem', color: '#1e293b', marginBottom: '8px' }}>Utilisateurs</h3>
-            <p style={{ fontSize: '0.9rem', color: '#64748b' }}>Voir les joueurs</p>
+        <Link href="/admin/users" style={{ textDecoration: 'none' }}>
+          <div className="glass-card" style={{
+            padding: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'white',
+            borderRadius: '24px',
+            boxShadow: '0 10px 20px -5px rgba(0, 0, 0, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.8)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{ fontSize: '2rem', width: '60px', height: '60px', borderRadius: '16px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👥</div>
+              <div>
+                <h3 style={{ fontSize: '1.25rem', color: '#1e293b', margin: 0, fontWeight: 700 }}>Utilisateurs</h3>
+                <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Liste des joueurs et soldes</span>
+              </div>
+            </div>
+            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e1' }}>›</div>
           </div>
-        </a>
+        </Link>
 
-        <a href="/admin/revenue" style={{ textDecoration: 'none' }}>
-          <div className="glass-card" style={{ padding: '32px', textAlign: 'center', transition: 'transform 0.2s', background: 'white', cursor: 'pointer' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '16px' }}>📈</div>
-            <h3 style={{ fontSize: '1.25rem', color: '#1e293b', marginBottom: '8px' }}>Revenus</h3>
-            <p style={{ fontSize: '0.9rem', color: '#64748b' }}>Statistiques</p>
+        <Link href="/admin/revenue" style={{ textDecoration: 'none' }}>
+          <div className="glass-card" style={{
+            padding: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'white',
+            borderRadius: '24px',
+            boxShadow: '0 10px 20px -5px rgba(0, 0, 0, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.8)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{ fontSize: '2rem', width: '60px', height: '60px', borderRadius: '16px', background: '#fdf4ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📈</div>
+              <div>
+                <h3 style={{ fontSize: '1.25rem', color: '#1e293b', margin: 0, fontWeight: 700 }}>Revenus</h3>
+                <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Statistiques et gains</span>
+              </div>
+            </div>
+            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e1' }}>›</div>
           </div>
-        </a>
+        </Link>
       </div>
     </>
   )
 }
-
