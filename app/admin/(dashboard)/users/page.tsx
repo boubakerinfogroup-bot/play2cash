@@ -36,7 +36,7 @@ export default function AdminUsersPage() {
   const handleTopup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    
+
     if (!topupAmount || parseFloat(topupAmount) <= 0) {
       setError('Montant invalide')
       return
@@ -136,110 +136,114 @@ export default function AdminUsersPage() {
 
   return (
     <div className="container">
-        <h1 className="page-title">Gérer les utilisateurs</h1>
+      <h1 className="page-title">Gérer les utilisateurs</h1>
 
-        {/* Manual Top-up/Withdraw by Account ID */}
-        <div className="card" style={{ marginBottom: '24px', background: 'var(--primary-color)', color: 'white' }}>
-          <h2 style={{ color: 'white', marginBottom: '16px' }}>Gestion rapide par ID Compte</h2>
+      {/* Manual Top-up/Withdraw by Account ID */}
+      <div className="card" style={{ marginBottom: '24px', background: 'var(--primary-color)', color: 'white' }}>
+        <h2 style={{ color: 'white', marginBottom: '16px' }}>Gestion rapide par ID Compte</h2>
 
-          {error && (
-            <div className="alert alert-error" style={{ background: 'rgba(255,255,255,0.9)', color: 'var(--danger-color)' }}>{error}</div>
-          )}
-
-          {success && (
-            <div className="alert alert-success" style={{ background: 'rgba(255,255,255,0.9)', color: 'var(--success-color)' }}>{success}</div>
-          )}
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <form onSubmit={(e) => handleManualAction('manual_topup', e)} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <input
-                type="text"
-                value={manualAccountId}
-                onChange={(e) => setManualAccountId(e.target.value)}
-                className="form-control"
-                placeholder="ID Compte (ex: P2C-00001)"
-                required
-              />
-              <input
-                type="number"
-                value={manualAmount}
-                onChange={(e) => setManualAmount(e.target.value)}
-                className="form-control"
-                min="0.01"
-                step="0.01"
-                placeholder="Montant"
-                required
-              />
-              <button type="submit" className="btn btn-success">
-                Recharger
-              </button>
-            </form>
-
-            <form onSubmit={(e) => handleManualAction('manual_withdraw', e)} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <input
-                type="text"
-                value={manualAccountId}
-                onChange={(e) => setManualAccountId(e.target.value)}
-                className="form-control"
-                placeholder="ID Compte (ex: P2C-00001)"
-                required
-              />
-              <input
-                type="number"
-                value={manualAmount}
-                onChange={(e) => setManualAmount(e.target.value)}
-                className="form-control"
-                min="0.01"
-                step="0.01"
-                placeholder="Montant"
-                required
-              />
-              <button type="submit" className="btn btn-danger">
-                Retirer
-              </button>
-            </form>
-          </div>
-        </div>
-
-        {error && !success && (
-          <div className="alert alert-error">{error}</div>
+        {error && (
+          <div className="alert alert-error" style={{ background: 'rgba(255,255,255,0.9)', color: 'var(--danger-color)' }}>{error}</div>
         )}
 
         {success && (
-          <div className="alert alert-success">{success}</div>
+          <div className="alert alert-success" style={{ background: 'rgba(255,255,255,0.9)', color: 'var(--success-color)' }}>{success}</div>
         )}
 
-        <div className="table-responsive">
-          <table>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <form onSubmit={(e) => handleManualAction('manual_topup', e)} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <input
+              type="text"
+              value={manualAccountId}
+              onChange={(e) => setManualAccountId(e.target.value)}
+              className="form-control"
+              placeholder="ID Compte (ex: P2C-00001)"
+              required
+            />
+            <input
+              type="number"
+              value={manualAmount}
+              onChange={(e) => setManualAmount(e.target.value)}
+              className="form-control"
+              min="0.01"
+              step="0.01"
+              placeholder="Montant"
+              required
+            />
+            <button type="submit" className="btn btn-success">
+              Recharger
+            </button>
+          </form>
+
+          <form onSubmit={(e) => handleManualAction('manual_withdraw', e)} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <input
+              type="text"
+              value={manualAccountId}
+              onChange={(e) => setManualAccountId(e.target.value)}
+              className="form-control"
+              placeholder="ID Compte (ex: P2C-00001)"
+              required
+            />
+            <input
+              type="number"
+              value={manualAmount}
+              onChange={(e) => setManualAmount(e.target.value)}
+              className="form-control"
+              min="0.01"
+              step="0.01"
+              placeholder="Montant"
+              required
+            />
+            <button type="submit" className="btn btn-danger">
+              Retirer
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {error && !success && (
+        <div className="alert alert-error">{error}</div>
+      )}
+
+      {success && (
+        <div className="alert alert-success">{success}</div>
+      )}
+
+      <div style={{ background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', overflow: 'hidden' }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr>
-                <th>ID</th>
-                <th>ID Compte</th>
-                <th>Nom</th>
-                <th>WhatsApp</th>
-                <th>Solde</th>
-                <th>Actions</th>
+              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                <th style={{ padding: '16px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Joueur</th>
+                <th style={{ padding: '16px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Contact</th>
+                <th style={{ padding: '16px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Solde</th>
+                <th style={{ padding: '16px', textAlign: 'right', fontWeight: 600, color: '#475569' }}>Action</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>
-                    <code style={{ background: 'var(--bg-secondary)', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
-                      {user.accountId || 'N/A'}
-                    </code>
+                <tr key={user.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                  <td style={{ padding: '16px' }}>
+                    <div style={{ fontWeight: 600, color: '#1e293b' }}>{user.name}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b' }}>ID: {user.accountId || 'N/A'}</div>
                   </td>
-                  <td>{user.name}</td>
-                  <td>{user.whatsapp}</td>
-                  <td>{formatCurrency(user.balance)}</td>
-                  <td>
+                  <td style={{ padding: '16px', color: '#475569' }}>{user.whatsapp}</td>
+                  <td style={{ padding: '16px', fontWeight: 700, color: '#10b981' }}>{formatCurrency(user.balance)}</td>
+                  <td style={{ padding: '16px', textAlign: 'right' }}>
                     <button
                       onClick={() => {
                         setSelectedUser(user)
                         setTopupModal(true)
                       }}
-                      className="btn btn-success btn-small"
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        background: 'rgba(16, 185, 129, 0.1)',
+                        color: '#059669',
+                        border: 'none',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
                     >
                       Recharger
                     </button>
@@ -249,6 +253,7 @@ export default function AdminUsersPage() {
             </tbody>
           </table>
         </div>
+      </div>
 
       {/* Top-up Modal */}
       {topupModal && (

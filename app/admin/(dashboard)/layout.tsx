@@ -15,11 +15,18 @@ export default async function AdminLayout({
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
-      <AdminSidebar />
-      <main style={{ marginLeft: '280px', padding: '40px', minHeight: '100vh' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          {children}
+      <nav style={{ background: 'white', borderBottom: '1px solid #e2e8f0', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ fontWeight: 800, fontSize: '1.2rem', background: 'var(--gradient-main)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          PLAY2CASH ADMIN
         </div>
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <a href="/admin" style={{ textDecoration: 'none', color: '#64748b', fontWeight: 600 }}>Dashboard</a>
+          <a href="/" style={{ textDecoration: 'none', color: '#64748b' }}>Site</a>
+        </div>
+      </nav>
+
+      <main style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto' }}>
+        {children}
       </main>
     </div>
   )
