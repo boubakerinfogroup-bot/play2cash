@@ -21,7 +21,6 @@ export default async function AdminLayout({
         </div>
         <div style={{ display: 'flex', gap: '16px' }}>
           <a href="/admin" style={{ textDecoration: 'none', color: '#64748b', fontWeight: 600 }}>Dashboard</a>
-          <a href="/" style={{ textDecoration: 'none', color: '#64748b' }}>Site</a>
         </div>
       </nav>
 

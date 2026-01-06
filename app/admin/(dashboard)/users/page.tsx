@@ -143,34 +143,58 @@ export default function AdminUsersPage() {
       <div style={{ padding: '16px', maxWidth: '100%' }}>
         <h1 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '8px', color: '#1e293b' }}>
           Gérer les utilisateurs
-          <span style={{ fontSize: '0.8rem', opacity: 0.5, marginLeft: '8px', color: '#64748b' }}>v5.2</span>
+          <span style={{ fontSize: '0.8rem', opacity: 0.5, marginLeft: '8px', color: '#64748b' }}>v5.3</span>
         </h1>
         <p style={{ color: '#64748b', marginBottom: '24px' }}>Total: {filteredUsers.length} utilisateurs</p>
 
-        {/* Success/Error Messages */}
-        {success && (
-          <div style={{
-            background: '#f0fdf4',
-            color: '#166534',
-            padding: '12px 16px',
-            borderRadius: '12px',
-            marginBottom: '16px',
-            border: '1px solid #bbf7d0'
-          }}>
-            ✅ {success}
-          </div>
-        )}
-
-        {error && (
-          <div style={{
-            background: '#fef2f2',
-            color: '#dc2626',
-            padding: '12px 16px',
-            borderRadius: '12px',
-            marginBottom: '16px',
-            border: '1px solid #fecaca'
-          }}>
-            ❌ {error}
+        {/* Success/Error Popup Modal */}
+        {(success || error) && (
+          <div
+            style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 10000,
+              animation: 'slideDown 0.3s ease-out'
+            }}
+          >
+            <style jsx>{`
+              @keyframes slideDown {
+                from {
+                  opacity: 0;
+                  transform: translate(-50%, -60%);
+                }
+                to {
+                  opacity: 1;
+                  transform: translate(-50%, -50%);
+                }
+              }
+            `}</style>
+            <div style={{
+              background: success ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+              color: 'white',
+              padding: '24px 32px',
+              borderRadius: '20px',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '16px',
+              minWidth: '300px',
+              maxWidth: '90vw'
+            }}>
+              <div style={{ fontSize: '2.5rem' }}>
+                {success ? '✅' : '❌'}
+              </div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: '4px' }}>
+                  {success ? 'Succès!' : 'Erreur'}
+                </div>
+                <div style={{ fontSize: '0.95rem', opacity: 0.95 }}>
+                  {success || error}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
