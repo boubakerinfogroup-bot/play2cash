@@ -138,6 +138,17 @@ export default function AdminUsersPage() {
           .desktop-table { display: none !important; }
           .mobile-cards { display: flex !important; }
         }
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translate(-50%, -60%);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+          }
+        }
       `}</style>
 
       <div style={{ padding: '16px', maxWidth: '100%' }}>
@@ -159,18 +170,6 @@ export default function AdminUsersPage() {
               animation: 'slideDown 0.3s ease-out'
             }}
           >
-            <style jsx>{`
-              @keyframes slideDown {
-                from {
-                  opacity: 0;
-                  transform: translate(-50%, -60%);
-                }
-                to {
-                  opacity: 1;
-                  transform: translate(-50%, -50%);
-                }
-              }
-            `}</style>
             <div style={{
               background: success ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
               color: 'white',
