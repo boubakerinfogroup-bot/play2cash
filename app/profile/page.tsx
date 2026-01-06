@@ -12,6 +12,7 @@ import BottomSheet from '@/components/BottomSheet'
 
 export default function ProfilePage() {
   const router = useRouter()
+  console.log('Profile Page v2.2 Loaded')
   const [user, setUser] = useState<User | null>(null)
   const [lang, setLang] = useState<'fr' | 'ar'>('fr')
   const [transactions, setTransactions] = useState<any[]>([])
@@ -170,7 +171,7 @@ export default function ProfilePage() {
 
       <div className="container" style={{ paddingBottom: '100px' }}>
         <h1 className="gradient-text" style={{ fontSize: '2rem', textAlign: 'center', marginBottom: '32px' }}>
-          {t('profile', lang)}
+          {t('profile', lang)} <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>v2.2</span>
         </h1>
 
         <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
