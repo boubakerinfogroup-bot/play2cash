@@ -75,6 +75,23 @@ export default function ProfilePage() {
     }
   }
 
+  const getErrorMessage = (error: string, lang: 'ar' | 'fr') => {
+    const errorMap: Record<string, { ar: string, fr: string }> = {
+      'Not authenticated': { ar: 'غير مصرح', fr: 'Non authentifié' },
+      'Invalid amount': { ar: 'مبلغ غير صالح', fr: 'Montant invalide' },
+      'WhatsApp number required': { ar: 'رقم الواتساب مطلوب', fr: 'Numéro WhatsApp requis' },
+      'You already have a pending deposit request': { ar: 'لديك طلب إيداع قيد المعالجة بالفعل', fr: 'Vous avez déjà une demande de dépôt en cours' },
+      'You already have a pending withdrawal request': { ar: 'لديك طلب سحب قيد المعالجة بالفعل', fr: 'Vous avez déjà une demande de retrait en cours' },
+      'Insufficient balance': { ar: 'رصيد غير كاف', fr: 'Solde insuffisant' },
+    }
+
+    if (errorMap[error]) {
+      return errorMap[error][lang]
+    }
+
+    return lang === 'ar' ? 'حدث خطأ غير متوقع' : 'Une erreur inattendue est survenue'
+  }
+
   const handleDeposit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
@@ -90,18 +107,18 @@ export default function ProfilePage() {
         setDepositAmount('')
         setFeedback({
           type: 'success',
-          message: lang === 'ar' ? 'تم إرسال طلب الإيداع بنجاح' : 'Demande de dépôt envoyée avec succès'
+          message: lang === 'ar' ? 'تم إرسال طلب الإيداع بنجاح. سيتم معالجته قريباً.' : 'Demande de dépôt envoyée avec succès. Elle sera traitée bientôt.'
         })
       } else {
         setFeedback({
           type: 'error',
-          message: result.error || (lang === 'ar' ? 'حدث خطأ' : 'Une erreur est survenue')
+          message: getErrorMessage(result.error || '', lang)
         })
       }
     } catch (err: any) {
       setFeedback({
         type: 'error',
-        message: err.message || (lang === 'ar' ? 'حدث خطأ' : 'Une erreur est survenue')
+        message: lang === 'ar' ? 'فشل الاتصال بالخادم' : 'Échec de la connexion au serveur'
       })
     }
   }
@@ -127,13 +144,13 @@ export default function ProfilePage() {
       } else {
         setFeedback({
           type: 'error',
-          message: result.error || (lang === 'ar' ? 'حدث خطأ' : 'Une erreur est survenue')
+          message: getErrorMessage(result.error || '', lang)
         })
       }
     } catch (err: any) {
       setFeedback({
         type: 'error',
-        message: err.message || (lang === 'ar' ? 'حدث خطأ' : 'Une erreur est survenue')
+        message: lang === 'ar' ? 'فشل الاتصال بالخادم' : 'Échec de la connexion au serveur'
       })
     }
   }
@@ -378,8 +395,8 @@ export default function ProfilePage() {
                 required
                 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#4f46e5', paddingLeft: lang === 'ar' ? '16px' : '48px', paddingRight: lang === 'ar' ? '48px' : '16px' }}
               />
-              <span style={{ position: 'absolute', [lang === 'ar' ? 'right' : 'left']: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '1.2rem', color: '#94a3b8' }}>
-                $
+              <span style={{ position: 'absolute', [lang === 'ar' ? 'right' : 'left']: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '1rem', color: '#94a3b8', fontWeight: 'bold' }}>
+                {lang === 'ar' ? 'د.ت' : 'TND'}
               </span>
             </div>
           </div>
