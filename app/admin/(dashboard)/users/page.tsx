@@ -209,7 +209,57 @@ export default function AdminUsersPage() {
         <div className="alert alert-success">{success}</div>
       )}
 
-      <div style={{ background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', overflow: 'hidden' }}>
+      {/* Mobile View (Cards) */}
+      <div className="mobile-only-cards">
+        <style jsx>{`
+            .desktop-table { display: block; }
+            .mobile-only-cards { display: none; }
+            @media (max-width: 768px) {
+              .desktop-table { display: none !important; }
+              .mobile-only-cards { display: flex !important; flexDirection: column; gap: 12px; }
+            }
+          `}</style>
+
+        {users.map((user) => (
+          <div key={user.id} style={{ background: 'white', borderRadius: '12px', padding: '16px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1e293b' }}>{user.name}</div>
+                <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '4px' }}>
+                  <span style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px' }}>{user.accountId || 'ID?'}</span>
+                </div>
+              </div>
+              <div style={{ fontWeight: 800, color: '#10b981' }}>{formatCurrency(user.balance)}</div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', fontSize: '0.9rem', color: '#475569' }}>
+              <span>📞</span>
+              <span>{user.whatsapp}</span>
+            </div>
+
+            <button
+              onClick={() => {
+                setSelectedUser(user)
+                setTopupModal(true)
+              }}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '8px',
+                background: 'var(--gradient-btn)',
+                color: 'white',
+                border: 'none',
+                fontWeight: 600
+              }}
+            >
+              Recharger
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop View (Table) */}
+      <div className="desktop-table" style={{ background: 'white', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', overflow: 'hidden' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
