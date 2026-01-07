@@ -199,62 +199,44 @@ export default function BankerGame({ onComplete, isActive, matchId }: BankerGame
                 {!isRevealed ? (
                     <>
                         {/* Round Options */}
-                        {!playerChoice && (
-                            <div style={{
-                                display: 'grid',
-                                gap: '16px'
-                            }}>
-                                <button
-                                    onClick={() => makeChoice('safe')}
-                                    style={{
-                                        padding: '20px',
-                                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '16px',
-                                        textAlign: 'right',
-                                        direction: 'rtl',
-                                        cursor: 'pointer',
-                                        boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)'
-                                    }}
-                                >
-                                    <div style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '8px' }}>
-                                        🏦 آمن
-                                    </div>
-                                    <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>
-                                        +{round.safe}
-                                    </div>
-                                    <div style={{ fontSize: '0.8rem', opacity: 0.9 }}>
-                                        مضمون 100%
-                                    </div>
-                                </button>
+                        <div style={{
+                            display: 'grid',
+                            gap: '16px'
+                        }}>
+                            <button
+                                onClick={() => makeChoice('safe')}
+                                style={{
+                                    padding: '24px',
+                                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '16px',
+                                    cursor: 'pointer',
+                                    boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
+                                    fontSize: '2rem',
+                                    fontWeight: 900
+                                }}
+                            >
+                                +{round.safe}
+                            </button>
 
-                                <button
-                                    onClick={() => makeChoice('risk')}
-                                    style={{
-                                        padding: '20px',
-                                        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '16px',
-                                        textAlign: 'right',
-                                        direction: 'rtl',
-                                        cursor: 'pointer',
-                                        boxShadow: '0 4px 15px rgba(239, 68, 68, 0.3)'
-                                    }}
-                                >
-                                    <div style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '8px' }}>
-                                        🎲 مخاطرة
-                                    </div>
-                                    <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>
-                                        +{round.riskWin} أو {round.riskLose}
-                                    </div>
-                                    <div style={{ fontSize: '0.8rem', opacity: 0.9 }}>
-                                        50% فرصة
-                                    </div>
-                                </button>
-                            </div>
-                        )}
+                            <button
+                                onClick={() => makeChoice('risk')}
+                                style={{
+                                    padding: '24px',
+                                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '16px',
+                                    cursor: 'pointer',
+                                    boxShadow: '0 4px 15px rgba(239, 68, 68, 0.3)',
+                                    fontSize: '2rem',
+                                    fontWeight: 900
+                                }}
+                            >
+                                +{round.riskWin} / {round.riskLose}
+                            </button>
+                        </div>}
 
                         {playerChoice && (
                             <div style={{
