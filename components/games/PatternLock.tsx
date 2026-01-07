@@ -279,7 +279,6 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
                         )
                     })}
                 </div>
-                )}
             </div>
 
             {/* Result */}
