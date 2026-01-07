@@ -426,12 +426,14 @@ export async function acceptJoinRequest(
         data: { status: 'REJECTED' }
       })
 
-      // Update match to COUNTDOWN status
+      // Update match to COUNTDOWN status with game seed
       const countdownStartTime = new Date()
+      const gameSeed = crypto.randomUUID()
       await tx.match.update({
         where: { id: matchId },
         data: {
           status: 'COUNTDOWN',
+          gameSeed: gameSeed,
           startedAt: countdownStartTime
         }
       })
@@ -516,11 +518,15 @@ export async function startMatchAfterCountdown(
       return { success: false, error: 'Match n\'est pas en compte à rebours' }
     }
 
-    // Update to ACTIVE
+    // Generate game seed for deterministic gameplay
+    const gameSeed = crypto.randomUUID()
+
+    // Update to ACTIVE with game seed
     await prisma.match.update({
       where: { id: matchId },
       data: {
         status: 'ACTIVE',
+        gameSeed: gameSeed,
         startedAt: new Date()
       }
     })
