@@ -50,7 +50,8 @@ function LobbyContent() {
       return
     }
 
-    setUser(JSON.parse(userStr))
+    const parsedUser = JSON.parse(userStr)
+    setUser(parsedUser)
     setLang(langStr as 'fr' | 'ar')
 
     if (gameSlug) {
@@ -58,7 +59,21 @@ function LobbyContent() {
     }
 
     loadMatches()
+    refreshBalance(parsedUser.id)
   }, [gameSlug, router, stakeFilter])
+
+  const refreshBalance = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/user/balance?userId=${userId}`)
+      const data = await response.json()
+      if (data.success && data.user) {
+        setUser(data.user)
+        localStorage.setItem('user', JSON.stringify(data.user))
+      }
+    } catch (error) {
+      console.error('Refresh balance error:', error)
+    }
+  }
 
   const loadGame = async (slug: string) => {
     try {

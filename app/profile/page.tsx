@@ -43,7 +43,21 @@ export default function ProfilePage() {
     setWhatsapp(userData.whatsapp)
 
     loadData()
+    refreshBalance(userData.id)
   }, [router, filter])
+
+  const refreshBalance = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/user/balance?userId=${userId}`)
+      const data = await response.json()
+      if (data.success && data.user) {
+        setUser(data.user)
+        localStorage.setItem('user', JSON.stringify(data.user))
+      }
+    } catch (error) {
+      console.error('Refresh balance error:', error)
+    }
+  }
 
   const loadData = async () => {
     try {
