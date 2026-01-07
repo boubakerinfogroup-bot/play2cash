@@ -185,9 +185,9 @@ export default function RockPaperScissors({ onComplete, isActive, matchId }: RPS
                             fontWeight: 800,
                             color: roundResult === 'win' ? '#10b981' : roundResult === 'lose' ? '#ef4444' : '#f59e0b'
                         }}>
-                            {roundResult === 'win' && '🎉 فزت!'}
-                            {roundResult === 'lose' && '😔 خسرت'}
-                            {roundResult === 'draw' && '🤝 تعادل'}
+                            {roundResult === 'win' && 'فزت!'}
+                            {roundResult === 'lose' && 'خسرت'}
+                            {roundResult === 'draw' && 'تعادل'}
                         </div>
                         <div style={{ textAlign: 'center' }}>
                             <div style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>الخصم</div>
