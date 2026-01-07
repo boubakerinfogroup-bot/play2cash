@@ -6,6 +6,7 @@ interface PatternLockProps {
     onComplete: (score: number) => void
     isActive: boolean
     matchId?: string
+    seed?: string | null
 }
 
 class SeededRandom {
@@ -17,7 +18,7 @@ class SeededRandom {
     }
 }
 
-export default function PatternLock({ onComplete, isActive, matchId }: PatternLockProps) {
+export default function PatternLock({ onComplete, isActive, matchId, seed }: PatternLockProps) {
     const [pattern, setPattern] = useState<number[]>([])
     const [playerPattern, setPlayerPattern] = useState<number[]>([])
     const [isShowingPattern, setIsShowingPattern] = useState(false)

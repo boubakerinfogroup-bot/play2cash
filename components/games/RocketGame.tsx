@@ -7,6 +7,7 @@ interface RocketGameProps {
     onComplete: (score: number) => void
     isActive: boolean
     matchId?: string // For synchronized gameplay
+    seed?: string | null
 }
 
 // Seeded random number generator for fair synchronized gameplay
@@ -29,7 +30,7 @@ interface Obstacle {
     id: number;
 }
 
-export default function RocketGame({ onComplete, isActive, matchId }: RocketGameProps) {
+export default function RocketGame({ onComplete, isActive, matchId, seed }: RocketGameProps) {
     const [rocketX, setRocketX] = useState(50)
     const [obstacles, setObstacles] = useState<Obstacle[]>([])
     const [score, setScore] = useState(0)
@@ -44,12 +45,16 @@ export default function RocketGame({ onComplete, isActive, matchId }: RocketGame
 
     // Initialize seeded random for fair gameplay
     useEffect(() => {
-        if (matchId) {
-            // Use match ID to create seed - both players get same obstacles!
-            const seed = parseInt(matchId.replace(/\D/g, '').slice(0, 9)) || 12345
-            randomGen.current = new SeededRandom(seed)
+        if (seed) {
+            // Use provided seed from match
+            const numericSeed = parseInt(seed.replace(/\D/g, '').slice(0, 9)) || 12345
+            randomGen.current = new SeededRandom(numericSeed)
+        } else if (matchId) {
+            // Fallback to match ID
+            const numericSeed = parseInt(matchId.replace(/\D/g, '').slice(0, 9)) || 12345
+            randomGen.current = new SeededRandom(numericSeed)
         }
-    }, [matchId])
+    }, [matchId, seed])
 
     // Start game
     useEffect(() => {

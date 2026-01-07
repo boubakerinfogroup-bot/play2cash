@@ -6,6 +6,7 @@ interface SequencePadProps {
     onComplete: (score: number) => void
     isActive: boolean
     matchId?: string
+    seed?: string | null
 }
 
 // Seeded random for synchronized gameplay
@@ -24,7 +25,7 @@ class SeededRandom {
 
 const COLORS = ['#3b82f6', '#10b981', '#eab308', '#ef4444', '#8b5cf6', '#ec4899', '#f97316', '#14b8a6', '#6366f1']
 
-export default function SequencePad({ onComplete, isActive, matchId }: SequencePadProps) {
+export default function SequencePad({ onComplete, isActive, matchId, seed }: SequencePadProps) {
     const [sequence, setSequence] = useState<number[]>([])
     const [playerInput, setPlayerInput] = useState<number[]>([])
     const [currentLevel, setCurrentLevel] = useState(1)

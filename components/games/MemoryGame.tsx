@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import seedrandom from 'seedrandom'
 
 interface Card {
     id: number
@@ -12,6 +13,7 @@ interface Card {
 interface MemoryGameProps {
     onComplete: (score: number) => void
     isActive: boolean
+    seed?: string | null
 }
 
 // MASSIVE EMOJI POOL - 100+ unique emojis for infinite variations!
@@ -42,12 +44,13 @@ const EMOJI_POOL = [
 ]
 
 // Function to get random unique emojis for each game
-function getRandomEmojis(count: number): string[] {
-    const shuffled = [...EMOJI_POOL].sort(() => Math.random() - 0.5)
+function getRandomEmojis(count: number, seed?: string | null): string[] {
+    const rng = seed ? seedrandom(seed) : Math.random
+    const shuffled = [...EMOJI_POOL].sort(() => rng() - 0.5)
     return shuffled.slice(0, count)
 }
 
-export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
+export default function MemoryGame({ onComplete, isActive, seed }: MemoryGameProps) {
     const [cards, setCards] = useState<Card[]>([])
     const [flippedCards, setFlippedCards] = useState<number[]>([])
     const [moves, setMoves] = useState(0)
@@ -61,7 +64,7 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
     useEffect(() => {
         if (isActive && !isCompleted) {
             // Get 14 random emojis from the pool (28 cards total - easier!)
-            const randomEmojis = getRandomEmojis(14)
+            const randomEmojis = getRandomEmojis(14, seed)
             setSelectedEmojis(randomEmojis)
             initializeGame(randomEmojis)
             setStartTime(Date.now())
