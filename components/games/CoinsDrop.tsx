@@ -28,12 +28,12 @@ interface Coin {
 export default function CoinsDrop({ onComplete, isActive, matchId }: CoinsDropProps) {
     const [coins, setCoins] = useState<Coin[]>([])
     const [score, setScore] = useState(0)
-    const [missedCoins, setMissedCoins] = useState(0)
+    const [timeLeft, setTimeLeft] = useState(30)
     const [isGameOver, setIsGameOver] = useState(false)
     const randomGen = useRef<SeededRandom | null>(null)
     const coinIdRef = useRef(0)
     const gameLoopRef = useRef<number | null>(null)
-    const MAX_MISSED = 5
+    const timerRef = useRef<NodeJS.Timeout | null>(null)
 
     useEffect(() => {
         if (matchId) {
@@ -48,66 +48,72 @@ export default function CoinsDrop({ onComplete, isActive, matchId }: CoinsDropPr
         }
         return () => {
             if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current)
+            if (timerRef.current) clearInterval(timerRef.current)
         }
     }, [isActive])
 
     const startGame = () => {
         setCoins([])
         setScore(0)
-        setMissedCoins(0)
+        setTimeLeft(30)
         setIsGameOver(false)
+
+        // Start timer
+        timerRef.current = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    handleGameOver()
+                    return 0
+                }
+                return prev - 1
+            })
+        }, 1000)
+
         gameLoop()
     }
 
     const gameLoop = () => {
         const rng = randomGen.current || { next: () => Math.random() }
 
-        // Spawn rate increases with score
-        const spawnChance = Math.min(0.03 + (score * 0.0001), 0.08)
+        // Spawn rate increases with time (gets harder)
+        const elapsed = 30 - timeLeft
+        const spawnChance = Math.min(0.04 + (elapsed * 0.001), 0.1)
 
         if (rng.next() < spawnChance) {
-            const baseSpeed = 1.5 + (score * 0.01) // Speed increases with score
+            const baseSpeed = 1.5 + (elapsed * 0.02) // Speed increases over time
             const newCoin: Coin = {
                 id: coinIdRef.current++,
-                x: rng.next() * 90 + 5,
+                x: rng.next() * 85 + 7.5,
                 y: -5,
                 speed: baseSpeed + (rng.next() * 0.5)
             }
             setCoins(prev => [...prev, newCoin])
         }
 
-        // Move coins down
-        setCoins(prev => {
-            const updated = prev.map(coin => ({ ...coin, y: coin.y + coin.speed }))
-
-            // Check for missed coins
-            const nowMissed = updated.filter(c => c.y > 105).length
-            if (nowMissed > 0) {
-                setMissedCoins(prevMissed => {
-                    const newMissed = prevMissed + nowMissed
-                    if (newMissed >= MAX_MISSED) {
-                        handleGameOver()
-                    }
-                    return newMissed
-                })
-            }
-
-            return updated.filter(coin => coin.y < 105)
-        })
+        // Move coins down and remove ones that fall off
+        setCoins(prev => prev
+            .map(coin => ({ ...coin, y: coin.y + coin.speed }))
+            .filter(coin => coin.y < 105)
+        )
 
         if (!isGameOver) {
             gameLoopRef.current = requestAnimationFrame(gameLoop)
         }
     }
 
-    const handleCoinTap = (coinId: number) => {
+    const handleCoinTap = (coinId: number, event: React.MouseEvent | React.TouchEvent) => {
+        event.preventDefault()
+        event.stopPropagation()
+
+        // Remove coin and add to score
         setCoins(prev => prev.filter(c => c.id !== coinId))
-        setScore(prev => prev + 10)
+        setScore(prev => prev + 1)
     }
 
     const handleGameOver = () => {
         setIsGameOver(true)
         if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current)
+        if (timerRef.current) clearInterval(timerRef.current)
         onComplete(score)
     }
 
@@ -133,12 +139,12 @@ export default function CoinsDrop({ onComplete, isActive, matchId }: CoinsDropPr
             }}>
                 <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.9)' }}>الدولارات</div>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'white' }}>{score / 10}</div>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'white' }}>{score}</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.9)' }}>الفائتة</div>
+                    <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.9)' }}>الوقت</div>
                     <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'white' }}>
-                        {missedCoins}/{MAX_MISSED}
+                        {timeLeft}s
                     </div>
                 </div>
             </div>
@@ -150,41 +156,42 @@ export default function CoinsDrop({ onComplete, isActive, matchId }: CoinsDropPr
                 borderRadius: '20px',
                 position: 'relative',
                 overflow: 'hidden',
-                border: '3px solid #cbd5e1'
+                border: '3px solid #cbd5e1',
+                touchAction: 'none'
             }}>
                 {/* Coins */}
                 {coins.map(coin => (
                     <button
                         key={coin.id}
-                        onClick={() => handleCoinTap(coin.id)}
+                        onTouchStart={(e) => handleCoinTap(coin.id, e)}
+                        onClick={(e) => handleCoinTap(coin.id, e)}
                         style={{
                             position: 'absolute',
                             left: `${coin.x}%`,
                             top: `${coin.y}%`,
-                            width: '60px',
-                            height: '60px',
+                            width: '65px',
+                            height: '65px',
                             border: 'none',
                             background: 'transparent',
                             cursor: 'pointer',
                             transform: 'translate(-50%, -50%)',
                             filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))',
-                            transition: 'transform 0.1s',
-                            padding: 0
-                        }}
-                        onMouseDown={(e) => {
-                            e.currentTarget.style.transform = 'translate(-50%, -50%) scale(0.9)'
-                        }}
-                        onMouseUp={(e) => {
-                            e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1)'
+                            transition: 'none',
+                            padding: 0,
+                            WebkitTapHighlightColor: 'transparent'
                         }}
                     >
                         <Image
                             src="/assets/dollar.png"
                             alt="Dollar"
-                            width={60}
-                            height={60}
-                            style={{ display: 'block' }}
+                            width={65}
+                            height={65}
+                            style={{
+                                display: 'block',
+                                pointerEvents: 'none'
+                            }}
                             priority
+                            draggable={false}
                         />
                     </button>
                 ))}
@@ -207,10 +214,10 @@ export default function CoinsDrop({ onComplete, isActive, matchId }: CoinsDropPr
                     }}>
                         <div style={{ fontSize: '3rem' }}>💵</div>
                         <div style={{ color: 'white', fontSize: '1.5rem', fontWeight: 800 }}>
-                            فاتك الكثير من الدولارات!
+                            انتهى الوقت!
                         </div>
                         <div style={{ color: '#10b981', fontSize: '1.2rem', fontWeight: 700 }}>
-                            الدولارات المجموعة: {score / 10}
+                            الدولارات المجموعة: {score}
                         </div>
                     </div>
                 )}
@@ -224,7 +231,7 @@ export default function CoinsDrop({ onComplete, isActive, matchId }: CoinsDropPr
                 direction: 'rtl',
                 marginTop: '16px'
             }}>
-                💡 اضغط على الدولارات قبل أن تسقط! لا تفوت {MAX_MISSED}!
+                💡 اضغط على الدولارات لجمعها! اجمع أكثر من خصمك!
             </div>
         </div>
     )

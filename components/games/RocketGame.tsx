@@ -23,17 +23,24 @@ class SeededRandom {
     }
 }
 
+interface Obstacle {
+    x: number;
+    y: number;
+    id: number;
+}
+
 export default function RocketGame({ onComplete, isActive, matchId }: RocketGameProps) {
-    const [rocketX, setRocketX] = useState(50) // Rocket position (percentage)
-    const [obstacles, setObstacles] = useState<Array<{ x: number; y: number; id: number }>>([])
+    const [rocketX, setRocketX] = useState(50)
+    const [obstacles, setObstacles] = useState<Obstacle[]>([])
     const [score, setScore] = useState(0)
+    const [speed, setSpeed] = useState(1)
     const [isGameOver, setIsGameOver] = useState(false)
-    const [speed, setSpeed] = useState(2.5)
-    const [spawnRate, setSpawnRate] = useState(0.015) // Obstacle spawn probability
-    const [startTime, setStartTime] = useState<number>(0) // Track game start time
-    const gameLoopRef = useRef<number | null>(null)
-    const obstacleCounterRef = useRef(0)
+    const [isDragging, setIsDragging] = useState(false)
     const randomGen = useRef<SeededRandom | null>(null)
+    const obstacleCounterRef = useRef(0)
+    const gameLoopRef = useRef<number | null>(null)
+    const spawnRate = 0.02
+    const startTimeRef = useRef<number>(0)
 
     // Initialize seeded random for fair gameplay
     useEffect(() => {
@@ -47,47 +54,65 @@ export default function RocketGame({ onComplete, isActive, matchId }: RocketGame
     // Start game
     useEffect(() => {
         if (isActive && !isGameOver) {
-            startGame()
+            setRocketX(50)
+            setObstacles([])
+            setScore(0)
+            setSpeed(1)
+            obstacleCounterRef.current = 0
+            startTimeRef.current = Date.now()
+            gameLoop()
         }
         return () => {
-            if (gameLoopRef.current) {
-                cancelAnimationFrame(gameLoopRef.current)
-            }
+            if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current)
         }
-    }, [isActive])
+    }, [isActive, isGameOver])
 
-    const startGame = () => {
-        setRocketX(50)
-        setObstacles([])
-        setScore(0)
-        setSpeed(2.5)
-        setSpawnRate(0.015)
-        setIsGameOver(false)
-        setStartTime(Date.now())
-        obstacleCounterRef.current = 0
-        gameLoop()
+    const handleTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
+        if (isGameOver) return
+        setIsDragging(true)
+        handleTouchMove(e) // Handle initial position immediately
+    }
+
+    const handleTouchMove = (e: React.TouchEvent | React.MouseEvent) => {
+        if (!isDragging || isGameOver) return
+
+        const touch = 'touches' in e ? e.touches[0] : e
+        const container = (e.currentTarget as HTMLElement).getBoundingClientRect()
+        const relativeX = ((touch.clientX - container.left) / container.width) * 100
+        const clampedX = Math.max(10, Math.min(90, relativeX))
+        setRocketX(clampedX)
+    }
+
+    const handleTouchEnd = () => {
+        setIsDragging(false)
     }
 
     const gameLoop = () => {
         if (isGameOver) return
 
-        // Move obstacles down (rocket flying up)
+        const elapsedTime = Date.now() - startTimeRef.current
+
+        // Update speed based on time
+        setSpeed(1 + Math.floor(elapsedTime / 10000) * 0.1)
+
+        // Move obstacles down
         setObstacles(prev => {
             const moved = prev
                 .map(obs => ({ ...obs, y: obs.y + speed }))
                 .filter(obs => obs.y < 110)
 
-            // Add new obstacle from top - but wait 10 seconds before first spawn
-            const timeSinceStart = (Date.now() - startTime) / 1000 // seconds
-            const rng = randomGen.current || { next: () => Math.random() }
+            // Only spawn obstacles AFTER 5 seconds
+            if (elapsedTime > 5000) {
+                const rng = randomGen.current || { next: () => Math.random() }
 
-            if (timeSinceStart > 5 && rng.next() < spawnRate) {
-                const newX = rng.next() * 80 + 10 // Random X position
-                moved.push({
-                    x: newX,
-                    y: -5,
-                    id: obstacleCounterRef.current++
-                })
+                if (rng.next() < spawnRate) {
+                    const newX = rng.next() * 80 + 10
+                    moved.push({
+                        x: newX,
+                        y: -5,
+                        id: obstacleCounterRef.current++
+                    })
+                }
             }
 
             return moved
@@ -296,7 +321,7 @@ export default function RocketGame({ onComplete, isActive, matchId }: RocketGame
                 fontSize: '0.8rem',
                 direction: 'rtl'
             }}>
-                💡 حرك يساراً ويميناً لتفادي الصخور!
+                💡 اضغط واسحب يساراً ويميناً لتفادي الصخور!
             </div>
 
             {/* Star Animation CSS */}

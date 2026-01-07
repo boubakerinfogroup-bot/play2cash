@@ -159,7 +159,8 @@ export default function SequencePad({ onComplete, isActive, matchId }: SequenceP
                                 transform: isLit ? 'scale(1.05)' : 'scale(1)',
                                 transition: 'all 0.2s',
                                 boxShadow: isLit ? `0 8px 20px ${COLORS[index]}80` : '0 2px 8px rgba(0,0,0,0.1)',
-                                minHeight: '100px'
+                                minHeight: '100px',
+                                overflow: 'hidden'
                             }}
                         />
                     )
