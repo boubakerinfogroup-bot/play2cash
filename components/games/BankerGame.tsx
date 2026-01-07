@@ -6,6 +6,7 @@ interface BankerGameProps {
     onComplete: (score: number) => void
     isActive: boolean
     matchId?: string
+    seed?: string | null
 }
 
 class SeededRandom {
@@ -24,7 +25,7 @@ interface Round {
     outcome: boolean // true = win, false = lose
 }
 
-export default function BankerGame({ onComplete, isActive, matchId }: BankerGameProps) {
+export default function BankerGame({ onComplete, isActive, matchId, seed }: BankerGameProps) {
     const [playerStack, setPlayerStack] = useState(0)
     const [opponentStack, setOpponentStack] = useState(0)
     const [currentRound, setCurrentRound] = useState(0)

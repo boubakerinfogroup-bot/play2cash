@@ -6,11 +6,12 @@ interface RPSProps {
     onComplete: (score: number) => void
     isActive: boolean
     matchId?: string
+    seed?: string | null
 }
 
 type Choice = 'rock' | 'paper' | 'scissors' | null
 
-export default function RockPaperScissors({ onComplete, isActive, matchId }: RPSProps) {
+export default function RockPaperScissors({ onComplete, isActive, matchId, seed }: RPSProps) {
     const [playerChoice, setPlayerChoice] = useState<Choice>(null)
     const [opponentChoice, setOpponentChoice] = useState<Choice>(null)
     const [playerWins, setPlayerWins] = useState(0)

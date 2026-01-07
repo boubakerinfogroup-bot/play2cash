@@ -6,9 +6,10 @@ interface TicTacToePlusProps {
     onComplete: (score: number) => void
     isActive: boolean
     matchId?: string
+    seed?: string | null
 }
 
-export default function TicTacToePlus({ onComplete, isActive, matchId }: TicTacToePlusProps) {
+export default function TicTacToePlus({ onComplete, isActive, matchId, seed }: TicTacToePlusProps) {
     const ROWS = 6
     const COLS = 4
 
