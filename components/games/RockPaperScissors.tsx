@@ -213,7 +213,7 @@ export default function RockPaperScissors({ onComplete, isActive, matchId }: RPS
                         direction: 'rtl',
                         zIndex: 10
                     }}>
-                        <div style={{ fontSize: '4rem' }}>{playerWins > opponentWins ? '🏆' : '💔'}</div>
+                        <div style={{ fontSize: '4rem' }}></div>
                         <div style={{ color: 'white', fontSize: '1.8rem', fontWeight: 800 }}>
                             {playerWins > opponentWins ? 'فزت بالمباراة!' : 'خسرت المباراة'}
                         </div>

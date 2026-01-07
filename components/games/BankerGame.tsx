@@ -25,8 +25,8 @@ interface Round {
 }
 
 export default function BankerGame({ onComplete, isActive, matchId }: BankerGameProps) {
-    const [playerStack, setPlayerStack] = useState(100)
-    const [opponentStack, setOpponentStack] = useState(100)
+    const [playerStack, setPlayerStack] = useState(0)
+    const [opponentStack, setOpponentStack] = useState(0)
     const [currentRound, setCurrentRound] = useState(0)
     const [rounds, setRounds] = useState<Round[]>([])
     const [playerChoice, setPlayerChoice] = useState<'safe' | 'risk' | null>(null)
@@ -54,18 +54,18 @@ export default function BankerGame({ onComplete, isActive, matchId }: BankerGame
         const rng = randomGen.current || { next: () => Math.random() }
         const newRounds: Round[] = []
 
-        // Generate many scenarios for variety
+        // Balanced scenarios - risk is roughly 2x safe with equal downside
         const scenarios = [
-            { safe: 10, riskWin: 30, riskLose: -10, desc: "استثمار صغير" },
-            { safe: 5, riskWin: 40, riskLose: -20, desc: "فرصة عالية المخاطر" },
-            { safe: 15, riskWin: 25, riskLose: -5, desc: "توازن معتدل" },
-            { safe: 8, riskWin: 35, riskLose: -15, desc: "مشروع ريادي" },
-            { safe: 12, riskWin: 28, riskLose: -8, desc: "استثمار تكنولوجيا" },
-            { safe: 7, riskWin: 50, riskLose: -25, desc: "مضاربة سوق" },
-            { safe: 20, riskWin: 30, riskLose: -10, desc: "صفقة كبيرة" },
-            { safe: 10, riskWin: 45, riskLose: -18, desc: "عقارات" },
-            { safe: 6, riskWin: 38, riskLose: -12, desc: "تجارة إلكترونية" },
-            { safe: 14, riskWin: 32, riskLose: -14, desc: "مشروع جديد" }
+            { safe: 10, riskWin: 20, riskLose: -10 },
+            { safe: 12, riskWin: 24, riskLose: -12 },
+            { safe: 15, riskWin: 30, riskLose: -15 },
+            { safe: 8, riskWin: 16, riskLose: -8 },
+            { safe: 18, riskWin: 36, riskLose: -18 },
+            { safe: 20, riskWin: 40, riskLose: -20 },
+            { safe: 14, riskWin: 28, riskLose: -14 },
+            { safe: 16, riskWin: 32, riskLose: -16 },
+            { safe: 22, riskWin: 44, riskLose: -22 },
+            { safe: 25, riskWin: 50, riskLose: -25 }
         ]
 
         for (let i = 0; i < 5; i++) {
@@ -82,8 +82,7 @@ export default function BankerGame({ onComplete, isActive, matchId }: BankerGame
     }
 
     const resetGame = () => {
-        setPlayerStack(100)
-        setOpponentStack(100)
+        setOpponentStack(0)
         setCurrentRound(0)
         setPlayerChoice(null)
         setOpponentChoice(null)
@@ -135,8 +134,14 @@ export default function BankerGame({ onComplete, isActive, matchId }: BankerGame
 
         setTimeout(() => {
             if (currentRound === 4) {
-                // Game over
-                endGame(newPlayerStack > newOpponentStack)
+                // Game over - check who reached 200 first or has higher score
+                endGame(newPlayerStack >= 200 || (newPlayerStack > newOpponentStack && currentRound === 4))
+            } else if (newPlayerStack >= 200 || newOpponentStack >= 200) {
+                // Someone reached 200 mid-game
+                endGame(newPlayerStack >= 200)
+            } else {
+                // Next round
+                setCurrentRound(prev => prev + 1)
             } else {
                 // Next round
                 setCurrentRound(prev => prev + 1)
