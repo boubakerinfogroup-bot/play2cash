@@ -57,6 +57,21 @@ export default function HomePage() {
     }
   }
 
+  const refreshBalance = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/user/balance?userId=${userId}`)
+      const data = await response.json()
+
+      if (data.success && data.user) {
+        // Update user in state and localStorage
+        setUser(data.user)
+        localStorage.setItem('user', JSON.stringify(data.user))
+      }
+    } catch (error) {
+      console.error('Refresh balance error:', error)
+    }
+  }
+
   const toggleLang = () => {
     const newLang = lang === 'fr' ? 'ar' : 'fr'
     setLang(newLang)
