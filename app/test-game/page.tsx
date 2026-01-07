@@ -8,9 +8,8 @@ import RockPaperScissors from '@/components/games/RockPaperScissors'
 import TicTacToePlus from '@/components/games/TicTacToePlus'
 import PatternLock from '@/components/games/PatternLock'
 import BankerGame from '@/components/games/BankerGame'
-import TetraGame from '@/components/games/TetraGame'
 
-type GameType = 'memory' | 'rocket' | 'sequence' | 'rps' | 'tictactoe' | 'pattern' | 'banker' | 'tetra'
+type GameType = 'memory' | 'rocket' | 'sequence' | 'rps' | 'tictactoe' | 'pattern' | 'banker'
 
 export default function TestGamePage() {
     const [score, setScore] = useState<number | null>(null)
@@ -48,10 +47,10 @@ export default function TestGamePage() {
                     🎮 Game Testing Mode
                 </h1>
 
-                {/* Game Selector - 8 Games */}
+                {/* Game Selector - 7 Games */}
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(4, 1fr)',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
                     gap: '12px',
                     marginBottom: '20px'
                 }}>
@@ -153,20 +152,6 @@ export default function TestGamePage() {
                         }}>
                         💰<br />Banker
                     </button>
-                    <button onClick={() => { setSelectedGame('tetra'); setScore(null); }}
-                        style={{
-                            padding: '16px',
-                            background: selectedGame === 'tetra' ? '#10b981' : '#64748b',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '16px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4'
-                        }}>
-                        🧱<br />Tetra
-                    </button>
                 </div>
 
                 <p style={{
@@ -213,7 +198,6 @@ export default function TestGamePage() {
             {selectedGame === 'tictactoe' && <TicTacToePlus isActive={score === null} onComplete={handleComplete} matchId="test-ttt-123" />}
             {selectedGame === 'pattern' && <PatternLock isActive={score === null} onComplete={handleComplete} matchId="test-pattern-123" />}
             {selectedGame === 'banker' && <BankerGame isActive={score === null} onComplete={handleComplete} matchId="test-banker-123" />}
-            {selectedGame === 'tetra' && <TetraGame isActive={score === null} onComplete={handleComplete} matchId="test-tetra-123" />}
         </div>
     )
 }

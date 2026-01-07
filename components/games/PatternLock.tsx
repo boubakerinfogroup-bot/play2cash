@@ -174,9 +174,11 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
                 minHeight: '400px',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                flexDirection: 'column',
+                gap: '16px'
             }}>
-                {isShowingPattern ? (
+                {isShowingPattern && (
                     <div style={{
                         textAlign: 'center',
                         direction: 'rtl',
@@ -186,96 +188,97 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
                     }}>
                         احفظ النمط...
                     </div>
-                ) : (
-                    <div style={{
-                        position: 'relative',
-                        width: '100%',
-                        maxWidth: '300px',
-                        aspectRatio: '1'
-                    }}>
-                        {/* SVG for lines */}
-                        <svg
-                            style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: '100%',
-                                height: '100%',
-                                pointerEvents: 'none'
-                            }}
-                        >
-                            {/* Show pattern during reveal */}
-                            {isShowingPattern && pattern.map((dot, index) => {
-                                if (index === 0) return null
-                                const from = getDotPosition(pattern[index - 1])
-                                const to = getDotPosition(dot)
-                                return (
-                                    <line
-                                        key={index}
-                                        x1={`${from.x}%`}
-                                        y1={`${from.y}%`}
-                                        x2={`${to.x}%`}
-                                        y2={`${to.y}%`}
-                                        stroke="#a78bfa"
-                                        strokeWidth="10"
-                                        strokeLinecap="round"
-                                    />
-                                )
-                            })}
-                            {/* Show player pattern */}
-                            {!isShowingPattern && playerPattern.map((dot, index) => {
-                                if (index === 0) return null
-                                const from = getDotPosition(playerPattern[index - 1])
-                                const to = getDotPosition(dot)
-                                return (
-                                    <line
-                                        key={index}
-                                        x1={`${from.x}%`}
-                                        y1={`${from.y}%`}
-                                        x2={`${to.x}%`}
-                                        y2={`${to.y}%`}
-                                        stroke={result === 'correct' ? '#10b981' : result === 'wrong' ? '#ef4444' : '#60a5fa'}
-                                        strokeWidth="10"
-                                        strokeLinecap="round"
-                                    />
-                                )
-                            })}
-                        </svg>
+                )}
 
-                        {/* Dots */}
-                        {[...Array(9)].map((_, index) => {
-                            const pos = getDotPosition(index)
-                            const isActive = isShowingPattern && pattern.includes(index)
-                            const isTouched = playerPattern.includes(index)
-
+                <div style={{
+                    position: 'relative',
+                    width: '100%',
+                    maxWidth: '300px',
+                    aspectRatio: '1'
+                }}>
+                    {/* SVG for lines */}
+                    <svg
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            pointerEvents: 'none'
+                        }}
+                    >
+                        {/* Show pattern during reveal */}
+                        {isShowingPattern && pattern.map((dot, index) => {
+                            if (index === 0) return null
+                            const from = getDotPosition(pattern[index - 1])
+                            const to = getDotPosition(dot)
                             return (
-                                <div
+                                <line
                                     key={index}
-                                    onTouchStart={() => handleDotTouch(index)}
-                                    onClick={() => handleDotTouch(index)}
-                                    style={{
-                                        position: 'absolute',
-                                        left: `${pos.x}%`,
-                                        top: `${pos.y}%`,
-                                        transform: 'translate(-50%, -50%)',
-                                        width: isActive || isTouched ? '40px' : '28px',
-                                        height: isActive || isTouched ? '40px' : '28px',
-                                        borderRadius: '50%',
-                                        background: isActive
-                                            ? '#a78bfa'
-                                            : isTouched
-                                                ? result === 'correct' ? '#10b981' : result === 'wrong' ? '#ef4444' : '#60a5fa'
-                                                : '#e0e7ff',
-                                        cursor: !isShowingPattern && result === null ? 'pointer' : 'default',
-                                        transition: 'all 200ms',
-                                        border: '4px solid #312e81',
-                                        boxShadow: (isActive || isTouched) ? '0 0 20px rgba(167, 139, 250, 0.6)' : '0 2px 8px rgba(0,0,0,0.3)',
-                                        userSelect: 'none'
-                                    }}
+                                    x1={`${from.x}%`}
+                                    y1={`${from.y}%`}
+                                    x2={`${to.x}%`}
+                                    y2={`${to.y}%`}
+                                    stroke="#a78bfa"
+                                    strokeWidth="10"
+                                    strokeLinecap="round"
                                 />
                             )
                         })}
-                    </div>
+                        {/* Show player pattern */}
+                        {!isShowingPattern && playerPattern.map((dot, index) => {
+                            if (index === 0) return null
+                            const from = getDotPosition(playerPattern[index - 1])
+                            const to = getDotPosition(dot)
+                            return (
+                                <line
+                                    key={index}
+                                    x1={`${from.x}%`}
+                                    y1={`${from.y}%`}
+                                    x2={`${to.x}%`}
+                                    y2={`${to.y}%`}
+                                    stroke={result === 'correct' ? '#10b981' : result === 'wrong' ? '#ef4444' : '#60a5fa'}
+                                    strokeWidth="10"
+                                    strokeLinecap="round"
+                                />
+                            )
+                        })}
+                    </svg>
+
+                    {/* Dots */}
+                    {[...Array(9)].map((_, index) => {
+                        const pos = getDotPosition(index)
+                        const isActive = isShowingPattern && pattern.includes(index)
+                        const isTouched = playerPattern.includes(index)
+
+                        return (
+                            <div
+                                key={index}
+                                onTouchStart={() => handleDotTouch(index)}
+                                onClick={() => handleDotTouch(index)}
+                                style={{
+                                    position: 'absolute',
+                                    left: `${pos.x}%`,
+                                    top: `${pos.y}%`,
+                                    transform: 'translate(-50%, -50%)',
+                                    width: isActive || isTouched ? '40px' : '28px',
+                                    height: isActive || isTouched ? '40px' : '28px',
+                                    borderRadius: '50%',
+                                    background: isActive
+                                        ? '#a78bfa'
+                                        : isTouched
+                                            ? result === 'correct' ? '#10b981' : result === 'wrong' ? '#ef4444' : '#60a5fa'
+                                            : '#e0e7ff',
+                                    cursor: !isShowingPattern && result === null ? 'pointer' : 'default',
+                                    transition: 'all 200ms',
+                                    border: '4px solid #312e81',
+                                    boxShadow: (isActive || isTouched) ? '0 0 20px rgba(167, 139, 250, 0.6)' : '0 2px 8px rgba(0,0,0,0.3)',
+                                    userSelect: 'none'
+                                }}
+                            />
+                        )
+                    })}
+                </div>
                 )}
             </div>
 

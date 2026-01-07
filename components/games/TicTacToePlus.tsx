@@ -255,14 +255,14 @@ export default function TicTacToePlus({ onComplete, isActive, matchId }: TicTacT
                                             : cell === null
                                                 ? 'rgba(255, 255, 255, 0.9)'
                                                 : cell === 1
-                                                    ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
+                                                    ? 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)' // Yellow for player
                                                     : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
                                         border: 'none',
                                         borderRadius: '12px',
                                         fontSize: '2rem',
                                         fontWeight: 800,
                                         cursor: cell === null && currentTurn === 1 && !winner ? 'pointer' : 'default',
-                                        color: 'white',
+                                        color: cell === 1 ? '#000000' : 'white', // Black text for yellow cells
                                         boxShadow: cell !== null ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
                                         transition: 'all 200ms'
                                     }}

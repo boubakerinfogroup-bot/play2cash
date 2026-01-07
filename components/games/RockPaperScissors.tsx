@@ -71,14 +71,14 @@ export default function RockPaperScissors({ onComplete, isActive, matchId }: RPS
         if (result === 'win') {
             const newWins = playerWins + 1
             setPlayerWins(newWins)
-            if (newWins === 2) {
+            if (newWins === 8) { // First to 8 wins (best of 15)
                 endGame(true)
                 return
             }
         } else if (result === 'lose') {
             const newWins = opponentWins + 1
             setOpponentWins(newWins)
-            if (newWins === 2) {
+            if (newWins === 8) { // First to 8 wins (best of 15)
                 endGame(false)
                 return
             }

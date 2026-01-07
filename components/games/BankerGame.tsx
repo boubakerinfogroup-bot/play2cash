@@ -54,11 +54,26 @@ export default function BankerGame({ onComplete, isActive, matchId }: BankerGame
         const rng = randomGen.current || { next: () => Math.random() }
         const newRounds: Round[] = []
 
+        // Generate many scenarios for variety
+        const scenarios = [
+            { safe: 10, riskWin: 30, riskLose: -10, desc: "استثمار صغير" },
+            { safe: 5, riskWin: 40, riskLose: -20, desc: "فرصة عالية المخاطر" },
+            { safe: 15, riskWin: 25, riskLose: -5, desc: "توازن معتدل" },
+            { safe: 8, riskWin: 35, riskLose: -15, desc: "مشروع ريادي" },
+            { safe: 12, riskWin: 28, riskLose: -8, desc: "استثمار تكنولوجيا" },
+            { safe: 7, riskWin: 50, riskLose: -25, desc: "مضاربة سوق" },
+            { safe: 20, riskWin: 30, riskLose: -10, desc: "صفقة كبيرة" },
+            { safe: 10, riskWin: 45, riskLose: -18, desc: "عقارات" },
+            { safe: 6, riskWin: 38, riskLose: -12, desc: "تجارة إلكترونية" },
+            { safe: 14, riskWin: 32, riskLose: -14, desc: "مشروع جديد" }
+        ]
+
         for (let i = 0; i < 5; i++) {
+            const scenario = scenarios[Math.floor(rng.next() * scenarios.length)]
             newRounds.push({
-                safe: 10 + Math.floor(rng.next() * 10), // 10-20
-                riskWin: 20 + Math.floor(rng.next() * 20), // 20-40
-                riskLose: -(5 + Math.floor(rng.next() * 15)), // -5 to -20
+                safe: scenario.safe,
+                riskWin: scenario.riskWin,
+                riskLose: scenario.riskLose,
                 outcome: rng.next() > 0.5 // 50/50 chance
             })
         }
