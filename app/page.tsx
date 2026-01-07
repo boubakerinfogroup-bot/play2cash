@@ -28,14 +28,16 @@ export default function HomePage() {
       return
     }
 
-    setUser(JSON.parse(userStr))
+    const parsedUser = JSON.parse(userStr)
+    setUser(parsedUser)
     setLang(langStr as 'fr' | 'ar')
 
     // Setup auto-logout on inactivity
     const cleanup = setupInactivityLogout()
 
-    // Load games
+    // Load games and refresh balance
     loadGames()
+    refreshBalance(parsedUser.id)
 
     return cleanup
   }, [router])

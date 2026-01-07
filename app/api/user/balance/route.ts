@@ -1,40 +1,41 @@
-// Get User Balance API Route
-import { NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
+import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
-export async function GET() {
+// Get fresh user balance from database
+export async function GET(request: NextRequest) {
   try {
-    const user = await getCurrentUser()
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      )
+    const userId = request.nextUrl.searchParams.get('userId')
+
+    if (!userId) {
+      return NextResponse.json({ success: false, error: 'User ID required' }, { status: 400 })
     }
 
-    const dbUser = await prisma.user.findUnique({
-      where: { id: user.id },
-      select: { balance: true }
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        whatsapp: true,
+        email: true,
+        balance: true,
+        languagePreference: true,
+        isAdmin: true
+      }
     })
 
-    if (!dbUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      )
+    if (!user) {
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 })
     }
 
     return NextResponse.json({
       success: true,
-      balance: parseFloat(dbUser.balance.toString())
+      user: {
+        ...user,
+        balance: Number(user.balance)
+      }
     })
   } catch (error: any) {
-    console.error('Error getting balance:', error)
-    return NextResponse.json(
-      { error: 'Failed to get balance' },
-      { status: 500 }
-    )
+    console.error('Get balance error:', error)
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 })
   }
 }
-
