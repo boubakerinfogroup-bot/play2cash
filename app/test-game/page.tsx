@@ -6,8 +6,9 @@ import RocketGame from '@/components/games/RocketGame'
 import SequencePad from '@/components/games/SequencePad'
 import CoinsDrop from '@/components/games/CoinsDrop'
 import MazeMystery from '@/components/games/MazeMystery'
+import BalanceGame from '@/components/games/BalanceGame'
 
-type GameType = 'memory' | 'rocket' | 'sequence' | 'coins' | 'maze'
+type GameType = 'memory' | 'rocket' | 'sequence' | 'coins' | 'maze' | 'balance'
 
 export default function TestGamePage() {
     const [score, setScore] = useState<number | null>(null)
@@ -122,6 +123,20 @@ export default function TestGamePage() {
                         }}>
                         🧩<br />Maze
                     </button>
+                    <button onClick={() => { setSelectedGame('balance'); setScore(null); }}
+                        style={{
+                            padding: '16px',
+                            background: selectedGame === 'balance' ? '#10b981' : '#64748b',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '16px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            fontSize: '0.9rem',
+                            lineHeight: '1.4'
+                        }}>
+                        ⚖️<br />Balance
+                    </button>
                 </div>
 
                 <p style={{
@@ -166,6 +181,7 @@ export default function TestGamePage() {
             {selectedGame === 'sequence' && <SequencePad isActive={score === null} onComplete={handleComplete} />}
             {selectedGame === 'coins' && <CoinsDrop isActive={score === null} onComplete={handleComplete} />}
             {selectedGame === 'maze' && <MazeMystery isActive={score === null} onComplete={handleComplete} matchId="test-maze-123" />}
+            {selectedGame === 'balance' && <BalanceGame isActive={score === null} onComplete={handleComplete} matchId="test-balance-123" />}
         </div>
     )
 }
