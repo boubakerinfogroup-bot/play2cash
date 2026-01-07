@@ -68,6 +68,23 @@ export async function POST(
 
             // Use transaction to ensure atomic updates
             await prisma.$transaction(async (tx) => {
+                // Get current balances
+                const winner = await tx.user.findUnique({
+                    where: { id: winnerId },
+                    select: { balance: true }
+                })
+                const loser = await tx.user.findUnique({
+                    where: { id: loserId },
+                    select: { balance: true }
+                })
+
+                if (!winner || !loser) {
+                    throw new Error('User not found')
+                }
+
+                const winnerBalanceBefore = Number(winner.balance)
+                const loserBalanceBefore = Number(loser.balance)
+
                 // Update match
                 await tx.match.update({
                     where: { id: matchId },
@@ -100,14 +117,16 @@ export async function POST(
                     }
                 })
 
-                // Record transactions
+                // Record transactions with balance tracking
                 await tx.transaction.create({
                     data: {
                         userId: winnerId,
                         amount: winnerAmount,
                         type: 'MATCH_WIN',
-                        description: `Won match #${updatedMatch!.shortId}`,
-                        matchId: matchId
+                        description: `Won match`,
+                        matchId: matchId,
+                        balanceBefore: winnerBalanceBefore,
+                        balanceAfter: winnerBalanceBefore + winnerAmount
                     }
                 })
 
@@ -116,8 +135,10 @@ export async function POST(
                         userId: loserId,
                         amount: -stake,
                         type: 'MATCH_LOSS',
-                        description: `Lost match #${updatedMatch!.shortId}`,
-                        matchId: matchId
+                        description: `Lost match`,
+                        matchId: matchId,
+                        balanceBefore: loserBalanceBefore,
+                        balanceAfter: loserBalanceBefore - stake
                     }
                 })
             })
