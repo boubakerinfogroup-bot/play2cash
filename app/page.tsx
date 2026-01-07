@@ -57,13 +57,13 @@ export default function HomePage() {
   }
 
   const gameIcons: Record<string, string> = {
-    'memory': '🧠',
+    'memory': '/memory.png',
     'rocket': '🚀',
-    'sequence': '🎯',
+    'sequence': '/sequence.png',
     'rps': '✊',
-    'tictactoe': '⭕',
-    'pattern': '🔒',
-    'banker': '💰'
+    'tictactoe': '/tictactoe.png',
+    'pattern': '/patternlock.png',
+    'banker': '/banker.png'
   }
 
   if (loading) {
@@ -146,7 +146,7 @@ export default function HomePage() {
           <span>{t('profile', lang)}</span>
         </Link>
         <a href="https://wa.me/21629616525" target="_blank" rel="noopener noreferrer">
-          <span style={{ fontSize: '24px' }}>💬</span>
+          <img src="/whatsapp.png" alt="WhatsApp" width="24" height="24" />
           <span>WhatsApp</span>
         </a>
         <a href="#" onClick={(e) => { e.preventDefault(); toggleLang(); }}>
@@ -154,34 +154,6 @@ export default function HomePage() {
           <span>{lang === 'ar' ? 'Français' : 'العربية'}</span>
         </a>
       </nav>
-
-      {/* WhatsApp Contact Button */}
-      <a
-        href="https://wa.me/21629616525"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{
-          position: 'fixed',
-          bottom: '80px',
-          right: '20px',
-          width: '60px',
-          height: '60px',
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '1.8rem',
-          boxShadow: '0 10px 30px rgba(37, 211, 102, 0.5)',
-          cursor: 'pointer',
-          zIndex: 9999,
-          textDecoration: 'none',
-          border: '3px solid white'
-        }}
-        title="Contact WhatsApp"
-      >
-        💬
-      </a>
     </div>
   )
 }
