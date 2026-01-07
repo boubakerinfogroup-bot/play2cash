@@ -4,6 +4,12 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { formatCurrency } from '@/lib/utils'
 import MemoryGame from '@/components/games/MemoryGame'
+import RocketGame from '@/components/games/RocketGame'
+import SequencePad from '@/components/games/SequencePad'
+import RockPaperScissors from '@/components/games/RockPaperScissors'
+import TicTacToePlus from '@/components/games/TicTacToePlus'
+import PatternLock from '@/components/games/PatternLock'
+import BankerGame from '@/components/games/BankerGame'
 
 interface MatchData {
     id: string
@@ -243,30 +249,82 @@ export default function MatchPage({ params }: { params: { id: string } }) {
 
                     {/* Game Interface - Memory Game */}
                     {(() => {
-                        console.log('Game Debug:', { 
-                            gameSlug: match.gameSlug, 
-                            gameName: match.gameName,
-                            gameId: match.gameId 
-                        })
-                        
-                        // Check if this is memory game (case-insensitive)
-                        const isMemoryGame = 
-                            match.gameSlug?.toLowerCase().includes('memory') || 
-                            match.gameName?.toLowerCase().includes('memory') ||
-                            match.gameName?.toLowerCase().includes('mémoire')
-                        
-                        if (isMemoryGame) {
+                        const slug = match.gameSlug?.toLowerCase()
+
+                        // Memory Game
+                        if (slug === 'memory') {
                             return (
-                                <MemoryGame 
+                                <MemoryGame
                                     isActive={true}
-                                    onComplete={(score) => {
-                                        handleFinishGame(score)
-                                    }}
+                                    onComplete={(score) => handleFinishGame(score)}
                                 />
                             )
                         }
-                        
-                        // Placeholder for other games
+
+                        // Rocket Game
+                        if (slug === 'rocket') {
+                            return (
+                                <RocketGame
+                                    isActive={true}
+                                    onComplete={(score) => handleFinishGame(score)}
+                                />
+                            )
+                        }
+
+                        // Sequence Pad
+                        if (slug === 'sequence') {
+                            return (
+                                <SequencePad
+                                    isActive={true}
+                                    onComplete={(score) => handleFinishGame(score)}
+                                />
+                            )
+                        }
+
+                        // Rock Paper Scissors
+                        if (slug === 'rps') {
+                            return (
+                                <RockPaperScissors
+                                    isActive={true}
+                                    onComplete={(score) => handleFinishGame(score)}
+                                />
+                            )
+                        }
+
+                        // Tic-Tac-Toe Plus
+                        if (slug === 'tictactoe') {
+                            return (
+                                <TicTacToePlus
+                                    isActive={true}
+                                    matchId={params.id}
+                                    onComplete={(score) => handleFinishGame(score)}
+                                />
+                            )
+                        }
+
+                        // Pattern Lock
+                        if (slug === 'pattern') {
+                            return (
+                                <PatternLock
+                                    isActive={true}
+                                    matchId={params.id}
+                                    onComplete={(score) => handleFinishGame(score)}
+                                />
+                            )
+                        }
+
+                        // Banker Game
+                        if (slug === 'banker') {
+                            return (
+                                <BankerGame
+                                    isActive={true}
+                                    matchId={params.id}
+                                    onComplete={(score) => handleFinishGame(score)}
+                                />
+                            )
+                        }
+
+                        // Fallback for unknown games
                         return (
                             <div style={{
                                 background: 'rgba(255,255,255,0.05)',
@@ -275,30 +333,13 @@ export default function MatchPage({ params }: { params: { id: string } }) {
                                 textAlign: 'center',
                                 marginBottom: '20px'
                             }}>
-                                <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🎮</div>
+                                <div style={{ fontSize: '4rem', marginBottom: '20px' }}>⚠️</div>
                                 <h2 style={{ color: 'white', fontSize: '1.8rem', fontWeight: 800, marginBottom: '16px' }}>
-                                    {match.gameName}
+                                    Game Not Found
                                 </h2>
-                                <p style={{ color: '#94a3b8', marginBottom: '32px' }}>
-                                    Le jeu se joue ici...
+                                <p style={{ color: '#94a3b8', marginBottom: '16px' }}>
+                                    Game: {match.gameName} (slug: {match.gameSlug})
                                 </p>
-
-                                {/* Finish Button (simplified - real game would have actual gameplay) */}
-                                <button
-                                    onClick={() => handleFinishGame(100)}
-                                    style={{
-                                        padding: '16px 40px',
-                                        borderRadius: '12px',
-                                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                                        color: 'white',
-                                        border: 'none',
-                                        fontSize: '1.1rem',
-                                        fontWeight: 700,
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    ✓ Terminer
-                                </button>
                             </div>
                         )
                     })()}
