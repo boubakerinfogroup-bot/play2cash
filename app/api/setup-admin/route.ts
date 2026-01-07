@@ -92,7 +92,7 @@ export async function GET(request: Request) {
                     description: gameData.description,
                     descriptionAr: gameData.descriptionAr
                 },
-                create: game
+                create: gameData
             })
         }
 
