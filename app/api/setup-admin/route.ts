@@ -79,26 +79,18 @@ export async function GET(request: Request) {
                 name: 'Banker',
                 nameAr: 'المصرفي',
                 slug: 'banker',
-                description: 'Risk vs reward decisions',
-                descriptionAr: 'قرارات المخاطرة والمكافأة',
+                description: 'Risk vs reward - race to 200 points',
+                descriptionAr: 'مخاطرة مقابل مكافأة - سباق إلى 200 نقطة',
                 isActive: true
-            },
-            {
-                name: 'Tetra',
-                nameAr: 'تترا',
-                slug: 'tetra',
-                description: 'Simple tetris blocks',
-                descriptionAr: 'مكعبات تتريس بسيطة',
-                isActive: true
-            },
+            }
         ]
 
-        for (const game of games) {
+        for (const gameData of games) {
             await prisma.game.upsert({
-                where: { slug: game.slug },
+                where: { slug: gameData.slug },
                 update: {
-                    description: game.description,
-                    descriptionAr: game.descriptionAr
+                    description: gameData.description,
+                    descriptionAr: gameData.descriptionAr
                 },
                 create: game
             })

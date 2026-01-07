@@ -60,8 +60,10 @@ export default function HomePage() {
     'memory': '🧠',
     'rocket': '🚀',
     'sequence': '🎯',
-    'dollars': '💵',
-    'maze': '🧩',
+    'rps': '✊',
+    'tictactoe': '⭕',
+    'pattern': '🔒',
+    'banker': '💰'
   }
 
   if (loading) {
@@ -83,9 +85,12 @@ export default function HomePage() {
       <div className="container">
 
 
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <Link href="/lobby" className="btn" style={{ maxWidth: '300px', margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '20px', display: 'flex', gap: '12px', maxWidth: '600px', margin: '0 auto 20px' }}>
+          <Link href="/lobby" className="btn" style={{ flex: 1 }}>
             {lang === 'ar' ? '🎮 جميع الغرف الحية' : '🎮 Toutes les salles'}
+          </Link>
+          <Link href="/test-game" className="btn" style={{ flex: 1, background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' }}>
+            {lang === 'ar' ? '🎯 تدريب' : '🎯 Entraînement'}
           </Link>
         </div>
 
