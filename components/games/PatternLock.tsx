@@ -27,6 +27,7 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
     const [opponentWins, setOpponentWins] = useState(0)
     const [isGameOver, setIsGameOver] = useState(false)
     const [result, setResult] = useState<'correct' | 'wrong' | null>(null)
+    const [revealedDots, setRevealedDots] = useState<number>(0)
 
     const randomGen = useRef<SeededRandom | null>(null)
     const touchedDots = useRef<Set<number>>(new Set())
@@ -62,12 +63,26 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
         setResult(null)
         setIsDrawing(false)
         touchedDots.current.clear()
+        setRevealedDots(0)
 
-        // Show pattern
+        // Show pattern with animation
         setIsShowingPattern(true)
+
+        // Speed increases with difficulty (faster each round)
+        const dotDelay = Math.max(300 - (currentRound * 30), 150) // 300ms -> 150ms
+
+        // Reveal dots one by one
+        for (let i = 0; i < patternLength; i++) {
+            setTimeout(() => {
+                setRevealedDots(i + 1)
+            }, i * dotDelay)
+        }
+
+        // Freeze for 2 seconds after full reveal, then hide
         setTimeout(() => {
             setIsShowingPattern(false)
-        }, 2000 + (patternLength * 300))
+            setRevealedDots(0)
+        }, (patternLength * dotDelay) + 2000)
     }
 
     const handleDotTouch = (dot: number) => {
@@ -196,7 +211,7 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
                     maxWidth: '300px',
                     aspectRatio: '1'
                 }}>
-                    {/* SVG for lines */}
+                    {/* SVG for lines and arrows */}
                     <svg
                         style={{
                             position: 'absolute',
@@ -207,8 +222,21 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
                             pointerEvents: 'none'
                         }}
                     >
-                        {/* Show pattern during reveal */}
-                        {isShowingPattern && pattern.map((dot, index) => {
+                        <defs>
+                            <marker
+                                id="arrowhead"
+                                markerWidth="10"
+                                markerHeight="10"
+                                refX="9"
+                                refY="3"
+                                orient="auto"
+                            >
+                                <polygon points="0 0, 10 3, 0 6" fill="#a78bfa" />
+                            </marker>
+                        </defs>
+
+                        {/* Show pattern during reveal - only revealed dots */}
+                        {isShowingPattern && pattern.slice(0, revealedDots).map((dot, index) => {
                             if (index === 0) return null
                             const from = getDotPosition(pattern[index - 1])
                             const to = getDotPosition(dot)
@@ -222,9 +250,11 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
                                     stroke="#a78bfa"
                                     strokeWidth="10"
                                     strokeLinecap="round"
+                                    markerEnd="url(#arrowhead)"
                                 />
                             )
                         })}
+
                         {/* Show player pattern */}
                         {!isShowingPattern && playerPattern.map((dot, index) => {
                             if (index === 0) return null
@@ -248,7 +278,11 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
                     {/* Dots */}
                     {[...Array(9)].map((_, index) => {
                         const pos = getDotPosition(index)
-                        const isActive = isShowingPattern && pattern.includes(index)
+                        const patternIndex = pattern.indexOf(index)
+                        const isInPattern = patternIndex !== -1
+                        const isRevealed = isShowingPattern && patternIndex < revealedDots
+                        const isFirst = patternIndex === 0 && isRevealed
+                        const isLast = patternIndex === pattern.length - 1 && isRevealed
                         const isTouched = playerPattern.includes(index)
 
                         return (
@@ -261,18 +295,22 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
                                     left: `${pos.x}%`,
                                     top: `${pos.y}%`,
                                     transform: 'translate(-50%, -50%)',
-                                    width: isActive || isTouched ? '40px' : '28px',
-                                    height: isActive || isTouched ? '40px' : '28px',
+                                    width: (isRevealed || isTouched) ? '40px' : '28px',
+                                    height: (isRevealed || isTouched) ? '40px' : '28px',
                                     borderRadius: '50%',
-                                    background: isActive
-                                        ? '#a78bfa'
-                                        : isTouched
-                                            ? result === 'correct' ? '#10b981' : result === 'wrong' ? '#ef4444' : '#60a5fa'
-                                            : '#e0e7ff',
+                                    background: isFirst
+                                        ? '#10b981' // Green for start
+                                        : isLast
+                                            ? '#ef4444' // Red for end
+                                            : isRevealed
+                                                ? '#a78bfa' // Purple for middle
+                                                : isTouched
+                                                    ? result === 'correct' ? '#10b981' : result === 'wrong' ? '#ef4444' : '#60a5fa'
+                                                    : '#e0e7ff',
                                     cursor: !isShowingPattern && result === null ? 'pointer' : 'default',
                                     transition: 'all 200ms',
                                     border: '4px solid #312e81',
-                                    boxShadow: (isActive || isTouched) ? '0 0 20px rgba(167, 139, 250, 0.6)' : '0 2px 8px rgba(0,0,0,0.3)',
+                                    boxShadow: (isRevealed || isTouched) ? '0 0 20px rgba(167, 139, 250, 0.6)' : '0 2px 8px rgba(0,0,0,0.3)',
                                     userSelect: 'none'
                                 }}
                             />

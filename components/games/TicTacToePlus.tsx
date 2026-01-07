@@ -291,9 +291,9 @@ export default function TicTacToePlus({ onComplete, isActive, matchId }: TicTacT
                         color: winner === 1 ? '#10b981' : winner === 2 ? '#ef4444' : '#f59e0b',
                         direction: 'rtl'
                     }}>
-                        {winner === 1 && '🎉 فزت بالجولة!'}
-                        {winner === 2 && '😔 خسرت الجولة'}
-                        {winner === 'tie' && '🤝 تعادل'}
+                        {winner === 1 && 'فزت بالجولة'}
+                        {winner === 2 && 'خسرت الجولة'}
+                        {winner === 'tie' && 'تعادل'}
                     </div>
                 )}
             </div>
