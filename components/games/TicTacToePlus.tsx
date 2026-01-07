@@ -203,7 +203,7 @@ export default function TicTacToePlus({ onComplete, isActive, matchId }: TicTacT
 
             {/* Board */}
             <div style={{
-                background: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
+                background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
                 borderRadius: '20px',
                 padding: '20px',
                 border: '3px solid #cbd5e1',
@@ -211,27 +211,32 @@ export default function TicTacToePlus({ onComplete, isActive, matchId }: TicTacT
                 position: 'relative',
                 overflow: 'hidden'
             }}>
-                {/* Decorative circles */}
-                <div style={{
-                    position: 'absolute',
-                    top: '-50px',
-                    right: '-50px',
-                    width: '150px',
-                    height: '150px',
-                    borderRadius: '50%',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    pointerEvents: 'none'
-                }} />
-                <div style={{
-                    position: 'absolute',
-                    bottom: '-30px',
-                    left: '-30px',
-                    width: '100px',
-                    height: '100px',
-                    borderRadius: '50%',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    pointerEvents: 'none'
-                }} />
+                {/* Decorative circles - removed for better contrast */}
+
+                {/* Winning Line */}
+                {winner && winningLine && (
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        pointerEvents: 'none',
+                        zIndex: 10
+                    }}>
+                        <svg style={{ width: '100%', height: '100%' }}>
+                            <line
+                                x1={`${(winningLine[0][1] + 0.5) * (100 / COLS)}%`}
+                                y1={`${(winningLine[0][0] + 0.5) * (100 / ROWS)}%`}
+                                x2={`${(winningLine[3][1] + 0.5) * (100 / COLS)}%`}
+                                y2={`${(winningLine[3][0] + 0.5) * (100 / ROWS)}%`}
+                                stroke="#fbbf24"
+                                strokeWidth="8"
+                                strokeLinecap="round"
+                            />
+                        </svg>
+                    </div>
+                )}
 
                 <div style={{
                     display: 'grid',
