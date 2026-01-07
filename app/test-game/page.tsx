@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import MemoryGame from '@/components/games/MemoryGame'
 import RocketGame from '@/components/games/RocketGame'
 import SequencePad from '@/components/games/SequencePad'
@@ -9,33 +10,87 @@ import TicTacToePlus from '@/components/games/TicTacToePlus'
 import PatternLock from '@/components/games/PatternLock'
 import BankerGame from '@/components/games/BankerGame'
 
-type GameType = 'memory' | 'rocket' | 'sequence' | 'rps' | 'tictactoe' | 'pattern' | 'banker'
+type GameType = 'memory' | 'rocket' | 'sequence' | 'rps' | 'tictactoe' | 'pattern' | 'banker' | null
 
-export default function TestGamePage() {
+export default function TrainingPage() {
+    const [selectedGame, setSelectedGame] = useState<GameType>(null)
     const [score, setScore] = useState<number | null>(null)
-    const [selectedGame, setSelectedGame] = useState<GameType>('memory')
 
     const handleComplete = (finalScore: number) => {
         setScore(finalScore)
-        console.log('Game completed with score:', finalScore)
-        alert(`Game Finished! Score: ${Math.round(finalScore)}`)
+        console.log('Training completed with score:', finalScore)
     }
 
-    const handleReset = () => {
+    const handleBackToSelection = () => {
+        setSelectedGame(null)
         setScore(null)
-        window.location.reload()
     }
 
+    const games = [
+        { id: 'memory' as GameType, nameEn: 'Memory', nameAr: 'الذاكرة', icon: '🧠', descEn: 'Match pairs of cards', descAr: 'طابق أزواج البطاقات' },
+        { id: 'rocket' as GameType, nameEn: 'Rocket', nameAr: 'الصاروخ', icon: '🚀', descEn: 'Dodge falling obstacles', descAr: 'تفادى العقبات الساقطة' },
+        { id: 'sequence' as GameType, nameEn: 'Sequence Pad', nameAr: 'لوحة التسلسل', icon: '🎯', descEn: 'Remember patterns', descAr: 'تذكر الأنماط' },
+        { id: 'rps' as GameType, nameEn: 'Rock Paper Scissors', nameAr: 'حجر ورقة مقص', icon: '✊', descEn: 'Best of 15', descAr: 'أفضل من 15' },
+        { id: 'tictactoe' as GameType, nameEn: 'Tic-Tac-Toe Plus', nameAr: 'إكس أو بلس', icon: '⭕', descEn: '4x6 grid', descAr: 'شبكة 4×6' },
+        { id: 'pattern' as GameType, nameEn: 'Pattern Lock', nameAr: 'قفل النمط', icon: '🔒', descEn: 'Memorize pattern', descAr: 'احفظ النمط' },
+        { id: 'banker' as GameType, nameEn: 'Banker', nameAr: 'المصرفي', icon: '💰', descEn: 'Race to 200', descAr: 'سباق إلى 200' }
+    ]
+
+    // If game is selected, show the game
+    if (selectedGame) {
+        return (
+            <div style={{
+                minHeight: '100vh',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                padding: '20px'
+            }}>
+                {/* Back Button */}
+                <button
+                    onClick={handleBackToSelection}
+                    style={{
+                        position: 'fixed',
+                        top: '20px',
+                        left: '20px',
+                        padding: '12px 24px',
+                        background: 'rgba(255,255,255,0.2)',
+                        backdropFilter: 'blur(10px)',
+                        color: 'white',
+                        border: '2px solid rgba(255,255,255,0.3)',
+                        borderRadius: '12px',
+                        cursor: 'pointer',
+                        fontWeight: 700,
+                        fontSize: '1rem',
+                        zIndex: 1000
+                    }}
+                >
+                    ← العودة | Retour
+                </button>
+
+                {/* Game Container */}
+                <div style={{ maxWidth: '400px', margin: '0 auto', paddingTop: '60px' }}>
+                    {selectedGame === 'memory' && <MemoryGame onComplete={handleComplete} isActive={true} />}
+                    {selectedGame === 'rocket' && <RocketGame onComplete={handleComplete} isActive={true} />}
+                    {selectedGame === 'sequence' && <SequencePad onComplete={handleComplete} isActive={true} />}
+                    {selectedGame === 'rps' && <RockPaperScissors onComplete={handleComplete} isActive={true} />}
+                    {selectedGame === 'tictactoe' && <TicTacToePlus onComplete={handleComplete} isActive={true} matchId="training" />}
+                    {selectedGame === 'pattern' && <PatternLock onComplete={handleComplete} isActive={true} matchId="training" />}
+                    {selectedGame === 'banker' && <BankerGame onComplete={handleComplete} isActive={true} matchId="training" />}
+                </div>
+            </div>
+        )
+    }
+
+    // Game selection screen (looks like main page)
     return (
         <div style={{
             minHeight: '100vh',
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             padding: '20px'
         }}>
-            {/* Training Header */}
+            {/* Header */}
             <div style={{
                 textAlign: 'center',
-                marginBottom: '30px',
+                marginBottom: '40px',
                 padding: '20px'
             }}>
                 <h1 style={{
@@ -44,184 +99,133 @@ export default function TestGamePage() {
                     marginBottom: '10px',
                     textShadow: '0 2px 10px rgba(0,0,0,0.3)'
                 }}>
-                    🎯 وضع التدريب | Mode Entraînement
+                    🎯 وضع التدريب
                 </h1>
                 <p style={{
                     color: 'rgba(255,255,255,0.9)',
-                    fontSize: '1.1rem',
-                    maxWidth: '600px',
-                    margin: '0 auto'
+                    fontSize: '1.2rem',
+                    marginBottom: '5px'
                 }}>
-                    تدرّب على جميع الألعاب بدون مخاطر | Entraînez-vous à tous les jeux sans risque
+                    Mode Entraînement
                 </p>
-            </div>
-
-            {/* Game Selection */}
-            <div style={{
-                maxWidth: '400px',
-                margin: '0 auto 20px',
-                textAlign: 'center'
-            }}>
-                <h1 style={{
-                    color: 'white',
-                    fontSize: '1.5rem',
-                    fontWeight: 800,
-                    marginBottom: '10px'
-                }}>
-                    🎮 Game Testing Mode
-                </h1>
-
-                {/* Game Selector - 7 Games */}
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: '12px',
-                    marginBottom: '20px'
-                }}>
-                    <button onClick={() => { setSelectedGame('memory'); setScore(null); }}
-                        style={{
-                            padding: '16px',
-                            background: selectedGame === 'memory' ? '#10b981' : '#64748b',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '16px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4'
-                        }}>
-                        🧠<br />Memory
-                    </button>
-                    <button onClick={() => { setSelectedGame('rocket'); setScore(null); }}
-                        style={{
-                            padding: '16px',
-                            background: selectedGame === 'rocket' ? '#10b981' : '#64748b',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '16px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4'
-                        }}>
-                        🚀<br />Rocket
-                    </button>
-                    <button onClick={() => { setSelectedGame('sequence'); setScore(null); }}
-                        style={{
-                            padding: '16px',
-                            background: selectedGame === 'sequence' ? '#10b981' : '#64748b',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '16px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4'
-                        }}>
-                        🎯<br />Sequence
-                    </button>
-                    <button onClick={() => { setSelectedGame('rps'); setScore(null); }}
-                        style={{
-                            padding: '16px',
-                            background: selectedGame === 'rps' ? '#10b981' : '#64748b',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '16px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4'
-                        }}>
-                        ✊<br />RPS
-                    </button>
-                    <button onClick={() => { setSelectedGame('tictactoe'); setScore(null); }}
-                        style={{
-                            padding: '16px',
-                            background: selectedGame === 'tictactoe' ? '#10b981' : '#64748b',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '16px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4'
-                        }}>
-                        ⭕<br />TicTac
-                    </button>
-                    <button onClick={() => { setSelectedGame('pattern'); setScore(null); }}
-                        style={{
-                            padding: '16px',
-                            background: selectedGame === 'pattern' ? '#10b981' : '#64748b',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '16px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4'
-                        }}>
-                        🔒<br />Pattern
-                    </button>
-                    <button onClick={() => { setSelectedGame('banker'); setScore(null); }}
-                        style={{
-                            padding: '16px',
-                            background: selectedGame === 'banker' ? '#10b981' : '#64748b',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '16px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4'
-                        }}>
-                        💰<br />Banker
-                    </button>
-                </div>
-
                 <p style={{
-                    color: '#94a3b8',
-                    fontSize: '0.9rem',
-                    marginBottom: '10px'
+                    color: 'rgba(255,255,255,0.8)',
+                    fontSize: '1rem'
                 }}>
-                    Development Only - Test games here
+                    تدرّب على جميع الألعاب بدون مخاطر
                 </p>
-                {score !== null && (
-                    <div style={{
-                        background: '#10b981',
-                        color: 'white',
-                        padding: '12px',
-                        borderRadius: '12px',
-                        marginBottom: '10px',
-                        fontWeight: 700
-                    }}>
-                        ✓ Completed! Score: {Math.round(score)}
-                    </div>
-                )}
-                <button
-                    onClick={handleReset}
-                    style={{
-                        padding: '10px 20px',
-                        background: '#3b82f6',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '8px',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        marginBottom: '20px'
-                    }}
-                >
-                    🔄 Reset Game
-                </button>
             </div>
 
-            {/* Game Rendering - 8 Games */}
-            {selectedGame === 'memory' && <MemoryGame isActive={score === null} onComplete={handleComplete} />}
-            {selectedGame === 'rocket' && <RocketGame isActive={score === null} onComplete={handleComplete} />}
-            {selectedGame === 'sequence' && <SequencePad isActive={score === null} onComplete={handleComplete} />}
-            {selectedGame === 'rps' && <RockPaperScissors isActive={score === null} onComplete={handleComplete} matchId="test-rps-123" />}
-            {selectedGame === 'tictactoe' && <TicTacToePlus isActive={score === null} onComplete={handleComplete} matchId="test-ttt-123" />}
-            {selectedGame === 'pattern' && <PatternLock isActive={score === null} onComplete={handleComplete} matchId="test-pattern-123" />}
-            {selectedGame === 'banker' && <BankerGame isActive={score === null} onComplete={handleComplete} matchId="test-banker-123" />}
+            {/* Back to Home */}
+            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                <Link href="/" style={{
+                    display: 'inline-block',
+                    padding: '12px 24px',
+                    background: 'rgba(255,255,255,0.2)',
+                    backdropFilter: 'blur(10px)',
+                    color: 'white',
+                    border: '2px solid rgba(255,255,255,0.3)',
+                    borderRadius: '12px',
+                    textDecoration: 'none',
+                    fontWeight: 700
+                }}>
+                    ← العودة للرئيسية | Retour à l'accueil
+                </Link>
+            </div>
+
+            {/* Game Cards Grid */}
+            <div style={{
+                maxWidth: '1200px',
+                margin: '0 auto',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '24px',
+                padding: '0 20px'
+            }}>
+                {games.map((game, index) => (
+                    <div
+                        key={game.id}
+                        onClick={() => setSelectedGame(game.id)}
+                        style={{
+                            background: 'rgba(255,255,255,0.15)',
+                            backdropFilter: 'blur(10px)',
+                            borderRadius: '20px',
+                            padding: '32px 24px',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            border: '2px solid rgba(255,255,255,0.2)',
+                            textAlign: 'center',
+                            boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+                            animation: `slideUp 0.5s ease ${index * 100}ms both`
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-8px)'
+                            e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.2)'
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)'
+                            e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.1)'
+                        }}
+                    >
+                        {/* Icon */}
+                        <div style={{ fontSize: '80px', marginBottom: '16px' }}>
+                            {game.icon}
+                        </div>
+
+                        {/* Name */}
+                        <h3 style={{
+                            color: 'white',
+                            fontSize: '1.5rem',
+                            fontWeight: 800,
+                            marginBottom: '8px'
+                        }}>
+                            {game.nameAr}
+                        </h3>
+                        <h4 style={{
+                            color: 'rgba(255,255,255,0.8)',
+                            fontSize: '1.1rem',
+                            marginBottom: '12px'
+                        }}>
+                            {game.nameEn}
+                        </h4>
+
+                        {/* Description */}
+                        <p style={{
+                            color: 'rgba(255,255,255,0.7)',
+                            fontSize: '0.95rem',
+                            lineHeight: '1.4'
+                        }}>
+                            {game.descAr}
+                        </p>
+
+                        {/* Play Button */}
+                        <div style={{
+                            marginTop: '20px',
+                            padding: '12px 24px',
+                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            color: 'white',
+                            borderRadius: '12px',
+                            fontWeight: 700,
+                            fontSize: '1rem'
+                        }}>
+                            تدرّب الآن | S'entraîner
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <style jsx>{`
+                @keyframes slideUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            `}</style>
         </div>
     )
 }
