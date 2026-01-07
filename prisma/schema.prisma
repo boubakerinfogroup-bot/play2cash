@@ -148,6 +148,8 @@ enum TransactionType {
   WIN
   REFUND
   FEE
+  MATCH_WIN
+  MATCH_LOSS
 
   @@map("transaction_type")
 }
