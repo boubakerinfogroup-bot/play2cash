@@ -46,7 +46,7 @@ export default function MatchPage({ params }: { params: { id: string } }) {
 
     useEffect(() => {
         loadMatch()
-        const pollInterval = setInterval(loadMatch, 2000)
+        const pollInterval = setInterval(loadMatch, 500) // Poll every 500ms for real-time sync
         return () => clearInterval(pollInterval)
     }, [params.id])
 
@@ -85,13 +85,18 @@ export default function MatchPage({ params }: { params: { id: string } }) {
                 } else if (data.match.status === 'ACTIVE') {
                     setPhase('playing')
                 } else if (data.match.status === 'COMPLETED') {
-                    setPhase('results')
+                    // Match completed - redirect to results
+                    window.location.href = `/match/${params.id}/result`
+                    return
                 }
 
-                // Get current user ID from players
-                if (!currentUserId && data.match.isPlayer) {
-                    // This is a simplification - in real app, get from session
-                    setCurrentUserId(data.match.players[0].userId)
+                // Get current user ID from localStorage
+                if (!currentUserId) {
+                    const userStr = localStorage.getItem('user')
+                    if (userStr) {
+                        const user = JSON.parse(userStr)
+                        setCurrentUserId(user.id)
+                    }
                 }
             }
         } catch (err: any) {
@@ -113,23 +118,25 @@ export default function MatchPage({ params }: { params: { id: string } }) {
     }
 
     const handleFinishGame = async (score: number = 100) => {
-        // Save game result with actual score from the game
+        if (!currentUserId) return
+
         try {
-            const response = await fetch(`/api/matches/${params.id}/save-result`, {
+            const response = await fetch(`/api/matches/${params.id}/finish`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    score,
-                    gameData: { status: 'completed', time: Date.now(), finalScore: score }
+                    userId: currentUserId,
+                    score
                 })
             })
 
             const data = await response.json()
             if (data.success) {
-                // Match will update to COMPLETED via polling
+                // If match completed, redirect will happen via polling
+                // Otherwise wait for opponent to finish
             }
         } catch (err: any) {
-            console.error('Save result error:', err)
+            console.error('Finish game error:', err)
         }
     }
 
