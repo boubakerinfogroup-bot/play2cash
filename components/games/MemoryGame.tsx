@@ -128,13 +128,8 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
                 setFlippedCards([])
                 setIsChecking(false)
             } else {
-                // No match - quick flip back for mobile
+                // No match - just flip back quickly (no highlight)
                 setTimeout(() => {
-                    setCards(cards.map(card =>
-                        newFlippedCards.includes(card.id)
-                            ? { ...card, isFlipped: false }
-                            : card
-                    ))
                     setFlippedCards([])
                     setIsChecking(false)
                 }, 600)

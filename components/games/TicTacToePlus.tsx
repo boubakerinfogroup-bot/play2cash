@@ -203,17 +203,43 @@ export default function TicTacToePlus({ onComplete, isActive, matchId }: TicTacT
 
             {/* Board */}
             <div style={{
-                background: 'linear-gradient(to bottom, #dbeafe 0%, #e0e7ff 100%)',
+                background: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
                 borderRadius: '20px',
                 padding: '20px',
                 border: '3px solid #cbd5e1',
-                marginBottom: '20px'
+                marginBottom: '20px',
+                position: 'relative',
+                overflow: 'hidden'
             }}>
+                {/* Decorative circles */}
+                <div style={{
+                    position: 'absolute',
+                    top: '-50px',
+                    right: '-50px',
+                    width: '150px',
+                    height: '150px',
+                    borderRadius: '50%',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    pointerEvents: 'none'
+                }} />
+                <div style={{
+                    position: 'absolute',
+                    bottom: '-30px',
+                    left: '-30px',
+                    width: '100px',
+                    height: '100px',
+                    borderRadius: '50%',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    pointerEvents: 'none'
+                }} />
+
                 <div style={{
                     display: 'grid',
                     gridTemplateRows: `repeat(${ROWS}, 1fr)`,
                     gap: '8px',
-                    aspectRatio: `${COLS}/${ROWS}`
+                    aspectRatio: `${COLS}/${ROWS}`,
+                    position: 'relative',
+                    zIndex: 1
                 }}>
                     {board.map((row, rowIndex) => (
                         <div key={rowIndex} style={{ display: 'grid', gridTemplateColumns: `repeat(${COLS}, 1fr)`, gap: '8px' }}>
@@ -227,7 +253,7 @@ export default function TicTacToePlus({ onComplete, isActive, matchId }: TicTacT
                                         background: isWinningCell(rowIndex, colIndex)
                                             ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
                                             : cell === null
-                                                ? '#f1f5f9'
+                                                ? 'rgba(255, 255, 255, 0.9)'
                                                 : cell === 1
                                                     ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
                                                     : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
@@ -237,7 +263,7 @@ export default function TicTacToePlus({ onComplete, isActive, matchId }: TicTacT
                                         fontWeight: 800,
                                         cursor: cell === null && currentTurn === 1 && !winner ? 'pointer' : 'default',
                                         color: 'white',
-                                        boxShadow: cell !== null ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
+                                        boxShadow: cell !== null ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
                                         transition: 'all 200ms'
                                     }}
                                 >
@@ -247,7 +273,6 @@ export default function TicTacToePlus({ onComplete, isActive, matchId }: TicTacT
                         </div>
                     ))}
                 </div>
-
                 {/* Round Result */}
                 {winner && !isGameOver && (
                     <div style={{

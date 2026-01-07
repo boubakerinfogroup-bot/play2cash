@@ -166,10 +166,10 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
 
             {/* Pattern Grid */}
             <div style={{
-                background: 'linear-gradient(to bottom, #f3e8ff 0%, #e0e7ff 100%)',
+                background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)',
                 borderRadius: '20px',
                 padding: '20px',
-                border: '3px solid #cbd5e1',
+                border: '3px solid #6366f1',
                 marginBottom: '20px',
                 minHeight: '400px',
                 display: 'flex',
@@ -182,7 +182,7 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
                         direction: 'rtl',
                         fontSize: '1.2rem',
                         fontWeight: 700,
-                        color: '#7c3aed'
+                        color: '#a5b4fc'
                     }}>
                         احفظ النمط...
                     </div>
@@ -216,8 +216,8 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
                                         y1={`${from.y}%`}
                                         x2={`${to.x}%`}
                                         y2={`${to.y}%`}
-                                        stroke="#7c3aed"
-                                        strokeWidth="8"
+                                        stroke="#a78bfa"
+                                        strokeWidth="10"
                                         strokeLinecap="round"
                                     />
                                 )
@@ -234,8 +234,8 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
                                         y1={`${from.y}%`}
                                         x2={`${to.x}%`}
                                         y2={`${to.y}%`}
-                                        stroke={result === 'correct' ? '#10b981' : result === 'wrong' ? '#ef4444' : '#3b82f6'}
-                                        strokeWidth="8"
+                                        stroke={result === 'correct' ? '#10b981' : result === 'wrong' ? '#ef4444' : '#60a5fa'}
+                                        strokeWidth="10"
                                         strokeLinecap="round"
                                     />
                                 )
@@ -258,18 +258,18 @@ export default function PatternLock({ onComplete, isActive, matchId }: PatternLo
                                         left: `${pos.x}%`,
                                         top: `${pos.y}%`,
                                         transform: 'translate(-50%, -50%)',
-                                        width: isActive || isTouched ? '32px' : '24px',
-                                        height: isActive || isTouched ? '32px' : '24px',
+                                        width: isActive || isTouched ? '40px' : '28px',
+                                        height: isActive || isTouched ? '40px' : '28px',
                                         borderRadius: '50%',
                                         background: isActive
-                                            ? '#7c3aed'
+                                            ? '#a78bfa'
                                             : isTouched
-                                                ? result === 'correct' ? '#10b981' : result === 'wrong' ? '#ef4444' : '#3b82f6'
-                                                : '#cbd5e1',
+                                                ? result === 'correct' ? '#10b981' : result === 'wrong' ? '#ef4444' : '#60a5fa'
+                                                : '#e0e7ff',
                                         cursor: !isShowingPattern && result === null ? 'pointer' : 'default',
                                         transition: 'all 200ms',
-                                        border: '3px solid white',
-                                        boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                                        border: '4px solid #312e81',
+                                        boxShadow: (isActive || isTouched) ? '0 0 20px rgba(167, 139, 250, 0.6)' : '0 2px 8px rgba(0,0,0,0.3)',
                                         userSelect: 'none'
                                     }}
                                 />

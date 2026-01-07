@@ -52,8 +52,9 @@ export default function SequencePad({ onComplete, isActive, matchId }: SequenceP
     const startNewRound = () => {
         const rng = randomGen.current || { next: () => Math.random() }
         const newSequence: number[] = []
-        // Generate a sequence of length 'currentLevel'
-        for (let i = 0; i < currentLevel; i++) {
+        // Increase difficulty: 3, 5, 7, 9, 11... (+2 each level)
+        const sequenceLength = 3 + ((currentLevel - 1) * 2)
+        for (let i = 0; i < sequenceLength; i++) {
             newSequence.push(Math.floor(rng.next() * 9))
         }
 
