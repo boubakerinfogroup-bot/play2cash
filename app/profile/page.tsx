@@ -75,13 +75,7 @@ export default function ProfilePage() {
         setMatches(matchesData.matches)
       }
 
-      // Refresh balance
-      const balanceResponse = await fetch('/api/user/balance')
-      const balanceData = await balanceResponse.json()
-      if (balanceData.balance !== undefined && user) {
-        setUser({ ...user, balance: balanceData.balance })
-        localStorage.setItem('user', JSON.stringify({ ...user, balance: balanceData.balance }))
-      }
+      // Note: Balance is refreshed separately via refreshBalance() function
     } catch (error) {
       console.error('Error loading data:', error)
     } finally {

@@ -1,13 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { getCurrentUser } from '@/lib/auth'
 
 // Get fresh user balance from database
+// Supports both authenticated session and userId parameter
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.nextUrl.searchParams.get('userId')
+    // First, try to get the authenticated user from session
+    const sessionUser = await getCurrentUser()
+
+    // If no session user, check for userId parameter
+    const userIdParam = request.nextUrl.searchParams.get('userId')
+
+    // Determine which user ID to use
+    const userId = sessionUser?.id || userIdParam
 
     if (!userId) {
-      return NextResponse.json({ success: false, error: 'User ID required' }, { status: 400 })
+      return NextResponse.json({
+        success: false,
+        error: 'Authentication required or User ID parameter needed'
+      }, { status: 400 })
     }
 
     const user = await prisma.user.findUnique({
@@ -29,6 +41,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
+      balance: Number(user.balance),
       user: {
         ...user,
         balance: Number(user.balance)

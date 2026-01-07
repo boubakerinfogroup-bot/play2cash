@@ -511,29 +511,41 @@ export async function startMatchAfterCountdown(
     })
 
     if (!match) {
+      console.error('[startMatchAfterCountdown] Match not found:', matchId)
       return { success: false, error: 'Match non trouvé' }
     }
 
+    console.log('[startMatchAfterCountdown] Current match status:', match.status)
+
     if (match.status !== 'COUNTDOWN') {
-      return { success: false, error: 'Match n\'est pas en compte à rebours' }
+      console.error('[startMatchAfterCountdown] Invalid status. Expected COUNTDOWN, got:', match.status)
+      return { success: false, error: `Match n'est pas en compte à rebours (status: ${match.status})` }
     }
 
-    // Generate game seed for deterministic gameplay
-    const gameSeed = crypto.randomUUID()
+    // Validate that gameSeed was set during acceptJoinRequest
+    if (!match.gameSeed) {
+      console.error('[startMatchAfterCountdown] No gameSeed found for match in COUNTDOWN status:', matchId)
+      return { success: false, error: 'État de match invalide - pas de seed' }
+    }
 
-    // Update to ACTIVE with game seed
+    console.log('[startMatchAfterCountdown] Using existing gameSeed, transitioning to ACTIVE')
+
+    // Update to ACTIVE - PRESERVE the existing gameSeed!
+    // The seed was already generated in acceptJoinRequest for deterministic gameplay
     await prisma.match.update({
       where: { id: matchId },
       data: {
         status: 'ACTIVE',
-        gameSeed: gameSeed,
+        // DO NOT regenerate gameSeed - it was already set in acceptJoinRequest
+        // Preserving the seed ensures both players get the same game state
         startedAt: new Date()
       }
     })
 
+    console.log('[startMatchAfterCountdown] Match started successfully:', matchId)
     return { success: true }
   } catch (error: any) {
-    console.error('Start match error:', error)
+    console.error('[startMatchAfterCountdown] Error:', error)
     return {
       success: false,
       error: error?.message || 'Erreur lors du démarrage'
