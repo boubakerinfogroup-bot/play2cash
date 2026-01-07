@@ -25,7 +25,12 @@ export async function GET(request: Request) {
             },
         })
 
-        // 2. Seed Games - FINAL 7 GAMES ONLY
+        // 2. Clear ALL data first (to avoid foreign key constraints)
+        await prisma.joinRequest.deleteMany({})
+        await prisma.match.deleteMany({})
+        await prisma.game.deleteMany({})
+
+        // 3. Seed Games - FINAL 7 GAMES ONLY
         const games = [
             {
                 name: 'Memory',
@@ -85,10 +90,7 @@ export async function GET(request: Request) {
             }
         ]
 
-        // Delete ALL existing games first
-        await prisma.game.deleteMany({})
-
-        // Then create only the 7 new games
+        // Create the 7 new games
         for (const gameData of games) {
             await prisma.game.create({
                 data: gameData
@@ -97,7 +99,7 @@ export async function GET(request: Request) {
 
         return NextResponse.json({
             success: true,
-            message: 'Admin recovered (admin/admin) and 7 Games seeded.',
+            message: 'Database cleared. Admin recovered (admin/admin) and 7 Games seeded.',
             adminId: admin.id
         })
 
