@@ -25,7 +25,7 @@ export async function GET(request: Request) {
             },
         })
 
-        // 2. Seed Games - NEW 8-GAME LINEUP
+        // 2. Seed Games - FINAL 7 GAMES ONLY
         const games = [
             {
                 name: 'Memory',
@@ -85,20 +85,19 @@ export async function GET(request: Request) {
             }
         ]
 
+        // Delete ALL existing games first
+        await prisma.game.deleteMany({})
+
+        // Then create only the 7 new games
         for (const gameData of games) {
-            await prisma.game.upsert({
-                where: { slug: gameData.slug },
-                update: {
-                    description: gameData.description,
-                    descriptionAr: gameData.descriptionAr
-                },
-                create: gameData
+            await prisma.game.create({
+                data: gameData
             })
         }
 
         return NextResponse.json({
             success: true,
-            message: 'Admin recovered (admin/admin) and Games seeded.',
+            message: 'Admin recovered (admin/admin) and 7 Games seeded.',
             adminId: admin.id
         })
 
