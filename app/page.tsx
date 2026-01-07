@@ -61,6 +61,7 @@ export default function HomePage() {
     'rocket': '🚀',
     'sequence': '🎯',
     'dollars': '💵',
+    'maze': '🧩',
   }
 
   if (loading) {

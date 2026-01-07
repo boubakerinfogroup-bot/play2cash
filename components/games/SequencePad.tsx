@@ -153,7 +153,7 @@ export default function SequencePad({ onComplete, isActive, matchId }: SequenceP
                             style={{
                                 aspectRatio: '1',
                                 border: 'none',
-                                borderRadius: '20px',
+                                borderRadius: '0',
                                 background: isLit ? COLORS[index] : isClicked ? `${COLORS[index]}80` : '#e2e8f0',
                                 cursor: isPlayerTurn && !isPlaying ? 'pointer' : 'default',
                                 transform: isLit ? 'scale(1.05)' : 'scale(1)',

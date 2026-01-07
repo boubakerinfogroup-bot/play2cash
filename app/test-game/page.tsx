@@ -5,8 +5,9 @@ import MemoryGame from '@/components/games/MemoryGame'
 import RocketGame from '@/components/games/RocketGame'
 import SequencePad from '@/components/games/SequencePad'
 import CoinsDrop from '@/components/games/CoinsDrop'
+import MazeMystery from '@/components/games/MazeMystery'
 
-type GameType = 'memory' | 'rocket' | 'sequence' | 'coins'
+type GameType = 'memory' | 'rocket' | 'sequence' | 'coins' | 'maze'
 
 export default function TestGamePage() {
     const [score, setScore] = useState<number | null>(null)
@@ -44,10 +45,10 @@ export default function TestGamePage() {
                     🎮 Game Testing Mode
                 </h1>
 
-                {/* Game Selector - 4 Games in 2x2 Grid */}
+                {/* Game Selector - 5 Games in 3x2 Grid */}
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
                     gap: '12px',
                     marginBottom: '20px'
                 }}>
@@ -106,6 +107,20 @@ export default function TestGamePage() {
                             lineHeight: '1.4'
                         }}>
                         💵<br />Dollars
+                    </button>
+                    <button onClick={() => { setSelectedGame('maze'); setScore(null); }}
+                        style={{
+                            padding: '16px',
+                            background: selectedGame === 'maze' ? '#10b981' : '#64748b',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '16px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            fontSize: '0.9rem',
+                            lineHeight: '1.4'
+                        }}>
+                        🧩<br />Maze
                     </button>
                 </div>
 

@@ -105,9 +105,15 @@ export default function CoinsDrop({ onComplete, isActive, matchId }: CoinsDropPr
         event.preventDefault()
         event.stopPropagation()
 
-        // Remove coin and add to score
-        setCoins(prev => prev.filter(c => c.id !== coinId))
-        setScore(prev => prev + 1)
+        // Remove coin and add to score atomically to support multi-touch
+        setCoins(prev => {
+            const exists = prev.some(c => c.id === coinId)
+            if (exists) {
+                setScore(s => s + 1)
+                return prev.filter(c => c.id !== coinId)
+            }
+            return prev
+        })
     }
 
     const handleGameOver = () => {
