@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -41,10 +42,6 @@ export default function LoginPage() {
     }
   }
 
-  const toggleLang = () => {
-    setLang(prev => prev === 'fr' ? 'ar' : 'fr')
-  }
-
   return (
     <div style={{
       minHeight: '100vh',
@@ -53,34 +50,108 @@ export default function LoginPage() {
       justifyContent: 'center',
       padding: '20px',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
     }}>
-      {/* Decorative localized Background Elements for Login only */}
+      {/* Animated Background Elements */}
       <div style={{
         position: 'absolute',
-        top: '20%',
-        left: '10%',
-        width: '300px',
-        height: '300px',
-        background: 'radial-gradient(circle, rgba(236,72,153,0.4) 0%, rgba(0,0,0,0) 70%)',
-        filter: 'blur(40px)',
-        zIndex: -1
+        top: '10%',
+        left: '5%',
+        width: '400px',
+        height: '400px',
+        background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0) 70%)',
+        filter: 'blur(60px)',
+        animation: 'float 6s ease-in-out infinite',
+        zIndex: 0
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: '10%',
+        right: '5%',
+        width: '350px',
+        height: '350px',
+        background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0) 70%)',
+        filter: 'blur(50px)',
+        animation: 'float 8s ease-in-out infinite reverse',
+        zIndex: 0
       }} />
 
       <div className="glass-card" style={{
         maxWidth: '480px',
         width: '100%',
         padding: '48px 32px',
-        textAlign: 'center'
+        textAlign: 'center',
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(20px)',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+        position: 'relative',
+        zIndex: 1
       }}>
-        <h1 className="gradient-text" style={{ fontSize: '3.5rem', marginBottom: '8px', lineHeight: 1.1 }}>
-          Play2Cash
-        </h1>
-        <p style={{ color: '#64748b', marginBottom: '40px', fontSize: '1.1rem' }}>
-          {lang === 'ar' ? 'الجيل القادم من الألعاب المهارية' : 'Next Gen Skill Gaming'}
-        </p>
+        {/* Logo */}
+        <div style={{ marginBottom: '32px' }}>
+          <img
+            src="/logo.svg"
+            alt="Play2Cash"
+            style={{
+              width: '180px',
+              height: 'auto',
+              margin: '0 auto',
+              display: 'block',
+              filter: 'drop-shadow(0 4px 12px rgba(102, 126, 234, 0.4))'
+            }}
+          />
+        </div>
 
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '24px' }}>
+        {/* Language Flags */}
+        <div style={{
+          display: 'flex',
+          gap: '16px',
+          justifyContent: 'center',
+          marginBottom: '40px'
+        }}>
+          <button
+            onClick={() => setLang('fr')}
+            style={{
+              background: lang === 'fr' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'rgba(0,0,0,0.05)',
+              border: 'none',
+              padding: '12px 20px',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: lang === 'fr' ? '0 4px 12px rgba(102, 126, 234, 0.4)' : 'none',
+              transform: lang === 'fr' ? 'scale(1.05)' : 'scale(1)'
+            }}
+          >
+            <img src="/french.png" alt="Français" width="32" height="24" style={{ borderRadius: '4px' }} />
+          </button>
+          <button
+            onClick={() => setLang('ar')}
+            style={{
+              background: lang === 'ar' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'rgba(0,0,0,0.05)',
+              border: 'none',
+              padding: '12px 20px',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: lang === 'ar' ? '0 4px 12px rgba(102, 126, 234, 0.4)' : 'none',
+              transform: lang === 'ar' ? 'scale(1.05)' : 'scale(1)'
+            }}
+          >
+            <img src="/arabic.png" alt="العربية" width="32" height="24" style={{ borderRadius: '4px' }} />
+          </button>
+        </div>
+
+        {/* Login Title */}
+        <h2 style={{
+          fontSize: '1.8rem',
+          fontWeight: 700,
+          marginBottom: '24px',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}>
           {lang === 'ar' ? 'تسجيل الدخول' : 'Connexion'}
         </h2>
 
@@ -91,7 +162,8 @@ export default function LoginPage() {
             padding: '12px',
             borderRadius: '12px',
             marginBottom: '20px',
-            fontSize: '0.9rem'
+            fontSize: '0.9rem',
+            border: '1px solid rgba(239, 68, 68, 0.2)'
           }}>
             {error}
           </div>
@@ -99,7 +171,13 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div style={{ textAlign: 'left' }}>
-            <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '8px', color: '#475569' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              marginBottom: '8px',
+              color: '#475569'
+            }}>
               {lang === 'ar' ? 'الاسم' : 'Nom'}
             </label>
             <input
@@ -109,11 +187,26 @@ export default function LoginPage() {
               onChange={(e) => setName(e.target.value)}
               required
               placeholder="John Doe"
+              style={{
+                width: '100%',
+                padding: '14px 16px',
+                borderRadius: '12px',
+                border: '2px solid rgba(0,0,0,0.1)',
+                fontSize: '1rem',
+                transition: 'all 0.3s ease',
+                outline: 'none'
+              }}
             />
           </div>
 
           <div style={{ textAlign: 'left' }}>
-            <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '8px', color: '#475569' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              marginBottom: '8px',
+              color: '#475569'
+            }}>
               WhatsApp
             </label>
             <input
@@ -123,11 +216,26 @@ export default function LoginPage() {
               onChange={(e) => setWhatsapp(e.target.value)}
               required
               placeholder="+216 00 000 000"
+              style={{
+                width: '100%',
+                padding: '14px 16px',
+                borderRadius: '12px',
+                border: '2px solid rgba(0,0,0,0.1)',
+                fontSize: '1rem',
+                transition: 'all 0.3s ease',
+                outline: 'none'
+              }}
             />
           </div>
 
           <div style={{ textAlign: 'left' }}>
-            <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, marginBottom: '8px', color: '#475569' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              marginBottom: '8px',
+              color: '#475569'
+            }}>
               Email
             </label>
             <input
@@ -137,34 +245,44 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="hello@example.com"
+              style={{
+                width: '100%',
+                padding: '14px 16px',
+                borderRadius: '12px',
+                border: '2px solid rgba(0,0,0,0.1)',
+                fontSize: '1rem',
+                transition: 'all 0.3s ease',
+                outline: 'none'
+              }}
             />
           </div>
 
-          <button type="submit" className="btn" disabled={loading} style={{ marginTop: '10px' }}>
+          <button
+            type="submit"
+            className="btn"
+            disabled={loading}
+            style={{
+              marginTop: '10px',
+              padding: '16px',
+              fontSize: '1.1rem',
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
+              transform: loading ? 'scale(0.98)' : 'scale(1)',
+              transition: 'all 0.2s ease'
+            }}
+          >
             {loading ? '...' : (lang === 'ar' ? 'ابدأ اللعب 🚀' : 'Commencer à jouer 🚀')}
           </button>
         </form>
-
-        <button
-          onClick={toggleLang}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#94a3b8',
-            marginTop: '32px',
-            cursor: 'pointer',
-            fontSize: '0.9rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            margin: '32px auto 0'
-          }}
-        >
-          <span style={{ fontSize: '1.2rem' }}>🌐</span>
-          {lang === 'ar' ? 'Switch to French' : 'Switch to Arabic'}
-        </button>
       </div>
+
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) translateX(0px); }
+          50% { transform: translateY(-20px) translateX(10px); }
+        }
+      `}</style>
     </div>
   )
 }

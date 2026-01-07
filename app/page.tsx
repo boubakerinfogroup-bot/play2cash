@@ -60,7 +60,7 @@ export default function HomePage() {
     'memory': '/memory.png',
     'rocket': '🚀',
     'sequence': '/sequence.png',
-    'rps': '✊',
+    'rps': '/rock-paper-scissors.png',
     'tictactoe': '/tictactoe.png',
     'pattern': '/patternlock.png',
     'banker': '/banker.png'
