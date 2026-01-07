@@ -14,12 +14,38 @@ interface MemoryGameProps {
     isActive: boolean
 }
 
-// 20 unique emojis for maximum difficulty (40 cards total)
-const EMOJIS = [
-    '🎮', '🎯', '🎲', '🎪', '🎨', '🎭', '🎬', '🎤',
-    '🎧', '🎼', '🎹', '🎺', '🎸', '🎻', '🪕', '🥁',
-    '🎳', '🎾', '⚽', '🏀'
+// MASSIVE EMOJI POOL - 100+ unique emojis for infinite variations!
+const EMOJI_POOL = [
+    // Games & Entertainment
+    '🎮', '🎯', '🎲', '🎪', '🎨', '🎭', '🎬', '🎤', '🎧', '🎼',
+    '🎹', '🎺', '🎸', '🎻', '🪕', '🥁', '🎳', '🎾', '⚽', '🏀',
+    '🏈', '⚾', '🥎', '🏐', '🏉', '🎱', '🏓', '🏸', '🏒', '🏑',
+
+    // Animals & Nature
+    '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯',
+    '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🐤', '🦆',
+    '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋',
+
+    // Food & Drinks
+    '🍕', '🍔', '🍟', '🌭', '🍿', '🥨', '🧀', '🍖', '🍗', '🥓',
+    '🥩', '🍞', '🥐', '🥖', '🥯', '🧇', '🥞', '🍰', '🎂', '🧁',
+    '🍪', '🍩', '🍨', '🍧', '🍦', '🥧', '🍫', '🍬', '🍭', '🍮',
+
+    // Fruits & Vegetables
+    '🍎', '🍏', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈',
+    '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🥕', '🌽', '🌶️',
+
+    // Objects & Symbols
+    '⭐', '⚡', '🔥', '💧', '🌈', '☀️', '🌙', '⛅', '❄️', '💎',
+    '🎁', '🎈', '🎊', '🎉', '🏆', '🥇', '🥈', '🥉', '🏅',
+    '👑', '💰', '💵', '💴', '💶', '💷', '🔔', '🔑', '🗝️', '🔒'
 ]
+
+// Function to get random unique emojis for each game
+function getRandomEmojis(count: number): string[] {
+    const shuffled = [...EMOJI_POOL].sort(() => Math.random() - 0.5)
+    return shuffled.slice(0, count)
+}
 
 export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
     const [cards, setCards] = useState<Card[]>([])
@@ -29,23 +55,27 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
     const [startTime, setStartTime] = useState<number | null>(null)
     const [isChecking, setIsChecking] = useState(false)
     const [isCompleted, setIsCompleted] = useState(false)
+    const [selectedEmojis, setSelectedEmojis] = useState<string[]>([])
 
-    // Initialize game
+    // Initialize game with random emojis
     useEffect(() => {
         if (isActive && !isCompleted) {
-            initializeGame()
+            // Get 14 random emojis from the pool (28 cards total - easier!)
+            const randomEmojis = getRandomEmojis(14)
+            setSelectedEmojis(randomEmojis)
+            initializeGame(randomEmojis)
             setStartTime(Date.now())
         }
     }, [isActive])
 
-    const initializeGame = () => {
-        // Create pairs of cards
-        const cardPairs = EMOJIS.flatMap((emoji, index) => [
+    const initializeGame = (emojis: string[]) => {
+        // Create pairs of cards with the selected emojis
+        const cardPairs = emojis.flatMap((emoji, index) => [
             { id: index * 2, emoji, isFlipped: false, isMatched: false },
             { id: index * 2 + 1, emoji, isFlipped: false, isMatched: false }
         ])
 
-        // Shuffle cards
+        // Shuffle cards for random positions every time
         const shuffled = cardPairs.sort(() => Math.random() - 0.5)
         setCards(shuffled)
         setFlippedCards([])
@@ -86,7 +116,7 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
                 ))
                 setMatchedPairs(p => {
                     const newPairs = p + 1
-                    if (newPairs === EMOJIS.length && !isCompleted) {
+                    if (newPairs === selectedEmojis.length && !isCompleted) {
                         // Game complete!
                         setIsCompleted(true)
                         const timeTaken = Date.now() - (startTime || Date.now())
@@ -120,7 +150,7 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
             width: '100%',
             maxWidth: '100vw'
         }}>
-            {/* Game Stats - Mobile Only */}
+            {/* Game Stats - Arabic */}
             <div style={{
                 display: 'flex',
                 justifyContent: 'space-around',
@@ -128,15 +158,16 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
                 background: '#1e293b',
                 borderRadius: '10px',
                 padding: '10px',
-                gap: '10px'
+                gap: '10px',
+                direction: 'rtl'
             }}>
                 <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '2px' }}>COUPS</div>
+                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '2px' }}>المحاولات</div>
                     <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#fff' }}>{moves}</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '2px' }}>PAIRES</div>
-                    <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#10b981' }}>{matchedPairs}/{EMOJIS.length}</div>
+                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '2px' }}>الأزواج</div>
+                    <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#10b981' }}>{matchedPairs}/{selectedEmojis.length}</div>
                 </div>
             </div>
 
@@ -181,9 +212,10 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
                 marginTop: '12px',
                 textAlign: 'center',
                 color: '#94a3b8',
-                fontSize: '0.8rem'
+                fontSize: '0.8rem',
+                direction: 'rtl'
             }}>
-                💡 Trouvez les paires !
+                💡 اعثر على الأزواج المتطابقة!
             </div>
         </div>
     )

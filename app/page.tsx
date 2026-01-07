@@ -57,12 +57,10 @@ export default function HomePage() {
   }
 
   const gameIcons: Record<string, string> = {
-    'fast-math': '/fast-math.png',
-    'memory-grid': '/memory-grid.png',
-    'memory-card': '/memory-card.png',
-    'trivia': '🧠',
-    'color-run': '/color-run.png',
-    'logic-maze': '🧩',
+    'memory': '🧠',
+    'rocket': '🚀',
+    'sequence': '🎯',
+    'dollars': '💵',
   }
 
   if (loading) {
@@ -146,6 +144,32 @@ export default function HomePage() {
           <span>{lang === 'ar' ? 'Français' : 'العربية'}</span>
         </a>
       </nav>
+
+      {/* DEBUG BUTTON - Only in development */}
+      <Link
+        href="/test-game"
+        style={{
+          position: 'fixed',
+          bottom: '80px',
+          right: '20px',
+          width: '60px',
+          height: '60px',
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '1.5rem',
+          boxShadow: '0 10px 30px rgba(245, 158, 11, 0.5)',
+          cursor: 'pointer',
+          zIndex: 9999,
+          textDecoration: 'none',
+          border: '3px solid white'
+        }}
+        title="Test Games"
+      >
+        🎮
+      </Link>
     </div>
   )
 }

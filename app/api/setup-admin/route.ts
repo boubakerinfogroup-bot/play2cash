@@ -25,25 +25,50 @@ export async function GET(request: Request) {
             },
         })
 
-        // 2. Seed Games (Light version)
+        // 2. Seed Games - NEW 4-GAME LINEUP
         const games = [
-            { name: 'Fast Math Duel', nameAr: 'مباراة الرياضيات السريعة', slug: 'fast-math', isActive: true },
-            { name: 'Memory Grid', nameAr: 'مباراة الذاكرة', slug: 'memory-grid', isActive: true },
-            { name: 'Memory Card', nameAr: 'بطاقات الذاكرة', slug: 'memory-card', isActive: true },
-            { name: 'Trivia Duel', nameAr: 'المعلومات العامة', slug: 'trivia', isActive: true },
-            { name: 'Color Run', nameAr: 'سباق الألوان', slug: 'color-run', isActive: true },
-            { name: 'Logic Maze', nameAr: 'متاهة المنطق', slug: 'logic-maze', isActive: true },
+            {
+                name: 'Memory',
+                nameAr: 'الذاكرة',
+                slug: 'memory',
+                description: 'Match pairs of cards',
+                descriptionAr: 'طابق أزواج البطاقات',
+                isActive: true
+            },
+            {
+                name: 'Rocket',
+                nameAr: 'الصاروخ',
+                slug: 'rocket',
+                description: 'Dodge falling obstacles',
+                descriptionAr: 'تفادى العقبات الساقطة',
+                isActive: true
+            },
+            {
+                name: 'Sequence',
+                nameAr: 'التسلسل',
+                slug: 'sequence',
+                description: 'Remember and repeat patterns',
+                descriptionAr: 'تذكر وكرر الأنماط',
+                isActive: true
+            },
+            {
+                name: 'Dollars',
+                nameAr: 'الدولارات',
+                slug: 'dollars',
+                description: 'Catch falling dollars',
+                descriptionAr: 'اجمع الدولارات الساقطة',
+                isActive: true
+            },
         ]
 
         for (const game of games) {
             await prisma.game.upsert({
                 where: { slug: game.slug },
-                update: {},
-                create: {
-                    ...game,
-                    description: 'Game description',
-                    descriptionAr: 'الوصف',
-                }
+                update: {
+                    description: game.description,
+                    descriptionAr: game.descriptionAr
+                },
+                create: game
             })
         }
 
