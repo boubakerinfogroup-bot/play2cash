@@ -188,15 +188,11 @@ export default function MemoryGame({ onComplete, isActive }: MemoryGameProps) {
                         style={{
                             aspectRatio: '1',
                             borderRadius: '16px',
-                            cursor: 'pointer',
                             transition: 'transform 0.3s, background 0.3s',
                             transform: card.isFlipped || card.isMatched ? 'rotateY(180deg)' : 'rotateY(0deg)',
                             background: card.isFlipped || card.isMatched ? 'white' : '#1e293b',
                             border: '3px solid #334155',
                             fontSize: '1.8rem',
-                            // The following cursor property is redundant due to the 'cursor: pointer' above,
-                            // but keeping it as per the instruction's explicit inclusion.
-                            cursor: (card.isMatched || isCompleted) ? 'default' : 'pointer',
                             opacity: card.isMatched ? 0.3 : 1,
                             WebkitTapHighlightColor: 'transparent',
                             touchAction: 'manipulation',
