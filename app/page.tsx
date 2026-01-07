@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Footer from '@/components/Footer'
 import NextImage from 'next/image'
 import { formatCurrency, t } from '@/lib/utils'
 import type { User } from '@/lib/auth'
@@ -154,6 +155,7 @@ export default function HomePage() {
           <span>{lang === 'ar' ? 'Français' : 'العربية'}</span>
         </a>
       </nav>
+      <Footer lang={lang} />
     </div>
   )
 }
