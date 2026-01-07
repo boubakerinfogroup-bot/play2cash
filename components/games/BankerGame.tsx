@@ -236,7 +236,7 @@ export default function BankerGame({ onComplete, isActive, matchId }: BankerGame
                             >
                                 +{round.riskWin} / {round.riskLose}
                             </button>
-                        </div>}
+                        </div>
 
                         {playerChoice && (
                             <div style={{
