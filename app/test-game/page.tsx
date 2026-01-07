@@ -165,6 +165,7 @@ export default function TestGamePage() {
             {selectedGame === 'rocket' && <RocketGame isActive={score === null} onComplete={handleComplete} />}
             {selectedGame === 'sequence' && <SequencePad isActive={score === null} onComplete={handleComplete} />}
             {selectedGame === 'coins' && <CoinsDrop isActive={score === null} onComplete={handleComplete} />}
+            {selectedGame === 'maze' && <MazeMystery isActive={score === null} onComplete={handleComplete} matchId="test-maze-123" />}
         </div>
     )
 }
