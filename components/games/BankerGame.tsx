@@ -142,9 +142,6 @@ export default function BankerGame({ onComplete, isActive, matchId }: BankerGame
             } else {
                 // Next round
                 setCurrentRound(prev => prev + 1)
-            } else {
-                // Next round
-                setCurrentRound(prev => prev + 1)
                 setPlayerChoice(null)
                 setOpponentChoice(null)
                 setIsRevealed(false)
