@@ -213,11 +213,12 @@ export default function BankerGame({ onComplete, isActive, matchId }: BankerGame
                                     borderRadius: '16px',
                                     cursor: 'pointer',
                                     boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
-                                    fontSize: '2rem',
-                                    fontWeight: 900
+                                    textAlign: 'center',
+                                    direction: 'rtl'
                                 }}
                             >
-                                +{round.safe}
+                                <div style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '8px', opacity: 0.9 }}>آمن</div>
+                                <div style={{ fontSize: '2.5rem', fontWeight: 900 }}>+{round.safe}</div>
                             </button>
 
                             <button
@@ -230,11 +231,13 @@ export default function BankerGame({ onComplete, isActive, matchId }: BankerGame
                                     borderRadius: '16px',
                                     cursor: 'pointer',
                                     boxShadow: '0 4px 15px rgba(239, 68, 68, 0.3)',
-                                    fontSize: '2rem',
-                                    fontWeight: 900
+                                    textAlign: 'center',
+                                    direction: 'rtl'
                                 }}
                             >
-                                +{round.riskWin} / {round.riskLose}
+                                <div style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '8px', opacity: 0.9 }}>مخاطرة</div>
+                                <div style={{ fontSize: '2rem', fontWeight: 900 }}>+{round.riskWin}</div>
+                                <div style={{ fontSize: '2rem', fontWeight: 900, marginTop: '-8px' }}>{round.riskLose}</div>
                             </button>
                         </div>
 
@@ -247,7 +250,7 @@ export default function BankerGame({ onComplete, isActive, matchId }: BankerGame
                                 fontWeight: 700,
                                 color: '#64748b'
                             }}>
-                                اخترت: {playerChoice === 'safe' ? '🏦 آمن' : '🎲 مخاطرة'}
+                                اخترت: {playerChoice === 'safe' ? `+${round.safe}` : `+${round.riskWin} / ${round.riskLose}`}
                                 <div style={{ marginTop: '16px', fontSize: '1rem', opacity: 0.7 }}>
                                     في انتظار الخصم...
                                 </div>
