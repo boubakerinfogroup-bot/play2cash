@@ -4,11 +4,8 @@ import { useState } from 'react'
 import MemoryGame from '@/components/games/MemoryGame'
 import RocketGame from '@/components/games/RocketGame'
 import SequencePad from '@/components/games/SequencePad'
-import CoinsDrop from '@/components/games/CoinsDrop'
-import MazeMystery from '@/components/games/MazeMystery'
-import BalanceGame from '@/components/games/BalanceGame'
 
-type GameType = 'memory' | 'rocket' | 'sequence' | 'coins' | 'maze' | 'balance'
+type GameType = 'memory' | 'rocket' | 'sequence'
 
 export default function TestGamePage() {
     const [score, setScore] = useState<number | null>(null)
@@ -46,7 +43,7 @@ export default function TestGamePage() {
                     🎮 Game Testing Mode
                 </h1>
 
-                {/* Game Selector - 5 Games in 3x2 Grid */}
+                {/* Game Selector - 3 Games */}
                 <div style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(3, 1fr)',
@@ -95,48 +92,6 @@ export default function TestGamePage() {
                         }}>
                         🎯<br />Sequence
                     </button>
-                    <button onClick={() => { setSelectedGame('coins'); setScore(null); }}
-                        style={{
-                            padding: '16px',
-                            background: selectedGame === 'coins' ? '#10b981' : '#64748b',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '16px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4'
-                        }}>
-                        💵<br />Dollars
-                    </button>
-                    <button onClick={() => { setSelectedGame('maze'); setScore(null); }}
-                        style={{
-                            padding: '16px',
-                            background: selectedGame === 'maze' ? '#10b981' : '#64748b',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '16px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4'
-                        }}>
-                        🧩<br />Maze
-                    </button>
-                    <button onClick={() => { setSelectedGame('balance'); setScore(null); }}
-                        style={{
-                            padding: '16px',
-                            background: selectedGame === 'balance' ? '#10b981' : '#64748b',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '16px',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4'
-                        }}>
-                        ⚖️<br />Balance
-                    </button>
                 </div>
 
                 <p style={{
@@ -175,13 +130,10 @@ export default function TestGamePage() {
                 </button>
             </div>
 
-            {/* Game Rendering - 4 Games */}
+            {/* Game Rendering - 3 Games */}
             {selectedGame === 'memory' && <MemoryGame isActive={score === null} onComplete={handleComplete} />}
             {selectedGame === 'rocket' && <RocketGame isActive={score === null} onComplete={handleComplete} />}
             {selectedGame === 'sequence' && <SequencePad isActive={score === null} onComplete={handleComplete} />}
-            {selectedGame === 'coins' && <CoinsDrop isActive={score === null} onComplete={handleComplete} />}
-            {selectedGame === 'maze' && <MazeMystery isActive={score === null} onComplete={handleComplete} matchId="test-maze-123" />}
-            {selectedGame === 'balance' && <BalanceGame isActive={score === null} onComplete={handleComplete} matchId="test-balance-123" />}
         </div>
     )
 }
