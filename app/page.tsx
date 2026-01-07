@@ -57,13 +57,13 @@ export default function HomePage() {
   }
 
   const gameIcons: Record<string, string> = {
-    'memory': '/memory.png',
+    'memory': '🧠',
     'rocket': '🚀',
-    'sequence': '/sequence.png',
+    'sequence': '🎯',
     'rps': '✊',
-    'tictactoe': '/tictactoe.png',
-    'pattern': '/patternlock.png',
-    'banker': '/banker.png'
+    'tictactoe': '⭕',
+    'pattern': '🔒',
+    'banker': '💰'
   }
 
   if (loading) {
@@ -89,7 +89,7 @@ export default function HomePage() {
           <Link href="/lobby" className="btn">
             {lang === 'ar' ? '🎮 جميع الغرف الحية' : '🎮 Toutes les salles'}
           </Link>
-          <Link href="/test-game" className="btn" style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' }}>
+          <Link href="/training" className="btn" style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' }}>
             {lang === 'ar' ? '🎯 تدريب' : '🎯 Entraînement'}
           </Link>
         </div>
@@ -145,6 +145,10 @@ export default function HomePage() {
           <img src="/profile.png" alt="Profile" width="24" height="24" />
           <span>{t('profile', lang)}</span>
         </Link>
+        <a href="https://wa.me/21629616525" target="_blank" rel="noopener noreferrer">
+          <span style={{ fontSize: '24px' }}>💬</span>
+          <span>WhatsApp</span>
+        </a>
         <a href="#" onClick={(e) => { e.preventDefault(); toggleLang(); }}>
           <img src={lang === 'ar' ? '/french.png' : '/arabic.png'} alt={lang === 'ar' ? 'Français' : 'العربية'} width="24" height="24" style={{ borderRadius: '2px' }} />
           <span>{lang === 'ar' ? 'Français' : 'العربية'}</span>
