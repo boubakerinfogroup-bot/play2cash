@@ -118,22 +118,8 @@ export default function RocketGame({ onComplete, isActive, matchId }: RocketGame
             return moved
         })
 
-        // Increase score and difficulty GRADUALLY
-        setScore(prev => {
-            const newScore = prev + 1
-
-            // Every 100 points: increase speed slightly
-            if (newScore % 100 === 0) {
-                setSpeed(s => Math.min(s + 0.2, 7))
-            }
-
-            // Every 80 points: increase obstacle spawn rate
-            if (newScore % 80 === 0) {
-                setSpawnRate(r => Math.min(r + 0.005, 0.055))
-            }
-
-            return newScore
-        })
+        // Increase score
+        setScore(prev => prev + 1)
 
         gameLoopRef.current = requestAnimationFrame(gameLoop)
     }
