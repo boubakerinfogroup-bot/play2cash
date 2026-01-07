@@ -57,13 +57,13 @@ export default function HomePage() {
   }
 
   const gameIcons: Record<string, string> = {
-    'memory': '🧠',
+    'memory': '/memory.png',
     'rocket': '🚀',
-    'sequence': '🎯',
+    'sequence': '/sequence.png',
     'rps': '✊',
-    'tictactoe': '⭕',
-    'pattern': '🔒',
-    'banker': '💰'
+    'tictactoe': '/tictactoe.png',
+    'pattern': '/patternlock.png',
+    'banker': '/banker.png'
   }
 
   if (loading) {
@@ -151,9 +151,11 @@ export default function HomePage() {
         </a>
       </nav>
 
-      {/* DEBUG BUTTON - Only in development */}
-      <Link
-        href="/test-game"
+      {/* WhatsApp Contact Button */}
+      <a
+        href="https://wa.me/21629616525"
+        target="_blank"
+        rel="noopener noreferrer"
         style={{
           position: 'fixed',
           bottom: '80px',
@@ -161,21 +163,21 @@ export default function HomePage() {
           width: '60px',
           height: '60px',
           borderRadius: '50%',
-          background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+          background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '1.5rem',
-          boxShadow: '0 10px 30px rgba(245, 158, 11, 0.5)',
+          fontSize: '1.8rem',
+          boxShadow: '0 10px 30px rgba(37, 211, 102, 0.5)',
           cursor: 'pointer',
           zIndex: 9999,
           textDecoration: 'none',
           border: '3px solid white'
         }}
-        title="Test Games"
+        title="Contact WhatsApp"
       >
-        🎮
-      </Link>
+        💬
+      </a>
     </div>
   )
 }

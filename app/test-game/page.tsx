@@ -29,10 +29,34 @@ export default function TestGamePage() {
     return (
         <div style={{
             minHeight: '100vh',
-            background: '#0f172a',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             padding: '20px'
         }}>
-            {/* Header */}
+            {/* Training Header */}
+            <div style={{
+                textAlign: 'center',
+                marginBottom: '30px',
+                padding: '20px'
+            }}>
+                <h1 style={{
+                    color: 'white',
+                    fontSize: '2.5rem',
+                    marginBottom: '10px',
+                    textShadow: '0 2px 10px rgba(0,0,0,0.3)'
+                }}>
+                    🎯 وضع التدريب | Mode Entraînement
+                </h1>
+                <p style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '1.1rem',
+                    maxWidth: '600px',
+                    margin: '0 auto'
+                }}>
+                    تدرّب على جميع الألعاب بدون مخاطر | Entraînez-vous à tous les jeux sans risque
+                </p>
+            </div>
+
+            {/* Game Selection */}
             <div style={{
                 maxWidth: '400px',
                 margin: '0 auto 20px',
