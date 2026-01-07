@@ -4,8 +4,13 @@ import { useState } from 'react'
 import MemoryGame from '@/components/games/MemoryGame'
 import RocketGame from '@/components/games/RocketGame'
 import SequencePad from '@/components/games/SequencePad'
+import RockPaperScissors from '@/components/games/RockPaperScissors'
+import TicTacToePlus from '@/components/games/TicTacToePlus'
+import PatternLock from '@/components/games/PatternLock'
+import BankerGame from '@/components/games/BankerGame'
+import TetraGame from '@/components/games/TetraGame'
 
-type GameType = 'memory' | 'rocket' | 'sequence'
+type GameType = 'memory' | 'rocket' | 'sequence' | 'rps' | 'tictactoe' | 'pattern' | 'banker' | 'tetra'
 
 export default function TestGamePage() {
     const [score, setScore] = useState<number | null>(null)
@@ -43,10 +48,10 @@ export default function TestGamePage() {
                     🎮 Game Testing Mode
                 </h1>
 
-                {/* Game Selector - 3 Games */}
+                {/* Game Selector - 8 Games */}
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gridTemplateColumns: 'repeat(4, 1fr)',
                     gap: '12px',
                     marginBottom: '20px'
                 }}>
@@ -92,6 +97,76 @@ export default function TestGamePage() {
                         }}>
                         🎯<br />Sequence
                     </button>
+                    <button onClick={() => { setSelectedGame('rps'); setScore(null); }}
+                        style={{
+                            padding: '16px',
+                            background: selectedGame === 'rps' ? '#10b981' : '#64748b',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '16px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            fontSize: '0.9rem',
+                            lineHeight: '1.4'
+                        }}>
+                        ✊<br />RPS
+                    </button>
+                    <button onClick={() => { setSelectedGame('tictactoe'); setScore(null); }}
+                        style={{
+                            padding: '16px',
+                            background: selectedGame === 'tictactoe' ? '#10b981' : '#64748b',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '16px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            fontSize: '0.9rem',
+                            lineHeight: '1.4'
+                        }}>
+                        ⭕<br />TicTac
+                    </button>
+                    <button onClick={() => { setSelectedGame('pattern'); setScore(null); }}
+                        style={{
+                            padding: '16px',
+                            background: selectedGame === 'pattern' ? '#10b981' : '#64748b',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '16px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            fontSize: '0.9rem',
+                            lineHeight: '1.4'
+                        }}>
+                        🔒<br />Pattern
+                    </button>
+                    <button onClick={() => { setSelectedGame('banker'); setScore(null); }}
+                        style={{
+                            padding: '16px',
+                            background: selectedGame === 'banker' ? '#10b981' : '#64748b',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '16px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            fontSize: '0.9rem',
+                            lineHeight: '1.4'
+                        }}>
+                        💰<br />Banker
+                    </button>
+                    <button onClick={() => { setSelectedGame('tetra'); setScore(null); }}
+                        style={{
+                            padding: '16px',
+                            background: selectedGame === 'tetra' ? '#10b981' : '#64748b',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '16px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            fontSize: '0.9rem',
+                            lineHeight: '1.4'
+                        }}>
+                        🧱<br />Tetra
+                    </button>
                 </div>
 
                 <p style={{
@@ -130,10 +205,15 @@ export default function TestGamePage() {
                 </button>
             </div>
 
-            {/* Game Rendering - 3 Games */}
+            {/* Game Rendering - 8 Games */}
             {selectedGame === 'memory' && <MemoryGame isActive={score === null} onComplete={handleComplete} />}
             {selectedGame === 'rocket' && <RocketGame isActive={score === null} onComplete={handleComplete} />}
             {selectedGame === 'sequence' && <SequencePad isActive={score === null} onComplete={handleComplete} />}
+            {selectedGame === 'rps' && <RockPaperScissors isActive={score === null} onComplete={handleComplete} matchId="test-rps-123" />}
+            {selectedGame === 'tictactoe' && <TicTacToePlus isActive={score === null} onComplete={handleComplete} matchId="test-ttt-123" />}
+            {selectedGame === 'pattern' && <PatternLock isActive={score === null} onComplete={handleComplete} matchId="test-pattern-123" />}
+            {selectedGame === 'banker' && <BankerGame isActive={score === null} onComplete={handleComplete} matchId="test-banker-123" />}
+            {selectedGame === 'tetra' && <TetraGame isActive={score === null} onComplete={handleComplete} matchId="test-tetra-123" />}
         </div>
     )
 }

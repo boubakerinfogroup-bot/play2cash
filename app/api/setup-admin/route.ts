@@ -25,7 +25,7 @@ export async function GET(request: Request) {
             },
         })
 
-        // 2. Seed Games - NEW 4-GAME LINEUP
+        // 2. Seed Games - NEW 8-GAME LINEUP
         const games = [
             {
                 name: 'Memory',
@@ -52,11 +52,43 @@ export async function GET(request: Request) {
                 isActive: true
             },
             {
-                name: 'Dollars',
-                nameAr: 'الدولارات',
-                slug: 'dollars',
-                description: 'Catch falling dollars',
-                descriptionAr: 'اجمع الدولارات الساقطة',
+                name: 'Rock Paper Scissors',
+                nameAr: 'حجر ورقة مقص',
+                slug: 'rps',
+                description: 'Classic RPS battle',
+                descriptionAr: 'معركة حجر ورقة مقص',
+                isActive: true
+            },
+            {
+                name: 'Tic-Tac-Toe Plus',
+                nameAr: 'إكس أو بلس',
+                slug: 'tictactoe',
+                description: '4x6 grid, 4 in a row wins',
+                descriptionAr: 'شبكة 4x6، 4 متتالية تفوز',
+                isActive: true
+            },
+            {
+                name: 'Pattern Lock',
+                nameAr: 'قفل النمط',
+                slug: 'pattern',
+                description: 'Memorize and redraw patterns',
+                descriptionAr: 'احفظ وأعد رسم الأنماط',
+                isActive: true
+            },
+            {
+                name: 'Banker',
+                nameAr: 'المصرفي',
+                slug: 'banker',
+                description: 'Risk vs reward decisions',
+                descriptionAr: 'قرارات المخاطرة والمكافأة',
+                isActive: true
+            },
+            {
+                name: 'Tetra',
+                nameAr: 'تترا',
+                slug: 'tetra',
+                description: 'Simple tetris blocks',
+                descriptionAr: 'مكعبات تتريس بسيطة',
                 isActive: true
             },
         ]
