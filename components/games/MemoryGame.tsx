@@ -131,11 +131,17 @@ export default function MemoryGame({ onComplete, isActive, seed }: MemoryGamePro
                 setFlippedCards([])
                 setIsChecking(false)
             } else {
-                // No match - just flip back quickly (no highlight)
+                // No match - flip cards back after brief delay
                 setTimeout(() => {
+                    // Flip back the unmatched cards
+                    setCards(cards.map(card =>
+                        newFlippedCards.includes(card.id)
+                            ? { ...card, isFlipped: false }
+                            : card
+                    ))
                     setFlippedCards([])
                     setIsChecking(false)
-                }, 600)
+                }, 800) // 800ms delay so user can see both cards
             }
         }
     }
