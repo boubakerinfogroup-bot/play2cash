@@ -66,6 +66,7 @@ model Match {
   gameSeed     String?     @map("game_seed") @db.VarChar(100)
   player1Score Int?        @map("player1_score")
   player2Score Int?        @map("player2_score")
+  rpsGameState Json?       @map("rps_game_state")
   shareLink    String?     @map("share_link") @db.VarChar(100)
   createdBy    String      @map("created_by")
   createdAt    DateTime    @default(now()) @map("created_at")
