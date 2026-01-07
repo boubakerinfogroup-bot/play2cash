@@ -13,16 +13,62 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // WhatsApp validation
+  const handleWhatsAppChange = (value: string) => {
+    // Remove +216 prefix and any non-digit characters
+    let cleaned = value.replace(/\+216/g, '').replace(/\D/g, '')
+    // Limit to 8 digits
+    cleaned = cleaned.slice(0, 8)
+    setWhatsapp(cleaned)
+  }
+
+  const isValidWhatsApp = (num: string): boolean => {
+    // Must be exactly 8 digits
+    if (num.length !== 8 || !/^\d{8}$/.test(num)) return false
+
+    // Check for repetitive patterns (e.g., 22222222, 11111111)
+    if (/^(\d)\1{7}$/.test(num)) return false
+
+    // Check for simple patterns (e.g., 12345678)
+    if (num === '12345678' || num === '87654321') return false
+
+    return true
+  }
+
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    return emailRegex.test(email)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+
+    // Validate WhatsApp
+    if (!isValidWhatsApp(whatsapp)) {
+      setError(lang === 'ar'
+        ? 'رقم واتساب غير صالح. يجب أن يكون 8 أرقام'
+        : 'Numéro WhatsApp invalide. Doit être 8 chiffres'
+      )
+      return
+    }
+
+    // Validate Email
+    if (!isValidEmail(email)) {
+      setError(lang === 'ar'
+        ? 'البريد الإلكتروني غير صالح'
+        : 'Email invalide'
+      )
+      return
+    }
+
     setLoading(true)
 
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, whatsapp, email, language: lang })
+        body: JSON.stringify({ name, whatsapp: '+216' + whatsapp, email, language: lang })
       })
 
       const result = await response.json()
@@ -30,6 +76,7 @@ export default function LoginPage() {
       if (result.success && result.user) {
         localStorage.setItem('user', JSON.stringify(result.user))
         localStorage.setItem('language', lang)
+        localStorage.setItem('lastActivity', Date.now().toString())
         router.push('/')
         router.refresh()
       } else {
@@ -269,9 +316,9 @@ export default function LoginPage() {
                 type="tel"
                 className="form-control"
                 value={whatsapp}
-                onChange={(e) => setWhatsapp(e.target.value)}
+                onChange={(e) => handleWhatsAppChange(e.target.value)}
                 required
-                placeholder="+216 00 000 000"
+                placeholder="29658745"
                 style={{
                   width: '100%',
                   padding: '14px 16px',

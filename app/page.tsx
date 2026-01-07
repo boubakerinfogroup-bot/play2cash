@@ -7,6 +7,7 @@ import Footer from '@/components/Footer'
 import NextImage from 'next/image'
 import { formatCurrency, t } from '@/lib/utils'
 import type { User } from '@/lib/auth'
+import { setupInactivityLogout } from '@/lib/inactivity'
 import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
 
@@ -30,8 +31,13 @@ export default function HomePage() {
     setUser(JSON.parse(userStr))
     setLang(langStr as 'fr' | 'ar')
 
+    // Setup auto-logout on inactivity
+    const cleanup = setupInactivityLogout()
+
     // Load games
     loadGames()
+
+    return cleanup
   }, [router])
 
   const loadGames = async () => {
