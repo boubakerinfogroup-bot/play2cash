@@ -81,7 +81,7 @@ export default function HomePage() {
 
   const gameIcons: Record<string, string> = {
     'memory': '/memory.png',
-    'rocket': '🚀',
+    'rocket': '/rocket.png',
     'sequence': '/sequence.png',
     'rps': '/rock-paper-scissors.png',
     'tictactoe': '/tictactoe.png',

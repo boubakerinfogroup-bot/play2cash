@@ -22,13 +22,17 @@ export default function MobileNav({ lang, onToggleLang }: MobileNavProps) {
         <img src="/profile.png" alt="Profile" width="24" height="24" />
         <span>{t('profile', lang)}</span>
       </Link>
+      <a href="https://wa.me/21629616525" target="_blank" rel="noopener noreferrer">
+        <img src="/whatsapp.png" alt="WhatsApp" width="24" height="24" />
+        <span>WhatsApp</span>
+      </a>
       <a href="#" onClick={(e) => { e.preventDefault(); onToggleLang(); }} className={pathname === '/lang-toggle' ? 'active' : ''}>
-        <img 
-          src={lang === 'ar' ? '/french.png' : '/arabic.png'} 
-          alt={lang === 'ar' ? 'Français' : 'العربية'} 
-          width="24" 
-          height="24" 
-          style={{ borderRadius: '2px', objectFit: 'cover', display: 'block' }} 
+        <img
+          src={lang === 'ar' ? '/french.png' : '/arabic.png'}
+          alt={lang === 'ar' ? 'Français' : 'العربية'}
+          width="24"
+          height="24"
+          style={{ borderRadius: '2px', objectFit: 'cover', display: 'block' }}
         />
         <span>{lang === 'ar' ? 'Français' : 'العربية'}</span>
       </a>
