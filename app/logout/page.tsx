@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { authAPI, clearToken } from '@/lib/api-client'
 
 export default function LogoutPage() {
   const router = useRouter()
@@ -11,9 +12,9 @@ export default function LogoutPage() {
     localStorage.removeItem('user')
     localStorage.removeItem('language')
 
-    // Clear session (would need API call to clear server-side session)
-    fetch('/api/auth/logout', { method: 'POST' })
-      .catch(() => {}) // Ignore errors
+    // Clear token and call logout API
+    clearToken()
+    authAPI.logout().catch(() => { }) // Ignore errors
 
     // Redirect to login
     router.push('/login')

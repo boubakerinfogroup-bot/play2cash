@@ -7,6 +7,7 @@ import { formatCurrency, t } from '@/lib/utils'
 import type { User } from '@/lib/types'
 import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
+import { gamesAPI } from '@/lib/api-client'
 
 import { Suspense } from 'react'
 
@@ -43,8 +44,7 @@ function GameContent() {
 
   const loadGame = async (gameSlug: string) => {
     try {
-      const response = await fetch('/api/games')
-      const data = await response.json()
+      const data = await gamesAPI.list()
 
       if (data.games) {
         const foundGame = data.games.find((g: any) => g.slug === gameSlug)

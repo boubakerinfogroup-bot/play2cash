@@ -8,6 +8,7 @@ import type { User } from '@/lib/types'
 import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
 import BottomSheet from '@/components/BottomSheet'
+import { gamesAPI, matchesAPI } from '@/lib/api-client'
 
 import { Suspense } from 'react'
 import PopupModal from '@/components/PopupModal'
@@ -51,8 +52,7 @@ function CreateContent() {
 
   const loadGame = async (slug: string) => {
     try {
-      const response = await fetch(`/api/games/${slug}`)
-      const data = await response.json()
+      const data = await gamesAPI.get(slug)
 
       if (data.game) {
         setGame(data.game)
@@ -92,16 +92,7 @@ function CreateContent() {
   const createMatch = async () => {
     setSubmitting(true)
     try {
-      const response = await fetch('/api/matches/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          gameId: game.id,
-          stake: Number(stake)
-        })
-      })
-
-      const result = await response.json()
+      const result = await matchesAPI.create(game.id, Number(stake))
 
       if (result.success && result.match) {
         // NOTE: Balance is NOT deducted here - only when match starts
