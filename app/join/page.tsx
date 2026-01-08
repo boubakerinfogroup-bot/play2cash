@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { matchesAPI } from '@/lib/api-client'
 
 import { Suspense } from 'react'
 
@@ -28,13 +29,7 @@ function JoinContent() {
 
   const joinMatch = async (id: string) => {
     try {
-      const response = await fetch('/api/matches/join', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ matchId: id })
-      })
-
-      const result = await response.json()
+      const result = await matchesAPI.join(id)
 
       if (result.success) {
         router.push(`/play?match=${id}`)
