@@ -9,6 +9,7 @@ import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
 import { matchesAPI } from '@/lib/api-client'
 import { useBalance } from '@/contexts/BalanceContext'
+import Confetti from '@/components/Confetti'
 
 import { Suspense } from 'react'
 
@@ -105,6 +106,7 @@ function ResultContent() {
 
   return (
     <div className={lang === 'ar' ? 'arabic-text' : ''}>
+      {iWon && <Confetti />}
       <Header user={user} lang={lang} />
 
       <div className="container" style={{ paddingBottom: '100px' }}>

@@ -56,6 +56,12 @@ function WaitingContent() {
     setCanCancel(remaining === 0)
     setTimeRemaining(remaining)
 
+    // Auto-cancel if timer expires and still pending
+    if (remaining === 0 && match.status === 'PENDING') {
+      handleAutoCancel()
+      return
+    }
+
     // Update timer every second
     const interval = setInterval(() => {
       const now = new Date()
@@ -64,6 +70,11 @@ function WaitingContent() {
 
       setCanCancel(remaining === 0)
       setTimeRemaining(remaining)
+
+      // Auto-cancel when timer reaches 0
+      if (remaining === 0 && match.status === 'PENDING') {
+        handleAutoCancel()
+      }
     }, 1000)
 
     return () => clearInterval(interval)
@@ -124,6 +135,21 @@ function WaitingContent() {
 
     return () => clearInterval(interval)
   }, [matchId, router])
+
+  const handleAutoCancel = async () => {
+    if (!matchId) return
+
+    try {
+      await matchesAPI.cancel(matchId)
+      // Redirect to lobby after auto-cancel
+      setTimeout(() => {
+        router.push('/lobby')
+      }, 1500)
+    } catch (error) {
+      console.error('Auto-cancel error:', error)
+      router.push('/lobby')
+    }
+  }
 
   const handleCancel = async () => {
     if (!canCancel || !matchId) {

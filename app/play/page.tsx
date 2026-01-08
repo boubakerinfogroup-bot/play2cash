@@ -68,14 +68,8 @@ function PlayContent() {
 
         setMatch(data.match)
 
-        // Show countdown (one-time per session)
-        const countdownKey = `countdown_shown_${id}`
-        if (!sessionStorage.getItem(countdownKey)) {
-          sessionStorage.setItem(countdownKey, 'true')
-          startCountdown()
-        } else {
-          setGameStarted(true)
-        }
+        // Always show countdown for clear game start indication
+        startCountdown()
       } else {
         router.push('/')
       }
