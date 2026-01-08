@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import seedrandom from 'seedrandom'
 
 interface SequencePadProps {
     matchId: string
@@ -10,19 +11,7 @@ interface SequencePadProps {
     onResultSubmitted: () => void
 }
 
-// Seeded random for synchronized gameplay
-class SeededRandom {
-    private seed: number
 
-    constructor(seed: number) {
-        this.seed = seed
-    }
-
-    next() {
-        this.seed = (this.seed * 9301 + 49297) % 233280
-        return this.seed / 233280
-    }
-}
 
 const COLORS = ['#3b82f6', '#10b981', '#eab308', '#ef4444', '#8b5cf6', '#ec4899', '#f97316', '#14b8a6', '#6366f1']
 
@@ -34,15 +23,12 @@ export default function SequencePad({ matchId, seed, userId, lang, onResultSubmi
     const [isPlayerTurn, setIsPlayerTurn] = useState(false)
     const [lightedTile, setLightedTile] = useState<number | null>(null)
     const [isGameOver, setIsGameOver] = useState(false)
-    const randomGen = useRef<SeededRandom | null>(null)
+    const randomGen = useRef<(() => number) | null>(null)
 
-    //Initialize seeded random
+    // Initialize seeded random
     useEffect(() => {
-        if (matchId) {
-            const seed = parseInt(matchId.replace(/\D/g, '').slice(0, 9)) || 12345
-            randomGen.current = new SeededRandom(seed)
-        }
-    }, [matchId])
+        randomGen.current = seedrandom(seed)
+    }, [seed])
 
     // Start game
     useEffect(() => {

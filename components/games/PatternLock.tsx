@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import seedrandom from 'seedrandom'
 
 interface PatternLockProps {
     matchId: string
@@ -10,14 +11,7 @@ interface PatternLockProps {
     onResultSubmitted: () => void
 }
 
-class SeededRandom {
-    private seed: number
-    constructor(seed: number) { this.seed = seed }
-    next() {
-        this.seed = (this.seed * 9301 + 49297) % 233280
-        return this.seed / 233280
-    }
-}
+
 
 export default function PatternLock({ matchId, seed, userId, lang, onResultSubmitted }: PatternLockProps) {
     const [pattern, setPattern] = useState<number[]>([])
@@ -31,15 +25,13 @@ export default function PatternLock({ matchId, seed, userId, lang, onResultSubmi
     const [result, setResult] = useState<'correct' | 'wrong' | null>(null)
     const [revealedDots, setRevealedDots] = useState<number>(0)
 
-    const randomGen = useRef<SeededRandom | null>(null)
+    const randomGen = useRef<(() => number) | null>(null)
     const touchedDots = useRef<Set<number>>(new Set())
 
     useEffect(() => {
-        if (matchId) {
-            const seed = parseInt(matchId.replace(/\D/g, '').slice(0, 9)) || 12345
-            randomGen.current = new SeededRandom(seed)
-        }
-    }, [matchId])
+        // Initialize seeded RNG with the seed prop
+        randomGen.current = seedrandom(seed)
+    }, [seed])
 
     useEffect(() => {
         if (!isGameOver) {

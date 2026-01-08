@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import seedrandom from 'seedrandom'
 
 interface BankerGameProps {
     matchId: string
@@ -10,14 +11,7 @@ interface BankerGameProps {
     onResultSubmitted: () => void
 }
 
-class SeededRandom {
-    private seed: number
-    constructor(seed: number) { this.seed = seed }
-    next() {
-        this.seed = (this.seed * 9301 + 49297) % 233280
-        return this.seed / 233280
-    }
-}
+
 
 interface Round {
     safe: number
@@ -36,15 +30,13 @@ export default function BankerGame({ matchId, seed, userId, lang, onResultSubmit
     const [isRevealed, setIsRevealed] = useState(false)
     const [isGameOver, setIsGameOver] = useState(false)
 
-    const randomGen = useRef<SeededRandom | null>(null)
+    const randomGen = useRef<(() => number) | null>(null)
 
     useEffect(() => {
-        if (matchId) {
-            const seed = parseInt(matchId.replace(/\D/g, '').slice(0, 9)) || 12345
-            randomGen.current = new SeededRandom(seed)
-            generateRounds()
-        }
-    }, [matchId])
+        // Initialize seeded RNG with the seed prop
+        randomGen.current = seedrandom(seed)
+        generateRounds()
+    }, [seed])
 
     useEffect(() => {
         if (!isGameOver) {
