@@ -44,11 +44,69 @@ export default function MatchPage({ params }: { params: { id: string } }) {
     const [phase, setPhase] = useState<'countdown' | 'playing' | 'results'>('countdown')
     const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
+    // Disconnect detection
+    const [pollFailures, setPollFailures] = useState(0)
+    const [confirmationCount, setConfirmationCount] = useState(0)
+    const [opponentDisconnected, setOpponentDisconnected] = useState(false)
+    const [disconnectCountdown, setDisconnectCountdown] = useState(20)
+    const [allowLeave, setAllowLeave] = useState(false)
+
     useEffect(() => {
         loadMatch()
         const pollInterval = setInterval(loadMatch, 500) // Poll every 500ms for real-time sync
         return () => clearInterval(pollInterval)
     }, [params.id])
+
+    // Disconnect detection: beforeunload handler with triple confirmation
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (allowLeave || phase !== 'playing') return
+
+            // First confirmation
+            const firstConfirm = window.confirm('⚠️ Are you sure you want to leave? You\'ll lose this match!')
+            if (!firstConfirm) {
+                e.preventDefault()
+                return
+            }
+
+            // Second confirmation
+            const secondConfirm = window.confirm('⚠️ Leaving will result in a LOSS and forfeit your stake. Continue?')
+            if (!secondConfirm) {
+                e.preventDefault()
+                return
+            }
+
+            // Third and final confirmation
+            const thirdConfirm = window.confirm('⚠️ FINAL WARNING: This action is irreversible. Leave and lose?')
+            if (thirdConfirm) {
+                // All 3 confirmations accepted - forfeit the match
+                handleForfeit()
+                setAllowLeave(true)
+            } else {
+                e.preventDefault()
+            }
+        }
+
+        window.addEventListener('beforeunload', handleBeforeUnload)
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+    }, [phase, currentUserId, allowLeave])
+
+    // Opponent disconnect timeout (20 seconds)
+    useEffect(() => {
+        if (!opponentDisconnected) return
+
+        if (disconnectCountdown <= 0) {
+            // Timeout - opponent forfeits
+            handleOpponentForfeit()
+            return
+        }
+
+        const timer = setTimeout(() => {
+            setDisconnectCountdown(d => d - 1)
+        }, 1000)
+
+        return () => clearTimeout(timer)
+    }, [opponentDisconnected, disconnectCountdown])
 
     // Countdown timer
     useEffect(() => {
@@ -78,6 +136,13 @@ export default function MatchPage({ params }: { params: { id: string } }) {
 
             if (data.success) {
                 setMatch(data.match)
+                setPollFailures(0) // Reset failures on successful poll
+
+                // If opponent reconnected, clear disconnect state
+                if (opponentDisconnected) {
+                    setOpponentDisconnected(false)
+                    setDisconnectCountdown(20)
+                }
 
                 // Determine current phase
                 if (data.match.status === 'COUNTDOWN') {
@@ -101,6 +166,17 @@ export default function MatchPage({ params }: { params: { id: string } }) {
             }
         } catch (err: any) {
             console.error('Load match error:', err)
+
+            // Track consecutive poll failures - possible opponent disconnect
+            setPollFailures(prev => {
+                const newCount = prev + 1
+                if (newCount >= 3 && phase === 'playing' && !opponentDisconnected) {
+                    // 3+ failures - opponent likely disconnected
+                    setOpponentDisconnected(true)
+                    setDisconnectCountdown(20)
+                }
+                return newCount
+            })
         } finally {
             setLoading(false)
         }
@@ -137,6 +213,38 @@ export default function MatchPage({ params }: { params: { id: string } }) {
             }
         } catch (err: any) {
             console.error('Finish game error:', err)
+        }
+    }
+
+    const handleForfeit = async () => {
+        if (!currentUserId) return
+
+        try {
+            await fetch(`/api/matches/${params.id}/forfeit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: currentUserId })
+            })
+        } catch (err: any) {
+            console.error('Forfeit error:', err)
+        }
+    }
+
+    const handleOpponentForfeit = async () => {
+        if (!match) return
+
+        const opponentId = match.players.find(p => p.userId !== currentUserId)?.userId
+        if (!opponentId) return
+
+        try {
+            await fetch(`/api/matches/${params.id}/forfeit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: opponentId })
+            })
+            // Poll will redirect to results
+        } catch (err: any) {
+            console.error('Opponent forfeit error:', err)
         }
     }
 
@@ -354,6 +462,50 @@ export default function MatchPage({ params }: { params: { id: string } }) {
                     <div style={{ textAlign: 'center', color: '#64748b', fontSize: '0.9rem' }}>
                         💡 Le premier à terminer gagne tout !
                     </div>
+
+                    {/* Opponent Disconnect Overlay */}
+                    {opponentDisconnected && (
+                        <div style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: 'rgba(0, 0, 0, 0.85)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 1000
+                        }}>
+                            <div style={{
+                                background: '#1e293b',
+                                borderRadius: '20px',
+                                padding: '40px',
+                                maxWidth: '400px',
+                                textAlign: 'center',
+                                border: '3px solid #ef4444'
+                            }}>
+                                <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🔌</div>
+                                <h2 style={{ color: 'white', fontSize: '1.5rem', marginBottom: '10px' }}>
+                                    Network Issues
+                                </h2>
+                                <p style={{ color: '#94a3b8', fontSize: '1rem', marginBottom: '20px' }}>
+                                    {opponent?.user.name} is having connection problems...
+                                </p>
+                                <div style={{
+                                    fontSize: '3rem',
+                                    fontWeight: 900,
+                                    color: '#ef4444',
+                                    marginBottom: '10px'
+                                }}>
+                                    {disconnectCountdown}s
+                                </div>
+                                <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                                    Waiting for reconnection...
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         )
