@@ -7,8 +7,28 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 const prismaClientSingleton = () => {
+  const url = process.env.DATABASE_URL
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('DB URL available:', !!url)
+  }
+
+  // Log the host to verify connection (security: masks password)
+  if (url && typeof url === 'string') {
+    try {
+      const masked = url.replace(/:[^:@]*@/, ':****@')
+      console.log('🔌 PRISMA CONNECTING TO:', masked)
+    } catch (e) {
+      console.log('🔌 PRISMA CONNECTING (Failed to mask URL)')
+    }
+  }
+
   return new PrismaClient({
     log: ['error', 'warn'],
+    datasources: {
+      db: {
+        url: url,
+      },
+    },
   })
 }
 
