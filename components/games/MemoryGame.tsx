@@ -122,9 +122,8 @@ export default function MemoryGame({ onComplete, isActive, seed }: MemoryGamePro
                     if (newPairs === selectedEmojis.length && !isCompleted) {
                         // Game complete!
                         setIsCompleted(true)
-                        const timeTaken = Date.now() - (startTime || Date.now())
-                        const score = Math.max(1000 - moves * 10 - timeTaken / 100, 100)
-                        onComplete(score)
+                        // Score is simply the number of pairs matched (out of 14)
+                        onComplete(newPairs)
                     }
                     return newPairs
                 })
