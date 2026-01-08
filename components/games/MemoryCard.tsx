@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import seedrandom from 'seedrandom'
 
 interface MemoryCardProps {
   matchId: string
@@ -61,7 +62,9 @@ export default function MemoryCard({ matchId, seed, userId, lang, onResultSubmit
 
   const initializeCards = () => {
     const pairs = Array.from({ length: 16 }, (_, i) => Math.floor(i / 2))
-    const shuffled = [...pairs].sort(() => Math.random() - 0.5)
+    // Use seeded random for deterministic shuffle
+    const rng = seedrandom(seed)
+    const shuffled = [...pairs].sort(() => rng() - 0.5)
     setCards(shuffled)
   }
 

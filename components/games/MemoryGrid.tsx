@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import seedrandom from 'seedrandom'
 
 interface MemoryGridProps {
   matchId: string
@@ -58,7 +59,9 @@ export default function MemoryGrid({ matchId, seed, userId, lang, onResultSubmit
   }, [matchId, router])
 
   const generateSequence = () => {
-    const newSeq = Array.from({ length: level + 2 }, () => Math.floor(Math.random() * 9))
+    // Use seeded random for deterministic sequence
+    const rng = seedrandom(seed + level) // Add level for variety
+    const newSeq = Array.from({ length: level + 2 }, () => Math.floor(rng() * 9))
     setSequence(newSeq)
     setUserSequence([])
     showSequence()

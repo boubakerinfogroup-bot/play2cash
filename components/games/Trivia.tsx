@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import seedrandom from 'seedrandom'
 
 interface TriviaProps {
   matchId: string
@@ -148,7 +149,9 @@ export default function Trivia({ matchId, seed, userId, lang, onResultSubmitted 
   }
 
   const question = questions[currentQuestion]
-  const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5)
+  // Use seeded random for deterministic option shuffle
+  const rng = seedrandom(seed + currentQuestion)
+  const shuffledOptions = [...question.options].sort(() => rng() - 0.5)
 
   return (
     <div className="game-area">
@@ -166,10 +169,10 @@ export default function Trivia({ matchId, seed, userId, lang, onResultSubmitted 
           <button
             key={index}
             className={`trivia-option ${showFeedback && selectedOption === option
-                ? option === question.a
-                  ? 'correct'
-                  : 'wrong'
-                : ''
+              ? option === question.a
+                ? 'correct'
+                : 'wrong'
+              : ''
               }`}
             onClick={() => handleAnswer(option)}
             disabled={!!selectedOption || showFeedback}

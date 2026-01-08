@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import seedrandom from 'seedrandom'
 
 interface FastMathProps {
   matchId: string
@@ -20,6 +21,7 @@ export default function FastMath({ matchId, seed, userId, lang, onResultSubmitte
   const [feedback, setFeedback] = useState('')
   const [currentAnswer, setCurrentAnswer] = useState(0)
   const [gameStarted, setGameStarted] = useState(false)
+  const [questionNumber, setQuestionNumber] = useState(0)
   const startTimeRef = useRef<number>(0)
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -87,10 +89,12 @@ export default function FastMath({ matchId, seed, userId, lang, onResultSubmitte
   }, [matchId, router])
 
   const generateQuestion = () => {
-    const num1 = Math.floor(Math.random() * 50) + 1
-    const num2 = Math.floor(Math.random() * 50) + 1
+    // Use seeded random for deterministic questions
+    const rng = seedrandom(seed + questionNumber)
+    const num1 = Math.floor(rng() * 50) + 1
+    const num2 = Math.floor(rng() * 50) + 1
     const operations = ['+', '-', '*']
-    const op = operations[Math.floor(Math.random() * operations.length)]
+    const op = operations[Math.floor(rng() * operations.length)]
 
     let q = `${num1} ${op} ${num2}`
     let ans = 0
@@ -103,6 +107,7 @@ export default function FastMath({ matchId, seed, userId, lang, onResultSubmitte
     setCurrentAnswer(ans)
     setAnswer('')
     setFeedback('')
+    setQuestionNumber(prev => prev + 1)
     setTimeout(() => answerInputRef.current?.focus(), 100)
   }
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import seedrandom from 'seedrandom'
 
 interface ColorRunProps {
   matchId: string
@@ -22,6 +23,7 @@ export default function ColorRun({ matchId, seed, userId, lang, onResultSubmitte
   const [targetColor, setTargetColor] = useState<string>('')
   const [score, setScore] = useState(0)
   const [timeLeft, setTimeLeft] = useState(30)
+  const [round, setRound] = useState(0)
   const startTimeRef = useRef<number>(0)
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -74,8 +76,11 @@ export default function ColorRun({ matchId, seed, userId, lang, onResultSubmitte
   }, [matchId, router])
 
   const generateTiles = () => {
-    const newTarget = COLORS[Math.floor(Math.random() * COLORS.length)]
+    // Use seeded random for deterministic target
+    const rng = seedrandom(seed + round)
+    const newTarget = COLORS[Math.floor(rng() * COLORS.length)]
     setTargetColor(newTarget)
+    setRound(prev => prev + 1)
   }
 
   const handleTileClick = (color: string) => {
@@ -116,7 +121,9 @@ export default function ColorRun({ matchId, seed, userId, lang, onResultSubmitte
     }
   }, [timeLeft])
 
-  const tileColors = Array.from({ length: 9 }, () => COLORS[Math.floor(Math.random() * COLORS.length)])
+  // Use seeded random for deterministic tile colors
+  const rng = seedrandom(seed + round)
+  const tileColors = Array.from({ length: 9 }, () => COLORS[Math.floor(rng() * COLORS.length)])
 
   return (
     <div className="game-area">
