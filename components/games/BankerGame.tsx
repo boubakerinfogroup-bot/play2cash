@@ -45,7 +45,7 @@ export default function BankerGame({ matchId, seed, userId, lang, onResultSubmit
     }, [])
 
     const generateRounds = () => {
-        const rng = randomGen.current || { next: () => Math.random() }
+        const rng = randomGen.current || (() => Math.random())
         const newRounds: Round[] = []
 
         // Balanced scenarios - risk is roughly 2x safe with equal downside
@@ -63,12 +63,12 @@ export default function BankerGame({ matchId, seed, userId, lang, onResultSubmit
         ]
 
         for (let i = 0; i < 5; i++) {
-            const scenario = scenarios[Math.floor(rng.next() * scenarios.length)]
+            const scenario = scenarios[Math.floor(rng() * scenarios.length)]
             newRounds.push({
                 safe: scenario.safe,
                 riskWin: scenario.riskWin,
                 riskLose: scenario.riskLose,
-                outcome: rng.next() > 0.5 // 50/50 chance
+                outcome: rng() > 0.5 // 50/50 chance
             })
         }
 

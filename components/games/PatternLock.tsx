@@ -43,10 +43,10 @@ export default function PatternLock({ matchId, seed, userId, lang, onResultSubmi
         // Generate pattern (length increases with round)
         const patternLength = Math.min(3 + currentRound, 8)
         const newPattern: number[] = []
-        const rng = randomGen.current || { next: () => Math.random() }
+        const rng = randomGen.current || (() => Math.random())
 
         while (newPattern.length < patternLength) {
-            const dot = Math.floor(rng.next() * 9)
+            const dot = Math.floor(rng() * 9)
             if (!newPattern.includes(dot)) {
                 newPattern.push(dot)
             }

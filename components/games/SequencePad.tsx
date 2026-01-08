@@ -38,12 +38,12 @@ export default function SequencePad({ matchId, seed, userId, lang, onResultSubmi
     }, [])
 
     const startNewRound = () => {
-        const rng = randomGen.current || { next: () => Math.random() }
+        const rng = randomGen.current || (() => Math.random())
         const newSequence: number[] = []
         // Increase difficulty: 3, 5, 7, 9, 11... (+2 each level)
         const sequenceLength = 3 + ((currentLevel - 1) * 2)
         for (let i = 0; i < sequenceLength; i++) {
-            newSequence.push(Math.floor(rng.next() * 9))
+            newSequence.push(Math.floor(rng() * 9))
         }
 
         setSequence(newSequence)
