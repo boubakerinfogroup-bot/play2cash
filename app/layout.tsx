@@ -31,7 +31,7 @@ export default function RootLayout({
         <BalanceProvider>
           {children}
         </BalanceProvider>
-        <div style={{ position: 'fixed', bottom: '4px', right: '4px', fontSize: '10px', opacity: 0.3, zIndex: 9999 }}>v2.4</div>
+        <div style={{ position: 'fixed', bottom: '4px', right: '4px', fontSize: '10px', opacity: 0.3, zIndex: 9999 }}>v2.5</div>
       </body>
     </html>
   )
