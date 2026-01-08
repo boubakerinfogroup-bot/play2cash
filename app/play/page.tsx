@@ -180,8 +180,9 @@ function PlayContent() {
     )
   }
 
-  // Find game slug from match
-  const gameSlug = (match as any).gameSlug || ''
+  // Find game slug and seed from match
+  const gameSlug = (match as any).gameSlug || (match as any).game?.slug || ''
+  const gameSeed = (match as any).gameSeed || (match as any).game_seed || ''
 
   // Game area - load the specific game component
   return (
@@ -217,7 +218,13 @@ function PlayContent() {
 
       <div className="container" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '20px' }}>
         <div className="glass-card" style={{ flex: 1, padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          <GameWrapper matchId={matchId || ''} gameSlug={gameSlug} userId={user.id} lang={lang} />
+          <GameWrapper
+            matchId={matchId || ''}
+            gameSlug={gameSlug}
+            gameSeed={gameSeed}
+            userId={user.id}
+            lang={lang}
+          />
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
+import { matchesAPI } from '@/lib/api-client'
 
 // Lazy load games
 const FastMath = dynamic(() => import('./FastMath'), { ssr: false })
@@ -15,11 +16,12 @@ const LogicMaze = dynamic(() => import('./LogicMaze'), { ssr: false })
 interface GameWrapperProps {
   matchId: string
   gameSlug: string
+  gameSeed: string
   userId: string
   lang: 'fr' | 'ar'
 }
 
-export default function GameWrapper({ matchId, gameSlug, userId, lang }: GameWrapperProps) {
+export default function GameWrapper({ matchId, gameSlug, gameSeed, userId, lang }: GameWrapperProps) {
   const router = useRouter()
   const [hasSubmitted, setHasSubmitted] = useState(false)
 
@@ -27,15 +29,14 @@ export default function GameWrapper({ matchId, gameSlug, userId, lang }: GameWra
     setHasSubmitted(true)
     // Poll for match completion
     const interval = setInterval(() => {
-      fetch(`/api/matches/${matchId}`)
-        .then(res => res.json())
+      matchesAPI.get(matchId)
         .then(data => {
           if (data.match && data.match.status === 'COMPLETED') {
             clearInterval(interval)
             router.push(`/result?match=${matchId}`)
           }
         })
-        .catch(() => {})
+        .catch(() => { })
     }, 2000)
 
     return () => clearInterval(interval)
@@ -54,17 +55,17 @@ export default function GameWrapper({ matchId, gameSlug, userId, lang }: GameWra
   // Render game based on slug
   switch (gameSlug) {
     case 'fast-math':
-      return <FastMath matchId={matchId} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+      return <FastMath matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
     case 'memory-grid':
-      return <MemoryGrid matchId={matchId} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+      return <MemoryGrid matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
     case 'memory-card':
-      return <MemoryCard matchId={matchId} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+      return <MemoryCard matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
     case 'trivia':
-      return <Trivia matchId={matchId} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+      return <Trivia matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
     case 'color-run':
-      return <ColorRun matchId={matchId} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+      return <ColorRun matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
     case 'logic-maze':
-      return <LogicMaze matchId={matchId} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+      return <LogicMaze matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
     default:
       return (
         <div style={{ textAlign: 'center', padding: '40px 20px' }}>
