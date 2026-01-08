@@ -47,7 +47,7 @@ export default function GameWrapper({ matchId, gameSlug, gameSeed, userId, lang 
     return (
       <div style={{ textAlign: 'center', padding: '40px 20px' }}>
         <h2>{lang === 'ar' ? 'تم إرسال النتيجة' : 'Résultat envoyé'}</h2>
-        <p>{lang === 'ar' ? 'في انتظار الخصم...' : 'En attente de l\\'adversaire...'}</p>
+        <p>{lang === 'ar' ? 'في انتظار الخصم...' : "En attente de l'adversaire..."}</p>
         <div className="spinner"></div>
       </div>
     )
