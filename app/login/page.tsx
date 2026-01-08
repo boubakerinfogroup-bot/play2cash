@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { authAPI } from '@/lib/api-client'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -65,13 +66,7 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, whatsapp: '+216' + whatsapp, email, language: lang })
-      })
-
-      const result = await response.json()
+      const result = await authAPI.login(name, '+216' + whatsapp, email, lang)
 
       if (result.success && result.user) {
         localStorage.setItem('user', JSON.stringify(result.user))
