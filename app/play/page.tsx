@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { formatCurrency } from '@/lib/utils'
 import type { User } from '@/lib/types'
 import GameWrapper from '@/components/games/GameWrapper'
+import { matchesAPI } from '@/lib/api-client'
 
 import { Suspense } from 'react'
 
@@ -42,8 +43,7 @@ function PlayContent() {
 
   const loadMatch = async (id: string) => {
     try {
-      const response = await fetch(`/api/matches/${id}`)
-      const data = await response.json()
+      const data = await matchesAPI.get(id)
 
       if (data.match) {
         // Check if user is in this match
@@ -103,8 +103,7 @@ function PlayContent() {
     if (!matchId || !gameStarted) return
 
     const interval = setInterval(() => {
-      fetch(`/api/matches/${matchId}`)
-        .then(res => res.json())
+      matchesAPI.get(matchId)
         .then(data => {
           if (data.match && data.match.status === 'COMPLETED') {
             router.push(`/result?match=${matchId}`)
