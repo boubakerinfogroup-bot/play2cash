@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { matchesAPI } from '@/lib/api-client'
 
-// Lazy load games
-const FastMath = dynamic(() => import('./FastMath'), { ssr: false })
-const MemoryGrid = dynamic(() => import('./MemoryGrid'), { ssr: false })
-const MemoryCard = dynamic(() => import('./MemoryCard'), { ssr: false })
-const Trivia = dynamic(() => import('./Trivia'), { ssr: false })
-const ColorRun = dynamic(() => import('./ColorRun'), { ssr: false })
-const LogicMaze = dynamic(() => import('./LogicMaze'), { ssr: false })
+// Lazy load the actual 7 games
+const BankerGame = dynamic(() => import('./BankerGame'), { ssr: false })
+const MemoryGame = dynamic(() => import('./MemoryGame'), { ssr: false })
+const PatternLock = dynamic(() => import('./PatternLock'), { ssr: false })
+const RockPaperScissors = dynamic(() => import('./RockPaperScissors'), { ssr: false })
+const RocketGame = dynamic(() => import('./RocketGame'), { ssr: false })
+const SequencePad = dynamic(() => import('./SequencePad'), { ssr: false })
+const TicTacToePlus = dynamic(() => import('./TicTacToePlus'), { ssr: false })
 
 interface GameWrapperProps {
   matchId: string
@@ -46,7 +47,7 @@ export default function GameWrapper({ matchId, gameSlug, gameSeed, userId, lang 
     return (
       <div style={{ textAlign: 'center', padding: '40px 20px' }}>
         <h2>{lang === 'ar' ? 'تم إرسال النتيجة' : 'Résultat envoyé'}</h2>
-        <p>{lang === 'ar' ? 'في انتظار الخصم...' : 'En attente de l\'adversaire...'}</p>
+        <p>{lang === 'ar' ? 'في انتظار الخصم...' : 'En attente de l\\'adversaire...'}</p>
         <div className="spinner"></div>
       </div>
     )
@@ -54,18 +55,20 @@ export default function GameWrapper({ matchId, gameSlug, gameSeed, userId, lang 
 
   // Render game based on slug
   switch (gameSlug) {
-    case 'fast-math':
-      return <FastMath matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
-    case 'memory-grid':
-      return <MemoryGrid matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
-    case 'memory-card':
-      return <MemoryCard matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
-    case 'trivia':
-      return <Trivia matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
-    case 'color-run':
-      return <ColorRun matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
-    case 'logic-maze':
-      return <LogicMaze matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+    case 'banker':
+      return <BankerGame matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+    case 'memory':
+      return <MemoryGame matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+    case 'pattern':
+      return <PatternLock matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+    case 'rps':
+      return <RockPaperScissors matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+    case 'rocket':
+      return <RocketGame matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+    case 'sequence':
+      return <SequencePad matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+    case 'tictactoe':
+      return <TicTacToePlus matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
     default:
       return (
         <div style={{ textAlign: 'center', padding: '40px 20px' }}>
@@ -74,4 +77,5 @@ export default function GameWrapper({ matchId, gameSlug, gameSeed, userId, lang 
       )
   }
 }
+
 
