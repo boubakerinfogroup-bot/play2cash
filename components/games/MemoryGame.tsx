@@ -11,9 +11,11 @@ interface Card {
 }
 
 interface MemoryGameProps {
-    onComplete: (score: number) => void
-    isActive: boolean
-    seed?: string | null
+    matchId: string
+    seed: string
+    userId: string
+    lang: 'fr' | 'ar'
+    onResultSubmitted: () => void
 }
 
 // MASSIVE EMOJI POOL - 100+ unique emojis for infinite variations!
@@ -50,7 +52,7 @@ function getRandomEmojis(count: number, seed?: string | null): string[] {
     return shuffled.slice(0, count)
 }
 
-export default function MemoryGame({ onComplete, isActive, seed }: MemoryGameProps) {
+export default function MemoryGame({ matchId, seed, userId, lang, onResultSubmitted }: MemoryGameProps) {
     const [cards, setCards] = useState<Card[]>([])
     const [flippedCards, setFlippedCards] = useState<number[]>([])
     const [moves, setMoves] = useState(0)
@@ -62,14 +64,14 @@ export default function MemoryGame({ onComplete, isActive, seed }: MemoryGamePro
 
     // Initialize game with random emojis
     useEffect(() => {
-        if (isActive && !isCompleted) {
+        if (!isCompleted) {
             // Get 14 random emojis from the pool (28 cards total - easier!)
             const randomEmojis = getRandomEmojis(14, seed)
             setSelectedEmojis(randomEmojis)
             initializeGame(randomEmojis)
             setStartTime(Date.now())
         }
-    }, [isActive])
+    }, [])
 
     const initializeGame = (emojis: string[]) => {
         // Create pairs of cards with the selected emojis
@@ -122,8 +124,7 @@ export default function MemoryGame({ onComplete, isActive, seed }: MemoryGamePro
                     if (newPairs === selectedEmojis.length && !isCompleted) {
                         // Game complete!
                         setIsCompleted(true)
-                        // Score is simply the number of pairs matched (out of 14)
-                        onComplete(newPairs)
+                        onResultSubmitted()
                     }
                     return newPairs
                 })
@@ -144,8 +145,6 @@ export default function MemoryGame({ onComplete, isActive, seed }: MemoryGamePro
             }
         }
     }
-
-    if (!isActive) return null
 
     return (
         <div style={{

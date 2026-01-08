@@ -4,10 +4,11 @@ import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 
 interface RocketGameProps {
-    onComplete: (score: number) => void
-    isActive: boolean
-    matchId?: string // For synchronized gameplay
-    seed?: string | null
+    matchId: string
+    seed: string
+    userId: string
+    lang: 'fr' | 'ar'
+    onResultSubmitted: () => void
 }
 
 // Seeded random number generator for fair synchronized gameplay
@@ -30,7 +31,7 @@ interface Obstacle {
     id: number;
 }
 
-export default function RocketGame({ onComplete, isActive, matchId, seed }: RocketGameProps) {
+export default function RocketGame({ matchId, seed, userId, lang, onResultSubmitted }: RocketGameProps) {
     const [rocketX, setRocketX] = useState(50)
     const [obstacles, setObstacles] = useState<Obstacle[]>([])
     const [score, setScore] = useState(0)
@@ -58,7 +59,7 @@ export default function RocketGame({ onComplete, isActive, matchId, seed }: Rock
 
     // Start game
     useEffect(() => {
-        if (isActive && !isGameOver) {
+        if (!isGameOver) {
             setRocketX(50)
             setObstacles([])
             setScore(0)
@@ -70,7 +71,7 @@ export default function RocketGame({ onComplete, isActive, matchId, seed }: Rock
         return () => {
             if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current)
         }
-    }, [isActive, isGameOver])
+    }, [])
 
     const handleTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
         if (isGameOver) return
@@ -153,7 +154,7 @@ export default function RocketGame({ onComplete, isActive, matchId, seed }: Rock
         if (gameLoopRef.current) {
             cancelAnimationFrame(gameLoopRef.current)
         }
-        onComplete(score)
+        onResultSubmitted()
     }
 
     // Touch/Click controls - move rocket left or right
@@ -166,8 +167,6 @@ export default function RocketGame({ onComplete, isActive, matchId, seed }: Rock
 
         setRocketX(Math.max(10, Math.min(90, clickX)))
     }
-
-    if (!isActive) return null
 
     return (
         <div style={{

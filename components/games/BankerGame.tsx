@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef } from 'react'
 
 interface BankerGameProps {
-    onComplete: (score: number) => void
-    isActive: boolean
-    matchId?: string
-    seed?: string | null
+    matchId: string
+    seed: string
+    userId: string
+    lang: 'fr' | 'ar'
+    onResultSubmitted: () => void
 }
 
 class SeededRandom {
@@ -25,7 +26,7 @@ interface Round {
     outcome: boolean // true = win, false = lose
 }
 
-export default function BankerGame({ onComplete, isActive, matchId, seed }: BankerGameProps) {
+export default function BankerGame({ matchId, seed, userId, lang, onResultSubmitted }: BankerGameProps) {
     const [playerStack, setPlayerStack] = useState(0)
     const [opponentStack, setOpponentStack] = useState(0)
     const [currentRound, setCurrentRound] = useState(0)
@@ -46,10 +47,10 @@ export default function BankerGame({ onComplete, isActive, matchId, seed }: Bank
     }, [matchId])
 
     useEffect(() => {
-        if (isActive && !isGameOver) {
+        if (!isGameOver) {
             resetGame()
         }
-    }, [isActive])
+    }, [])
 
     const generateRounds = () => {
         const rng = randomGen.current || { next: () => Math.random() }
@@ -152,10 +153,10 @@ export default function BankerGame({ onComplete, isActive, matchId, seed }: Bank
 
     const endGame = (playerWon: boolean) => {
         setIsGameOver(true)
-        onComplete(playerWon ? 1000 : 100)
+        onResultSubmitted()
     }
 
-    if (!isActive || rounds.length === 0) return null
+    if (rounds.length === 0) return null
 
     const round = rounds[currentRound]
 
