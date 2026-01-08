@@ -68,13 +68,13 @@ export default function TrainingPage() {
 
                 {/* Game Container */}
                 <div style={{ maxWidth: '400px', margin: '0 auto', paddingTop: '60px' }}>
-                    {selectedGame === 'memory' && <MemoryGame onComplete={handleComplete} isActive={true} />}
-                    {selectedGame === 'rocket' && <RocketGame onComplete={handleComplete} isActive={true} />}
-                    {selectedGame === 'sequence' && <SequencePad onComplete={handleComplete} isActive={true} />}
-                    {selectedGame === 'rps' && <RockPaperScissors onComplete={handleComplete} isActive={true} />}
-                    {selectedGame === 'tictactoe' && <TicTacToePlus onComplete={handleComplete} isActive={true} matchId="training" />}
-                    {selectedGame === 'pattern' && <PatternLock onComplete={handleComplete} isActive={true} matchId="training" />}
-                    {selectedGame === 'banker' && <BankerGame onComplete={handleComplete} isActive={true} matchId="training" />}
+                    {selectedGame === 'memory' && <MemoryGame matchId="training" seed="training-seed" userId="training-user" lang="ar" onResultSubmitted={() => handleComplete(100)} />}
+                    {selectedGame === 'rocket' && <RocketGame matchId="training" seed="training-seed" userId="training-user" lang="ar" onResultSubmitted={() => handleComplete(100)} />}
+                    {selectedGame === 'sequence' && <SequencePad matchId="training" seed="training-seed" userId="training-user" lang="ar" onResultSubmitted={() => handleComplete(100)} />}
+                    {selectedGame === 'rps' && <RockPaperScissors matchId="training" seed="training-seed" userId="training-user" lang="ar" onResultSubmitted={() => handleComplete(100)} />}
+                    {selectedGame === 'tictactoe' && <TicTacToePlus matchId="training" seed="training-seed" userId="training-user" lang="ar" onResultSubmitted={() => handleComplete(100)} />}
+                    {selectedGame === 'pattern' && <PatternLock matchId="training" seed="training-seed" userId="training-user" lang="ar" onResultSubmitted={() => handleComplete(100)} />}
+                    {selectedGame === 'banker' && <BankerGame matchId="training" seed="training-seed" userId="training-user" lang="ar" onResultSubmitted={() => handleComplete(100)} />}
                 </div>
             </div>
         )
