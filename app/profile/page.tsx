@@ -9,6 +9,7 @@ import Modal from '@/components/Modal'
 import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
 import BottomSheet from '@/components/BottomSheet'
+import { authAPI, walletAPI } from '@/lib/api-client'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -48,8 +49,7 @@ export default function ProfilePage() {
 
   const refreshBalance = async (userId: string) => {
     try {
-      const response = await fetch(`/api/user/balance?userId=${userId}`)
-      const data = await response.json()
+      const data = await authAPI.me()
       if (data.success && data.user) {
         setUser(data.user)
         localStorage.setItem('user', JSON.stringify(data.user))
@@ -62,18 +62,14 @@ export default function ProfilePage() {
   const loadData = async () => {
     try {
       // Load transactions
-      const txResponse = await fetch('/api/user/transactions')
-      const txData = await txResponse.json()
+      const txData = await walletAPI.getTransactions()
       if (txData.transactions) {
         setTransactions(txData.transactions)
       }
 
-      // Load matches
-      const matchesResponse = await fetch(`/api/user/matches?filter=${filter}`)
-      const matchesData = await matchesResponse.json()
-      if (matchesData.matches) {
-        setMatches(matchesData.matches)
-      }
+      // Load matches - Note: This endpoint needs to be added to matchesAPI
+      // For now, using empty array until backend implements user matches endpoint
+      setMatches([])
 
       // Note: Balance is refreshed separately via refreshBalance() function
     } catch (error) {
@@ -103,13 +99,7 @@ export default function ProfilePage() {
   const handleDeposit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const response = await fetch('/api/deposits/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: depositAmount, whatsapp })
-      })
-
-      const result = await response.json()
+      const result = await walletAPI.deposit(parseFloat(depositAmount), whatsapp)
       if (result.success) {
         setDepositModal(false)
         setDepositAmount('')
@@ -134,13 +124,7 @@ export default function ProfilePage() {
   const handleWithdrawal = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const response = await fetch('/api/withdrawals/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: withdrawalAmount, whatsapp })
-      })
-
-      const result = await response.json()
+      const result = await walletAPI.withdraw(parseFloat(withdrawalAmount), whatsapp)
       if (result.success) {
         setWithdrawalModal(false)
         setWithdrawalAmount('')
