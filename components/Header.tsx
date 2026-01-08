@@ -3,37 +3,22 @@
 import Link from 'next/link'
 import { formatCurrency } from '@/lib/utils'
 import type { User } from '@/lib/types'
-import { useState } from 'react'
+import { useBalance } from '@/contexts/BalanceContext'
 
 interface HeaderProps {
   user: User | null
   lang?: 'fr' | 'ar'
-  onBalanceUpdate?: (newBalance: number) => void
 }
 
-export default function Header({ user, lang = 'fr', onBalanceUpdate }: HeaderProps) {
-  const [isRefreshing, setIsRefreshing] = useState(false)
-  const [currentBalance, setCurrentBalance] = useState(user?.balance || 0)
+export default function Header({ user, lang = 'fr' }: HeaderProps) {
+  const { balance, loading, refreshBalance } = useBalance()
 
   const handleRefresh = async () => {
-    if (!user) return
-
-    setIsRefreshing(true)
-    try {
-      const response = await fetch('/api/user/balance')
-      const data = await response.json()
-      if (data.success && data.balance !== undefined) {
-        setCurrentBalance(data.balance)
-        if (onBalanceUpdate) {
-          onBalanceUpdate(data.balance)
-        }
-      }
-    } catch (error) {
-      console.error('Error refreshing balance:', error)
-    } finally {
-      setTimeout(() => setIsRefreshing(false), 1000)
-    }
+    await refreshBalance()
   }
+
+  // Use balance from context if available, otherwise fall back to user prop
+  const displayBalance = balance !== null ? balance : (user?.balance || 0)
 
   return (
     <div className="header glass">
@@ -51,11 +36,11 @@ export default function Header({ user, lang = 'fr', onBalanceUpdate }: HeaderPro
           zIndex: 1
         }}>
           <div className="balance-pill">
-            <span>{formatCurrency(currentBalance, lang)}</span>
+            <span>{formatCurrency(displayBalance, lang)}</span>
             <svg
               onClick={handleRefresh}
               className="refresh-icon"
-              style={{ transform: isRefreshing ? 'rotate(360deg)' : 'none' }}
+              style={{ transform: loading ? 'rotate(360deg)' : 'none' }}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"

@@ -8,6 +8,7 @@ import type { User } from '@/lib/types'
 import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
 import { matchesAPI } from '@/lib/api-client'
+import { useBalance } from '@/contexts/BalanceContext'
 
 import { Suspense } from 'react'
 
@@ -15,6 +16,7 @@ function ResultContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const matchId = searchParams.get('match')
+  const { refreshBalance } = useBalance()
 
   const [user, setUser] = useState<User | null>(null)
   const [match, setMatch] = useState<any>(null)
@@ -46,6 +48,8 @@ function ResultContent() {
 
       if (data.match) {
         setMatch(data.match)
+        // Refresh balance after match completes
+        await refreshBalance()
       } else {
         router.push('/')
       }
