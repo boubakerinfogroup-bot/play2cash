@@ -9,7 +9,7 @@ import Modal from '@/components/Modal'
 import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
 import BottomSheet from '@/components/BottomSheet'
-import { authAPI, walletAPI } from '@/lib/api-client'
+import { authAPI, walletAPI, matchesAPI } from '@/lib/api-client'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -67,9 +67,13 @@ export default function ProfilePage() {
         setTransactions(txData.transactions)
       }
 
-      // Load matches - Note: This endpoint needs to be added to matchesAPI
-      // For now, using empty array until backend implements user matches endpoint
-      setMatches([])
+      // Load matches
+      if (user?.id) {
+        const matchesData = await matchesAPI.getUserMatches(user.id, filter)
+        if (matchesData.success && matchesData.matches) {
+          setMatches(matchesData.matches)
+        }
+      }
 
       // Note: Balance is refreshed separately via refreshBalance() function
     } catch (error) {

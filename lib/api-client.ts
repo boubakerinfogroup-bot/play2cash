@@ -127,6 +127,15 @@ export const matchesAPI = {
 
     async get(matchId: string) {
         return apiCall(`/matches/${matchId}`);
+    },
+
+    async live(gameId?: string) {
+        const params = gameId ? `?gameId=${gameId}` : '';
+        return apiCall(`/matches/live${params}`);
+    },
+
+    async getUserMatches(userId: string, filter = 'all') {
+        return apiCall(`/matches/user/${userId}?filter=${filter}`);
     }
 };
 
