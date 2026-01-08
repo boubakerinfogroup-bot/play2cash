@@ -1,5 +1,6 @@
 {
   "name": "play2cash-next",
+  "description": "Play2Cash PVP Gaming Platform",
   "version": "1.0.0",
   "private": true,
   "scripts": {
