@@ -8,6 +8,7 @@ import type { User } from '@/lib/types'
 import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
 import BottomSheet from '@/components/BottomSheet'
+import { authAPI, gamesAPI, matchesAPI } from '@/lib/api-client'
 
 import { Suspense } from 'react'
 import PopupModal from '@/components/PopupModal'
@@ -64,8 +65,7 @@ function LobbyContent() {
 
   const refreshBalance = async (userId: string) => {
     try {
-      const response = await fetch(`/api/user/balance?userId=${userId}`)
-      const data = await response.json()
+      const data = await authAPI.me()
       if (data.success && data.user) {
         setUser(data.user)
         localStorage.setItem('user', JSON.stringify(data.user))
@@ -77,8 +77,7 @@ function LobbyContent() {
 
   const loadGame = async (slug: string) => {
     try {
-      const response = await fetch(`/api/games/${slug}`)
-      const data = await response.json()
+      const data = await gamesAPI.get(slug)
       if (data.game) {
         setGame(data.game)
       }
@@ -89,17 +88,11 @@ function LobbyContent() {
 
   const loadMatches = async () => {
     try {
-      const params = new URLSearchParams()
-      if (game?.id) {
-        params.append('gameId', game.id)
-      }
+      const data = await matchesAPI.live(game?.id)
 
-      const response = await fetch(`/api/matches/live?${params.toString()}`)
-      const data = await response.json()
-
-      if (data.success && data.rooms) {
+      if (data.success && data.matches) {
         // Filter by stake if selected
-        let filtered = data.rooms
+        let filtered = data.matches
         if (stakeFilter) {
           filtered = filtered.filter((r: any) => r.stake === Number(stakeFilter))
         }
@@ -127,8 +120,7 @@ function LobbyContent() {
 
     const pollInterval = setInterval(async () => {
       try {
-        const response = await fetch(`/api/matches/${pendingJoinRequest.matchId}/poll`)
-        const data = await response.json()
+        const data = await matchesAPI.get(pendingJoinRequest.matchId)
 
         if (data.success && data.match) {
           // Check if our join request was accepted
@@ -247,10 +239,7 @@ function LobbyContent() {
                   <button
                     onClick={async () => {
                       try {
-                        const response = await fetch(`/api/matches/${match.id}/request-join`, {
-                          method: 'POST'
-                        })
-                        const data = await response.json()
+                        const data = await matchesAPI.requestJoin(match.id)
                         if (data.success) {
                           // Set pending join request to start polling
                           setPendingJoinRequest({
