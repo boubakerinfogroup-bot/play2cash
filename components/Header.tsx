@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { formatCurrency } from '@/lib/utils'
-import type { User } from '@/lib/auth'
+import type { User } from '@/lib/types'
 import { useState } from 'react'
 
 interface HeaderProps {
