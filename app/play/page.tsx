@@ -7,6 +7,7 @@ import { formatCurrency } from '@/lib/utils'
 import type { User } from '@/lib/types'
 import GameWrapper from '@/components/games/GameWrapper'
 import { matchesAPI } from '@/lib/api-client'
+import { useQuitPrevention } from '@/hooks/useQuitPrevention'
 
 import { Suspense } from 'react'
 
@@ -21,6 +22,23 @@ function PlayContent() {
   const [loading, setLoading] = useState(true)
   const [countdown, setCountdown] = useState<number | null>(null)
   const [gameStarted, setGameStarted] = useState(false)
+
+  // Quit prevention - enabled when game is active
+  useQuitPrevention({
+    enabled: gameStarted && !!match && match.status === 'ACTIVE',
+    matchId: matchId || undefined,
+    onQuit: async () => {
+      // Process forfeit
+      if (matchId) {
+        try {
+          await matchesAPI.cancel(matchId)
+        } catch (error) {
+          console.error('Forfeit error:', error)
+        }
+        router.push(`/result?match=${matchId}`)
+      }
+    }
+  })
 
   useEffect(() => {
     const userStr = localStorage.getItem('user')
