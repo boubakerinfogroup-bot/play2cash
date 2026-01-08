@@ -194,7 +194,7 @@ export default function MemoryGame({ onComplete, isActive, seed }: MemoryGamePro
                             borderRadius: '16px',
                             transition: 'transform 0.3s',
                             transform: card.isFlipped || card.isMatched ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                            background: card.isFlipped || card.isMatched ? 'white' : '#1e293b',
+                            background: '#1e293b',
                             border: '3px solid #334155',
                             fontSize: '1.8rem',
                             opacity: 1,
