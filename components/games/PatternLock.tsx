@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef } from 'react'
 
 interface PatternLockProps {
-    onComplete: (score: number) => void
-    isActive: boolean
-    matchId?: string
-    seed?: string | null
+    matchId: string
+    seed: string
+    userId: string
+    lang: 'fr' | 'ar'
+    onResultSubmitted: () => void
 }
 
 class SeededRandom {
@@ -18,7 +19,7 @@ class SeededRandom {
     }
 }
 
-export default function PatternLock({ onComplete, isActive, matchId, seed }: PatternLockProps) {
+export default function PatternLock({ matchId, seed, userId, lang, onResultSubmitted }: PatternLockProps) {
     const [pattern, setPattern] = useState<number[]>([])
     const [playerPattern, setPlayerPattern] = useState<number[]>([])
     const [isShowingPattern, setIsShowingPattern] = useState(false)
@@ -41,10 +42,10 @@ export default function PatternLock({ onComplete, isActive, matchId, seed }: Pat
     }, [matchId])
 
     useEffect(() => {
-        if (isActive && !isGameOver) {
+        if (!isGameOver) {
             startNewRound()
         }
-    }, [isActive, currentRound])
+    }, [currentRound])
 
     const startNewRound = () => {
         // Generate pattern (length increases with round)
@@ -137,10 +138,10 @@ export default function PatternLock({ onComplete, isActive, matchId, seed }: Pat
 
     const endGame = (playerWon: boolean) => {
         setIsGameOver(true)
-        onComplete(playerWon ? 1000 : 100)
+        onResultSubmitted()
     }
 
-    if (!isActive) return null
+
 
     const getDotPosition = (index: number) => {
         const row = Math.floor(index / 3)

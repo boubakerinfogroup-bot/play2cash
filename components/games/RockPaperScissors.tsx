@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef } from 'react'
 
 interface RPSProps {
-    onComplete: (score: number) => void
-    isActive: boolean
-    matchId?: string
-    seed?: string | null
+    matchId: string
+    seed: string
+    userId: string
+    lang: 'fr' | 'ar'
+    onResultSubmitted: () => void
 }
 
 type Choice = 'rock' | 'paper' | 'scissors' | null
@@ -38,14 +39,9 @@ export default function RockPaperScissors({ onComplete, isActive, matchId, seed 
 
     // Initialize game
     useEffect(() => {
-        if (isActive && matchId) {
+        if (matchId) {
             initializeGame()
-            // Get my player number
-            const userStr = localStorage.getItem('user')
-            if (userStr) {
-                const user = JSON.parse(userStr)
-                determinePlayerNumber(user.id)
-            }
+            determinePlayerNumber(userId)
         }
 
         return () => {
@@ -53,7 +49,7 @@ export default function RockPaperScissors({ onComplete, isActive, matchId, seed 
                 clearInterval(pollingRef.current)
             }
         }
-    }, [isActive, matchId])
+    }, [matchId])
 
     const initializeGame = async () => {
         try {
@@ -183,7 +179,7 @@ export default function RockPaperScissors({ onComplete, isActive, matchId, seed 
         const score = myWins * 10
 
         setTimeout(() => {
-            onComplete(score)
+            onResultSubmitted()
         }, 3000)
     }
 

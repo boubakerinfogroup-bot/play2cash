@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef } from 'react'
 
 interface SequencePadProps {
-    onComplete: (score: number) => void
-    isActive: boolean
-    matchId?: string
-    seed?: string | null
+    matchId: string
+    seed: string
+    userId: string
+    lang: 'fr' | 'ar'
+    onResultSubmitted: () => void
 }
 
 // Seeded random for synchronized gameplay
@@ -25,7 +26,7 @@ class SeededRandom {
 
 const COLORS = ['#3b82f6', '#10b981', '#eab308', '#ef4444', '#8b5cf6', '#ec4899', '#f97316', '#14b8a6', '#6366f1']
 
-export default function SequencePad({ onComplete, isActive, matchId, seed }: SequencePadProps) {
+export default function SequencePad({ matchId, seed, userId, lang, onResultSubmitted }: SequencePadProps) {
     const [sequence, setSequence] = useState<number[]>([])
     const [playerInput, setPlayerInput] = useState<number[]>([])
     const [currentLevel, setCurrentLevel] = useState(1)
@@ -45,10 +46,10 @@ export default function SequencePad({ onComplete, isActive, matchId, seed }: Seq
 
     // Start game
     useEffect(() => {
-        if (isActive && !isGameOver) {
+        if (!isGameOver) {
             startNewRound()
         }
-    }, [isActive])
+    }, [])
 
     const startNewRound = () => {
         const rng = randomGen.current || { next: () => Math.random() }
@@ -106,11 +107,10 @@ export default function SequencePad({ onComplete, isActive, matchId, seed }: Seq
 
     const handleGameOver = () => {
         setIsGameOver(true)
-        const score = (currentLevel - 1) * 100
-        onComplete(score)
+        onResultSubmitted()
     }
 
-    if (!isActive) return null
+
 
     return (
         <div style={{

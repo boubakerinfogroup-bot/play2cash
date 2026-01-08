@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react'
 
 interface TicTacToePlusProps {
-    onComplete: (score: number) => void
-    isActive: boolean
-    matchId?: string
-    seed?: string | null
+    matchId: string
+    seed: string
+    userId: string
+    lang: 'fr' | 'ar'
+    onResultSubmitted: () => void
 }
 
-export default function TicTacToePlus({ onComplete, isActive, matchId, seed }: TicTacToePlusProps) {
+export default function TicTacToePlus({ matchId, seed, userId, lang, onResultSubmitted }: TicTacToePlusProps) {
     const ROWS = 6
     const COLS = 4
 
@@ -25,10 +26,10 @@ export default function TicTacToePlus({ onComplete, isActive, matchId, seed }: T
     const [isGameOver, setIsGameOver] = useState(false)
 
     useEffect(() => {
-        if (isActive && !isGameOver) {
+        if (!isGameOver) {
             resetGame()
         }
-    }, [isActive])
+    }, [])
 
     const resetGame = () => {
         setBoard(Array(ROWS).fill(null).map(() => Array(COLS).fill(null)))
@@ -162,10 +163,10 @@ export default function TicTacToePlus({ onComplete, isActive, matchId, seed }: T
 
     const endGame = (playerWon: boolean) => {
         setIsGameOver(true)
-        onComplete(playerWon ? 1000 : 100)
+        onResultSubmitted()
     }
 
-    if (!isActive) return null
+
 
     const isWinningCell = (row: number, col: number) => {
         return winningLine?.some(([r, c]) => r === row && c === col) || false
