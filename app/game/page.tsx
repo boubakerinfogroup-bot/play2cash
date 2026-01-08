@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { formatCurrency, t } from '@/lib/utils'
-import type { User } from '@/lib/auth'
+import type { User } from '@/lib/types'
 import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
 
