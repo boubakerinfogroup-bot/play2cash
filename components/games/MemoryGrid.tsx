@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation'
 
 interface MemoryGridProps {
   matchId: string
+  seed: string
   userId: string
   lang: 'fr' | 'ar'
   onResultSubmitted: () => void
 }
 
-export default function MemoryGrid({ matchId, userId, lang, onResultSubmitted }: MemoryGridProps) {
+export default function MemoryGrid({ matchId, seed, userId, lang, onResultSubmitted }: MemoryGridProps) {
   const router = useRouter()
   const [sequence, setSequence] = useState<number[]>([])
   const [userSequence, setUserSequence] = useState<number[]>([])
@@ -30,7 +31,7 @@ export default function MemoryGrid({ matchId, userId, lang, onResultSubmitted }:
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ matchId, action: 'heartbeat' })
-      }).catch(() => {})
+      }).catch(() => { })
     }, 3000)
 
     checkIntervalRef.current = setInterval(() => {
@@ -47,7 +48,7 @@ export default function MemoryGrid({ matchId, userId, lang, onResultSubmitted }:
             endGame()
           }
         })
-        .catch(() => {})
+        .catch(() => { })
     }, 2000)
 
     return () => {
@@ -167,3 +168,4 @@ export default function MemoryGrid({ matchId, userId, lang, onResultSubmitted }:
     </div>
   )
 }
+

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 
 interface LogicMazeProps {
   matchId: string
+  seed: string
   userId: string
   lang: 'fr' | 'ar'
   onResultSubmitted: () => void
@@ -21,7 +22,7 @@ const MAZE = [
   [0, 0, 0, 0, 0, 0, 0, 0],
 ]
 
-export default function LogicMaze({ matchId, userId, lang, onResultSubmitted }: LogicMazeProps) {
+export default function LogicMaze({ matchId, seed, userId, lang, onResultSubmitted }: LogicMazeProps) {
   const router = useRouter()
   const [playerPos, setPlayerPos] = useState({ row: 0, col: 0 })
   const [startTime] = useState(Date.now())
@@ -34,7 +35,7 @@ export default function LogicMaze({ matchId, userId, lang, onResultSubmitted }: 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ matchId, action: 'heartbeat' })
-      }).catch(() => {})
+      }).catch(() => { })
     }, 3000)
 
     checkIntervalRef.current = setInterval(() => {
@@ -51,7 +52,7 @@ export default function LogicMaze({ matchId, userId, lang, onResultSubmitted }: 
             endGame()
           }
         })
-        .catch(() => {})
+        .catch(() => { })
     }, 2000)
 
     return () => {
@@ -135,10 +136,10 @@ export default function LogicMaze({ matchId, userId, lang, onResultSubmitted }: 
                     background: isWall
                       ? 'var(--text-primary)'
                       : isPlayer
-                      ? 'var(--primary-color)'
-                      : isEnd
-                      ? 'var(--success-color)'
-                      : 'var(--card-bg)',
+                        ? 'var(--primary-color)'
+                        : isEnd
+                          ? 'var(--success-color)'
+                          : 'var(--card-bg)',
                     borderRadius: isPlayer ? '50%' : '4px',
                     minHeight: '40px',
                     transition: 'all 0.2s'
@@ -184,3 +185,4 @@ export default function LogicMaze({ matchId, userId, lang, onResultSubmitted }: 
     </div>
   )
 }
+

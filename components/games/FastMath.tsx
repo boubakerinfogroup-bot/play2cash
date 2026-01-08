@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation'
 
 interface FastMathProps {
   matchId: string
+  seed: string
   userId: string
   lang: 'fr' | 'ar'
   onResultSubmitted: () => void
 }
 
-export default function FastMath({ matchId, userId, lang, onResultSubmitted }: FastMathProps) {
+export default function FastMath({ matchId, seed, userId, lang, onResultSubmitted }: FastMathProps) {
   const router = useRouter()
   const [correctCount, setCorrectCount] = useState(0)
   const [timeLeft, setTimeLeft] = useState(60)
@@ -48,7 +49,7 @@ export default function FastMath({ matchId, userId, lang, onResultSubmitted }: F
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ matchId, action: 'heartbeat' })
-      }).catch(() => {})
+      }).catch(() => { })
     }, 3000)
 
     // Check opponent (every 2 seconds)
@@ -67,7 +68,7 @@ export default function FastMath({ matchId, userId, lang, onResultSubmitted }: F
             endGame()
           }
         })
-        .catch(() => {})
+        .catch(() => { })
     }, 2000)
 
     // Block page leave
@@ -186,9 +187,8 @@ export default function FastMath({ matchId, userId, lang, onResultSubmitted }: F
       />
       {feedback && (
         <div
-          className={`game-feedback ${
-            feedback.includes('Correct') || feedback.includes('صحيح') ? 'correct' : 'wrong'
-          }`}
+          className={`game-feedback ${feedback.includes('Correct') || feedback.includes('صحيح') ? 'correct' : 'wrong'
+            }`}
         >
           {feedback}
         </div>

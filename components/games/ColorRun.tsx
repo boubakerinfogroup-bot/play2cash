@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 
 interface ColorRunProps {
   matchId: string
+  seed: string
   userId: string
   lang: 'fr' | 'ar'
   onResultSubmitted: () => void
@@ -16,7 +17,7 @@ const COLOR_NAMES = {
   ar: { red: 'أحمر', blue: 'أزرق', green: 'أخضر', yellow: 'أصفر', purple: 'بنفسجي', orange: 'برتقالي' }
 }
 
-export default function ColorRun({ matchId, userId, lang, onResultSubmitted }: ColorRunProps) {
+export default function ColorRun({ matchId, seed, userId, lang, onResultSubmitted }: ColorRunProps) {
   const router = useRouter()
   const [targetColor, setTargetColor] = useState<string>('')
   const [score, setScore] = useState(0)
@@ -45,7 +46,7 @@ export default function ColorRun({ matchId, userId, lang, onResultSubmitted }: C
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ matchId, action: 'heartbeat' })
-      }).catch(() => {})
+      }).catch(() => { })
     }, 3000)
 
     checkIntervalRef.current = setInterval(() => {
@@ -62,7 +63,7 @@ export default function ColorRun({ matchId, userId, lang, onResultSubmitted }: C
             endGame()
           }
         })
-        .catch(() => {})
+        .catch(() => { })
     }, 2000)
 
     return () => {
@@ -170,3 +171,4 @@ export default function ColorRun({ matchId, userId, lang, onResultSubmitted }: C
     </div>
   )
 }
+

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 
 interface MemoryCardProps {
   matchId: string
+  seed: string
   userId: string
   lang: 'fr' | 'ar'
   onResultSubmitted: () => void
@@ -12,7 +13,7 @@ interface MemoryCardProps {
 
 const SYMBOLS = ['🍎', '🍌', '🍇', '🍊', '🦁', '🐯', '🐼', '🦊', '⚽', '🏀', '🎮', '🎸', '🚗', '✈️', '🚀', '⭐']
 
-export default function MemoryCard({ matchId, userId, lang, onResultSubmitted }: MemoryCardProps) {
+export default function MemoryCard({ matchId, seed, userId, lang, onResultSubmitted }: MemoryCardProps) {
   const router = useRouter()
   const [cards, setCards] = useState<number[]>([])
   const [flipped, setFlipped] = useState<Set<number>>(new Set())
@@ -32,7 +33,7 @@ export default function MemoryCard({ matchId, userId, lang, onResultSubmitted }:
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ matchId, action: 'heartbeat' })
-      }).catch(() => {})
+      }).catch(() => { })
     }, 3000)
 
     checkIntervalRef.current = setInterval(() => {
@@ -49,7 +50,7 @@ export default function MemoryCard({ matchId, userId, lang, onResultSubmitted }:
             endGame()
           }
         })
-        .catch(() => {})
+        .catch(() => { })
     }, 2000)
 
     return () => {
@@ -139,3 +140,4 @@ export default function MemoryCard({ matchId, userId, lang, onResultSubmitted }:
     </div>
   )
 }
+

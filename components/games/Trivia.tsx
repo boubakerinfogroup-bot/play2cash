@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 
 interface TriviaProps {
   matchId: string
+  seed: string
   userId: string
   lang: 'fr' | 'ar'
   onResultSubmitted: () => void
@@ -37,7 +38,7 @@ const QUESTIONS = {
   ]
 }
 
-export default function Trivia({ matchId, userId, lang, onResultSubmitted }: TriviaProps) {
+export default function Trivia({ matchId, seed, userId, lang, onResultSubmitted }: TriviaProps) {
   const router = useRouter()
   const [questions] = useState(QUESTIONS[lang])
   const [currentQuestion, setCurrentQuestion] = useState(0)
@@ -57,7 +58,7 @@ export default function Trivia({ matchId, userId, lang, onResultSubmitted }: Tri
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ matchId, action: 'heartbeat' })
-      }).catch(() => {})
+      }).catch(() => { })
     }, 3000)
 
     checkIntervalRef.current = setInterval(() => {
@@ -74,7 +75,7 @@ export default function Trivia({ matchId, userId, lang, onResultSubmitted }: Tri
             endGame()
           }
         })
-        .catch(() => {})
+        .catch(() => { })
     }, 2000)
 
     return () => {
@@ -164,13 +165,12 @@ export default function Trivia({ matchId, userId, lang, onResultSubmitted }: Tri
         {shuffledOptions.map((option, index) => (
           <button
             key={index}
-            className={`trivia-option ${
-              showFeedback && selectedOption === option
+            className={`trivia-option ${showFeedback && selectedOption === option
                 ? option === question.a
                   ? 'correct'
                   : 'wrong'
                 : ''
-            }`}
+              }`}
             onClick={() => handleAnswer(option)}
             disabled={!!selectedOption || showFeedback}
           >
@@ -181,3 +181,4 @@ export default function Trivia({ matchId, userId, lang, onResultSubmitted }: Tri
     </div>
   )
 }
+
