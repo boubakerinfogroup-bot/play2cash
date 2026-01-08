@@ -7,6 +7,7 @@ import { formatCurrency } from '@/lib/utils'
 import type { User } from '@/lib/types'
 import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
+import { matchesAPI } from '@/lib/api-client'
 
 import { Suspense } from 'react'
 
@@ -41,8 +42,7 @@ function ResultContent() {
 
   const loadResult = async (id: string) => {
     try {
-      const response = await fetch(`/api/matches/${id}/result`)
-      const data = await response.json()
+      const data = await matchesAPI.get(id)
 
       if (data.match) {
         setMatch(data.match)
