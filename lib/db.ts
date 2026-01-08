@@ -7,7 +7,7 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 const prismaClientSingleton = () => {
-  const url = process.env.DATABASE_URL
+  const url = process.env.DATABASE_URL || process.env.POSTGRES_URL
   if (process.env.NODE_ENV !== 'production') {
     console.log('DB URL available:', !!url)
   }
