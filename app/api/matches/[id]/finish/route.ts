@@ -37,7 +37,8 @@ export async function POST(
             }
         })
 
-        // Check if both players have finished
+        // FIRST PLAYER TO FINISH WINS! - It's a race
+        // Get the latest match state
         const updatedMatch = await prisma.match.findUnique({
             where: { id: matchId },
             include: {
@@ -49,24 +50,34 @@ export async function POST(
             }
         })
 
-        const player1Score = updatedMatch!.player1Score
-        const player2Score = updatedMatch!.player2Score
+        if (!updatedMatch) {
+            return NextResponse.json({ success: false, error: 'Match not found' }, { status: 404 })
+        }
 
-        // If both scores are set, determine winner and settle
-        if (player1Score !== null && player2Score !== null) {
-            const player1 = updatedMatch!.players[0]
-            const player2 = updatedMatch!.players[1]
+        // If match is already completed, just return success
+        if (updatedMatch.status === 'COMPLETED') {
+            return NextResponse.json({
+                success: true,
+                matchCompleted: true,
+                winnerId: updatedMatch.winnerId
+            })
+        }
 
-            // Determine winner (highest score)
-            const winnerId = player1Score > player2Score ? player1.userId : player2.userId
-            const loserId = player1Score > player2Score ? player2.userId : player1.userId
+        // This player finished first - they WIN!
+        const winnerId = userId
+        const loserId = updatedMatch.players.find(p => p.userId !== userId)?.userId
 
-            // Calculate amounts
-            const stake = Number(updatedMatch!.stake)
-            const platformFee = stake * 0.05
-            const winnerAmount = (stake * 2) - platformFee
+        if (!loserId) {
+            return NextResponse.json({ success: false, error: 'Opponent not found' }, { status: 404 })
+        }
 
-            // Use transaction to ensure atomic updates
+        // Calculate amounts
+        const stake = Number(updatedMatch.stake)
+        const platformFee = stake * 0.05
+        const winnerAmount = (stake * 2) - platformFee
+
+        // Use transaction to ensure atomic updates
+        try {
             await prisma.$transaction(async (tx) => {
                 // Get current balances
                 const winner = await tx.user.findUnique({
@@ -85,7 +96,7 @@ export async function POST(
                 const winnerBalanceBefore = Number(winner.balance)
                 const loserBalanceBefore = Number(loser.balance)
 
-                // Update match
+                // Update match to COMPLETED
                 await tx.match.update({
                     where: { id: matchId },
                     data: {
@@ -93,7 +104,10 @@ export async function POST(
                         winnerId: winnerId,
                         completedAt: new Date(),
                         settledAt: new Date(),
-                        platformFee: platformFee
+                        platformFee: platformFee,
+                        // Set both scores - winner has their score, loser gets 0
+                        player1Score: playerIndex === 0 ? score : 0,
+                        player2Score: playerIndex === 1 ? score : 0
                     }
                 })
 
@@ -123,7 +137,7 @@ export async function POST(
                         userId: winnerId,
                         amount: winnerAmount,
                         type: 'MATCH_WIN',
-                        description: `Won match`,
+                        description: `Won match - finished first!`,
                         matchId: matchId,
                         balanceBefore: winnerBalanceBefore,
                         balanceAfter: winnerBalanceBefore + winnerAmount
@@ -135,7 +149,7 @@ export async function POST(
                         userId: loserId,
                         amount: -stake,
                         type: 'MATCH_LOSS',
-                        description: `Lost match`,
+                        description: `Lost match - opponent finished first`,
                         matchId: matchId,
                         balanceBefore: loserBalanceBefore,
                         balanceAfter: loserBalanceBefore - stake
@@ -148,12 +162,10 @@ export async function POST(
                 matchCompleted: true,
                 winnerId: winnerId
             })
+        } catch (txError: any) {
+            console.error('Transaction error:', txError)
+            return NextResponse.json({ success: false, error: 'Failed to settle match' }, { status: 500 })
         }
-
-        return NextResponse.json({
-            success: true,
-            matchCompleted: false
-        })
     } catch (error: any) {
         console.error('Finish match error:', error)
         return NextResponse.json({ success: false, error: error.message }, { status: 500 })
