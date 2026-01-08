@@ -28,7 +28,7 @@ interface GameState {
     finalWinner: 1 | 2 | 'tie' | null
 }
 
-export default function RockPaperScissors({ onComplete, isActive, matchId, seed }: RPSProps) {
+export default function RockPaperScissors({ matchId, seed, userId, lang, onResultSubmitted }: RPSProps) {
     const [gameState, setGameState] = useState<GameState | null>(null)
     const [myChoice, setMyChoice] = useState<Choice>(null)
     const [waitingForOpponent, setWaitingForOpponent] = useState(false)
