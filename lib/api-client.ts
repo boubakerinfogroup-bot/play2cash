@@ -136,6 +136,10 @@ export const matchesAPI = {
 
     async getUserMatches(userId: string, filter = 'all') {
         return apiCall(`/matches/user/${userId}?filter=${filter}`);
+    },
+
+    async cancel(matchId: string) {
+        return apiCall(`/matches/${matchId}/cancel`, { method: 'POST' });
     }
 };
 

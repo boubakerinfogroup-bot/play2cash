@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { formatCurrency, t } from '@/lib/utils'
 import type { User } from '@/lib/types'
 import Header from '@/components/Header'
+import { matchesAPI } from '@/lib/api-client'
 
 import { Suspense } from 'react'
 
@@ -70,8 +71,7 @@ function WaitingContent() {
 
   const loadMatch = async (id: string) => {
     try {
-      const response = await fetch(`/api/matches/${id}`)
-      const data = await response.json()
+      const data = await matchesAPI.get(id)
 
       if (data.match) {
         // Check if user is creator
@@ -109,8 +109,7 @@ function WaitingContent() {
     if (!matchId) return
 
     const interval = setInterval(() => {
-      fetch(`/api/matches/${matchId}`)
-        .then(res => res.json())
+      matchesAPI.get(matchId)
         .then(data => {
           if (data.match) {
             if (data.match.status === 'ACTIVE') {
@@ -156,11 +155,7 @@ function WaitingContent() {
 
   const doCancel = async () => {
     try {
-      const response = await fetch(`/api/matches/${matchId}/cancel`, {
-        method: 'POST'
-      })
-
-      const result = await response.json()
+      const result = await matchesAPI.cancel(matchId!)
 
       if (result.success) {
         // Update user balance
