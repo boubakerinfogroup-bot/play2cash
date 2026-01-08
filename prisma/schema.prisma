@@ -6,9 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql" // Change to "mysql" if using MySQL
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql" // Change to "mysql" if using MySQL
+  url      = env("DATABASE_URL")
 }
 
 // Users table (no passwords, simple registration)
