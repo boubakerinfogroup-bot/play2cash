@@ -10,6 +10,7 @@ import type { User } from '@/lib/types'
 import { setupInactivityLogout } from '@/lib/inactivity'
 import Header from '@/components/Header'
 import MobileNav from '@/components/MobileNav'
+import { gamesAPI, authAPI } from '@/lib/api-client'
 
 export default function HomePage() {
   const router = useRouter()
@@ -44,8 +45,7 @@ export default function HomePage() {
 
   const loadGames = async () => {
     try {
-      const response = await fetch('/api/games')
-      const data = await response.json()
+      const data = await gamesAPI.list()
 
       if (data.games) {
         setGames(data.games)
@@ -59,8 +59,7 @@ export default function HomePage() {
 
   const refreshBalance = async (userId: string) => {
     try {
-      const response = await fetch(`/api/user/balance?userId=${userId}`)
-      const data = await response.json()
+      const data = await authAPI.me()
 
       if (data.success && data.user) {
         // Update user in state and localStorage
