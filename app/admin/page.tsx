@@ -9,8 +9,9 @@ export default function AdminDashboard() {
     const [stats, setStats] = useState<any>(null)
     const [deposits, setDeposits] = useState<any[]>([])
     const [withdrawals, setWithdrawals] = useState<any[]>([])
+    const [users, setUsers] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
-    const [activeTab, setActiveTab] = useState<'stats' | 'deposits' | 'withdrawals'>('stats')
+    const [activeTab, setActiveTab] = useState<'stats' | 'deposits' | 'withdrawals' | 'users'>('stats')
 
     useEffect(() => {
         const token = localStorage.getItem('adminToken')
@@ -27,24 +28,52 @@ export default function AdminDashboard() {
         const headers = { 'Authorization': `Bearer ${token}` }
 
         try {
-            // Load stats
-            const statsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/stats`, { headers })
-            const statsData = await statsRes.json()
+            const [statsRes, depositsRes, withdrawalsRes, usersRes] = await Promise.all([
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/stats`, { headers }),
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/deposits`, { headers }),
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/withdrawals`, { headers }),
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users`, { headers })
+            ])
+
+            const [statsData, depositsData, withdrawalsData, usersData] = await Promise.all([
+                statsRes.json(),
+                depositsRes.json(),
+                withdrawalsRes.json(),
+                usersRes.json()
+            ])
+
             if (statsData.success) setStats(statsData.stats)
-
-            // Load deposits
-            const depositsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/deposits`, { headers })
-            const depositsData = await depositsRes.json()
             if (depositsData.success) setDeposits(depositsData.deposits)
-
-            // Load withdrawals
-            const withdrawalsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/withdrawals`, { headers })
-            const withdrawalsData = await withdrawalsRes.json()
             if (withdrawalsData.success) setWithdrawals(withdrawalsData.withdrawals)
+            if (usersData.success) setUsers(usersData.users)
         } catch (error) {
             console.error('Load data error:', error)
         } finally {
             setLoading(false)
+        }
+    }
+
+    const handleTopUp = async (userId: string) => {
+        const amount = prompt('Enter amount to add:')
+        if (!amount) return
+
+        const token = localStorage.getItem('adminToken')
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/topup`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ amount: parseFloat(amount) })
+            })
+            const data = await res.json()
+            if (data.success) {
+                alert('Balance updated!')
+                loadData()
+            }
+        } catch (error) {
+            console.error('Top up error:', error)
         }
     }
 
@@ -111,7 +140,7 @@ export default function AdminDashboard() {
 
             {/* Tabs */}
             <div style={{ background: '#1e293b', padding: '0 24px', display: 'flex', gap: '8px', borderBottom: '1px solid #334155' }}>
-                {['stats', 'deposits', 'withdrawals'].map(tab => (
+                {['stats', 'users', 'deposits', 'withdrawals'].map(tab => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab as any)}
@@ -139,6 +168,43 @@ export default function AdminDashboard() {
                         <StatCard title="Active Matches" value={stats.active_matches || 0} />
                         <StatCard title="Total Matches" value={stats.total_matches || 0} />
                         <StatCard title="Platform Balance" value={formatCurrency(stats.platform_balance || 0)} />
+                    </div>
+                )}
+
+                {activeTab === 'users' && (
+                    <div>
+                        <h2 style={{ marginBottom: '16px' }}>All Users ({users.length})</h2>
+                        <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr style={{ background: '#1e293b', borderBottom: '2px solid #334155' }}>
+                                        <th style={{ padding: '12px', textAlign: 'left' }}>Name</th>
+                                        <th style={{ padding: '12px', textAlign: 'left' }}>WhatsApp</th>
+                                        <th style={{ padding: '12px', textAlign: 'left' }}>Email</th>
+                                        <th style={{ padding: '12px', textAlign: 'right' }}>Balance</th>
+                                        <th style={{ padding: '12px', textAlign: 'center' }}>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {users.map(user => (
+                                        <tr key={user.id} style={{ borderBottom: '1px solid #334155' }}>
+                                            <td style={{ padding: '12px' }}>{user.name}</td>
+                                            <td style={{ padding: '12px', color: '#94a3b8' }}>{user.whatsapp}</td>
+                                            <td style={{ padding: '12px', color: '#94a3b8' }}>{user.email}</td>
+                                            <td style={{ padding: '12px', textAlign: 'right', fontWeight: 600 }}>{formatCurrency(user.balance)}</td>
+                                            <td style={{ padding: '12px', textAlign: 'center' }}>
+                                                <button
+                                                    onClick={() => handleTopUp(user.id)}
+                                                    style={{ background: '#3b82f6', color: 'white', padding: '6px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
+                                                >
+                                                    Top Up
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 )}
 
