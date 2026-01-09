@@ -2,11 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import confetti from 'canvas-confetti'
-import { QRCodeSVG } from 'qrcode.react'
 import { formatCurrency } from '@/lib/utils'
-import { Share2, X, Check, Timer, Copy } from 'lucide-react'
 import { matchesAPI } from '@/lib/api-client'
 
 interface JoinRequest {
@@ -41,7 +37,6 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
     const [secondsUntilCanCancel, setSecondsUntilCanCancel] = useState(60)
     const [copied, setCopied] = useState(false)
     const [pendingRequest, setPendingRequest] = useState<JoinRequest | null>(null)
-    const [opponentJoined, setOpponentJoined] = useState(false)
 
 
     useEffect(() => {
@@ -86,9 +81,7 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
 
             // If status changed to COUNTDOWN, redirect to match page
             if (response.match.status === 'COUNTDOWN' || response.match.status === 'ACTIVE') {
-                setOpponentJoined(true)
-                confetti()
-                setTimeout(() => router.push(`/ play ? match = ${params.id} `), 2000)
+                router.push(`/play?match=${params.id}`)
             } else if (response.match.status === 'CANCELLED') {
                 router.push('/lobby')
             }
@@ -107,7 +100,7 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
         }
     }
 
-    const cancelMatch = async () => {
+    const handleCancel = async () => {
         if (secondsUntilCanCancel > 0) return
 
         try {
@@ -127,7 +120,7 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
         if (!pendingRequest) return
 
         try {
-            const response = await matchesAPI.acceptJoinRequest(params.id, pendingRequest.id)
+            const response = await matchesAPI.acceptJoin(params.id, pendingRequest.id)
 
             if (response.success) {
                 setPendingRequest(null)
@@ -146,7 +139,7 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
         if (!pendingRequest) return
 
         try {
-            const response = await matchesAPI.rejectJoinRequest(params.id, pendingRequest.id)
+            const response = await matchesAPI.rejectJoin(params.id, pendingRequest.id)
 
             if (response.success) {
                 setPendingRequest(null)
