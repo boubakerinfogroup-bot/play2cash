@@ -1,4 +1,3 @@
-```typescript
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -89,7 +88,7 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
             if (response.match.status === 'COUNTDOWN' || response.match.status === 'ACTIVE') {
                 setOpponentJoined(true)
                 confetti()
-                setTimeout(() => router.push(`/ play ? match = ${ params.id } `), 2000)
+                setTimeout(() => router.push(`/ play ? match = ${params.id} `), 2000)
             } else if (response.match.status === 'CANCELLED') {
                 router.push('/lobby')
             }
@@ -259,7 +258,7 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
                             }}
                         >
                             {secondsUntilCanCancel > 0
-                                ? `Annuler dans ${ secondsUntilCanCancel } s`
+                                ? `Annuler dans ${secondsUntilCanCancel} s`
                                 : '❌ Annuler la salle'}
                         </button>
                     </div>
