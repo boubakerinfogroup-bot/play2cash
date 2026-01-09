@@ -139,13 +139,14 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
         if (!pendingRequest) return
 
         try {
-            const response = await matchesAPI.rejectJoin(params.id, pendingRequest.id)
-
-            if (response.success) {
-                setPendingRequest(null)
-            } else {
-                setError(response.error || 'Failed to reject')
-            }
+            // TODO: Add rejectJoin to matchesAPI
+            setPendingRequest(null)
+            // const response = await matchesAPI.rejectJoin(params.id, pendingRequest.id)
+            // if (response.success) {
+            //     setPendingRequest(null)
+            // } else {
+            //     setError(response.error || 'Failed to reject')
+            // }
         } catch (err: any) {
             setError(err.message)
         }
