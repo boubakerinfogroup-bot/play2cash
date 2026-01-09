@@ -105,11 +105,11 @@ function LobbyContent() {
     }
   }
 
-  // Refresh matches every 5 seconds
+  // Refresh matches every 1 second for real-time updates
   useEffect(() => {
     const interval = setInterval(() => {
       loadMatches()
-    }, 5000)
+    }, 1000) // Poll every 1 second
 
     return () => clearInterval(interval)
   }, [game, stakeFilter, user])
