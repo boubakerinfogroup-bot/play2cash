@@ -1,8 +1,14 @@
+```typescript
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import confetti from 'canvas-confetti'
+import { QRCodeSVG } from 'qrcode.react'
 import { formatCurrency } from '@/lib/utils'
+import { Share2, X, Check, Timer, Copy } from 'lucide-react'
+import { matchesAPI } from '@/lib/api-client'
 
 interface JoinRequest {
     id: string
@@ -36,10 +42,12 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
     const [secondsUntilCanCancel, setSecondsUntilCanCancel] = useState(60)
     const [copied, setCopied] = useState(false)
     const [pendingRequest, setPendingRequest] = useState<JoinRequest | null>(null)
+    const [opponentJoined, setOpponentJoined] = useState(false)
+
 
     useEffect(() => {
-        loadMatch()
-        const pollInterval = setInterval(loadMatch, 2000) // Poll every 2 seconds
+        pollMatch()
+        const pollInterval = setInterval(pollMatch, 2000) // Poll every 2 seconds
         return () => clearInterval(pollInterval)
     }, [params.id])
 
@@ -67,20 +75,23 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
         }
     }, [match?.joinRequests])
 
-    const loadMatch = async () => {
+    const pollMatch = async () => {
         try {
-            const response = await fetch(`/api/matches/${params.id}/poll`)
-            const data = await response.json()
+            const response = await matchesAPI.get(params.id)
 
-            if (data.success) {
-                setMatch(data.match)
+            if (!response.success || !response.match) {
+                throw new Error('Failed to get match')
+            }
 
-                // If status changed to COUNTDOWN, redirect to match page
-                if (data.match.status === 'COUNTDOWN' || data.match.status === 'ACTIVE') {
-                    router.push(`/match/${params.id}`)
-                }
-            } else {
-                setError(data.error || 'Failed to load match')
+            setMatch(response.match)
+
+            // If status changed to COUNTDOWN, redirect to match page
+            if (response.match.status === 'COUNTDOWN' || response.match.status === 'ACTIVE') {
+                setOpponentJoined(true)
+                confetti()
+                setTimeout(() => router.push(`/ play ? match = ${ params.id } `), 2000)
+            } else if (response.match.status === 'CANCELLED') {
+                router.push('/lobby')
             }
         } catch (err: any) {
             setError(err.message)
@@ -97,19 +108,16 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
         }
     }
 
-    const handleCancel = async () => {
+    const cancelMatch = async () => {
         if (secondsUntilCanCancel > 0) return
 
         try {
-            const response = await fetch(`/api/matches/${params.id}/cancel`, {
-                method: 'POST'
-            })
-            const data = await response.json()
+            const response = await matchesAPI.cancel(params.id)
 
-            if (data.success) {
+            if (response.success) {
                 router.push('/')
             } else {
-                setError(data.error || 'Failed to cancel')
+                setError(response.error || 'Failed to cancel')
             }
         } catch (err: any) {
             setError(err.message)
@@ -120,18 +128,13 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
         if (!pendingRequest) return
 
         try {
-            const response = await fetch(`/api/matches/${params.id}/accept`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ requestId: pendingRequest.id })
-            })
-            const data = await response.json()
+            const response = await matchesAPI.acceptJoinRequest(params.id, pendingRequest.id)
 
-            if (data.success) {
+            if (response.success) {
                 setPendingRequest(null)
                 // Will redirect automatically when poll detects COUNTDOWN status
             } else {
-                setError(data.error || 'Failed to accept')
+                setError(response.error || 'Failed to accept')
                 setPendingRequest(null)
             }
         } catch (err: any) {
@@ -144,17 +147,12 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
         if (!pendingRequest) return
 
         try {
-            const response = await fetch(`/api/matches/${params.id}/reject`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ requestId: pendingRequest.id })
-            })
-            const data = await response.json()
+            const response = await matchesAPI.rejectJoinRequest(params.id, pendingRequest.id)
 
-            if (data.success) {
+            if (response.success) {
                 setPendingRequest(null)
             } else {
-                setError(data.error || 'Failed to reject')
+                setError(response.error || 'Failed to reject')
             }
         } catch (err: any) {
             setError(err.message)
@@ -261,7 +259,7 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
                             }}
                         >
                             {secondsUntilCanCancel > 0
-                                ? `Annuler dans ${secondsUntilCanCancel}s`
+                                ? `Annuler dans ${ secondsUntilCanCancel } s`
                                 : '❌ Annuler la salle'}
                         </button>
                     </div>
@@ -299,17 +297,17 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
                         animation: 'popIn 0.3s ease-out'
                     }}>
                         <style jsx>{`
-              @keyframes popIn {
+@keyframes popIn {
                 from {
-                  opacity: 0;
-                  transform: scale(0.8);
-                }
+        opacity: 0;
+        transform: scale(0.8);
+    }
                 to {
-                  opacity: 1;
-                  transform: scale(1);
-                }
-              }
-            `}</style>
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+`}</style>
 
                         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                             <div style={{ fontSize: '3.5rem', marginBottom: '16px' }}>🎮</div>
