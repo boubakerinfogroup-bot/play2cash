@@ -94,10 +94,10 @@ function CreateContent() {
     try {
       const result = await matchesAPI.create(game.id, Number(stake))
 
-      if (result.success && result.match) {
+      if (result.success && result.matchId) {
         // NOTE: Balance is NOT deducted here - only when match starts
         // Redirect to waiting room
-        router.push(`/waiting-room/${result.match.id}`)
+        router.push(`/waiting-room/${result.matchId}`)
       } else {
         setError(result.error || (lang === 'ar' ? 'خطأ في إنشاء التحدي' : 'Erreur lors de la création du défi'))
       }
