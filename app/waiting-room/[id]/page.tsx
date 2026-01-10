@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { formatCurrency } from '@/lib/utils'
 import { matchesAPI } from '@/lib/api-client'
@@ -37,12 +37,23 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
     const [secondsUntilCanCancel, setSecondsUntilCanCancel] = useState(60)
     const [copied, setCopied] = useState(false)
     const [pendingRequest, setPendingRequest] = useState<JoinRequest | null>(null)
+    const isMounted = useRef(true)
+    const pollIntervalRef = useRef<NodeJS.Timeout | null>(null)
+    const isAccepting = useRef(false)
 
 
     useEffect(() => {
+        isMounted.current = true
         pollMatch()
-        const pollInterval = setInterval(pollMatch, 2000) // Poll every 2 seconds
-        return () => clearInterval(pollInterval)
+        pollIntervalRef.current = setInterval(pollMatch, 2000) // Poll every 2 seconds
+
+        return () => {
+            isMounted.current = false
+            if (pollIntervalRef.current) {
+                clearInterval(pollIntervalRef.current)
+                pollIntervalRef.current = null
+            }
+        }
     }, [params.id])
 
     // Countdown timer
@@ -77,18 +88,32 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
                 throw new Error('Failed to get match')
             }
 
+            if (!isMounted.current) return
+
             setMatch(response.match)
 
             // If status changed to COUNTDOWN, redirect to match page
             if (response.match.status === 'COUNTDOWN' || response.match.status === 'ACTIVE') {
+                if (pollIntervalRef.current) {
+                    clearInterval(pollIntervalRef.current)
+                    pollIntervalRef.current = null
+                }
                 router.push(`/play?match=${params.id}`)
             } else if (response.match.status === 'CANCELLED') {
+                if (pollIntervalRef.current) {
+                    clearInterval(pollIntervalRef.current)
+                    pollIntervalRef.current = null
+                }
                 router.push('/lobby')
             }
         } catch (err: any) {
-            setError(err.message)
+            if (isMounted.current) {
+                setError(err.message)
+            }
         } finally {
-            setLoading(false)
+            if (isMounted.current) {
+                setLoading(false)
+            }
         }
     }
 
@@ -117,7 +142,9 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
     }
 
     const handleAcceptRequest = async () => {
-        if (!pendingRequest) return
+        if (!pendingRequest || isAccepting.current) return
+
+        isAccepting.current = true
 
         try {
             const response = await matchesAPI.acceptJoin(params.id, pendingRequest.id)
@@ -126,12 +153,18 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
                 setPendingRequest(null)
                 // Will redirect automatically when poll detects COUNTDOWN status
             } else {
-                setError(response.error || 'Failed to accept')
-                setPendingRequest(null)
+                if (isMounted.current) {
+                    setError(response.error || 'Failed to accept')
+                    setPendingRequest(null)
+                }
             }
         } catch (err: any) {
-            setError(err.message)
-            setPendingRequest(null)
+            if (isMounted.current) {
+                setError(err.message)
+                setPendingRequest(null)
+            }
+        } finally {
+            isAccepting.current = false
         }
     }
 

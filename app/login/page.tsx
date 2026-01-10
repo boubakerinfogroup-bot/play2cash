@@ -69,6 +69,10 @@ export default function LoginPage() {
       const result = await authAPI.login(name, '+216' + whatsapp, email, lang)
 
       if (result.success && result.user) {
+        // Clear any stale data first
+        localStorage.removeItem('user')
+
+        // Set fresh user data
         localStorage.setItem('user', JSON.stringify(result.user))
         localStorage.setItem('language', lang)
         localStorage.setItem('lastActivity', Date.now().toString())

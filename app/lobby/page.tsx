@@ -123,6 +123,19 @@ function LobbyContent() {
         const data = await matchesAPI.get(pendingJoinRequest.matchId)
 
         if (data.success && data.match) {
+          // Check if match was cancelled
+          if (data.match.status === 'CANCELLED') {
+            clearInterval(pollInterval)
+            setPendingJoinRequest(null)
+            setPopup({
+              isOpen: true,
+              title: lang === 'ar' ? 'ملغى' : 'Annulé',
+              message: lang === 'ar' ? 'تم إلغاء التحدي من قبل المنشئ' : 'Le défi a été annulé par le créateur',
+              type: 'warning'
+            })
+            return
+          }
+
           // Check if our join request was accepted
           const acceptedRequest = data.match.joinRequests?.find(
             (r: any) => r.id === pendingJoinRequest.requestId && r.status === 'ACCEPTED'
@@ -131,16 +144,19 @@ function LobbyContent() {
           if (acceptedRequest || data.match.status === 'COUNTDOWN' || data.match.status === 'ACTIVE') {
             // We were accepted! Redirect to match page
             clearInterval(pollInterval)
-            router.push(`/match/${pendingJoinRequest.matchId}`)
+            router.push(`/play?match=${pendingJoinRequest.matchId}`)
           }
         }
       } catch (err) {
         console.error('Poll error:', err)
+        // Clear pending request on error
+        clearInterval(pollInterval)
+        setPendingJoinRequest(null)
       }
     }, 2000) // Poll every 2 seconds
 
     return () => clearInterval(pollInterval)
-  }, [pendingJoinRequest])
+  }, [pendingJoinRequest, lang])
 
   const toggleLang = () => {
     const newLang = lang === 'fr' ? 'ar' : 'fr'
