@@ -55,27 +55,26 @@ export default function GameWrapper({ matchId, gameSlug, gameSeed, userId, lang 
 
   // Render game based on slug
   switch (gameSlug) {
-    case 'banker':
+    case 'banker-game':
       return <BankerGame matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
-    case 'memory':
+    case 'memory-game':
+    case 'memory-cards':
       return <MemoryGame matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
-    case 'pattern':
+    case 'pattern-lock':
       return <PatternLock matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
-    case 'rps':
+    case 'rock-paper-scissors':
       return <RockPaperScissors matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
-    case 'rocket':
+    case 'rocket-game':
       return <RocketGame matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
-    case 'sequence':
+    case 'sequence-pad':
       return <SequencePad matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
-    case 'tictactoe':
+    case 'tic-tac-toe-plus':
       return <TicTacToePlus matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
     default:
       return (
         <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-          <p>{lang === 'ar' ? 'اللعبة غير متاحة بعد' : 'Jeu non disponible'}</p>
+          <p>{lang === 'ar' ? 'اللعبة غير متاحة بعد' : `Jeu non disponible (${gameSlug})`}</p>
         </div>
       )
   }
 }
-
-
