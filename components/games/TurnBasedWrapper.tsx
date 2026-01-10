@@ -34,9 +34,8 @@ export default function TurnBasedWrapper({
     useEffect(() => {
         const pollState = async () => {
             try {
-                // Get token from localStorage - use the correct key
-                const user = JSON.parse(localStorage.getItem('user') || '{}')
-                const token = user.token || localStorage.getItem('token')
+                // Get token from localStorage - use the CORRECT key 'auth_token'
+                const token = localStorage.getItem('auth_token')
 
                 if (!token) {
                     console.error('No authentication token found')
@@ -112,9 +111,8 @@ export default function TurnBasedWrapper({
 
     const handleSubmitMove = async (moveData: any) => {
         try {
-            // Get token from localStorage
-            const user = JSON.parse(localStorage.getItem('user') || '{}')
-            const token = user.token || localStorage.getItem('token')
+            // Get token from localStorage - use CORRECT key 'auth_token'
+            const token = localStorage.getItem('auth_token')
 
             if (!token) {
                 console.error('No authentication token found')
