@@ -78,8 +78,8 @@ function PlayContent() {
           return
         }
 
-        // If not active yet, wait
-        if (data.match.status !== 'ACTIVE') {
+        // If not COUNTDOWN or ACTIVE yet, wait
+        if (data.match.status !== 'ACTIVE' && data.match.status !== 'COUNTDOWN') {
           router.push(`/waiting?match=${id}`)
           return
         }
