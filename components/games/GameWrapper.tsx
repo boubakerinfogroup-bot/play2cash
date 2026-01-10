@@ -14,6 +14,11 @@ const RocketGame = dynamic(() => import('./RocketGame'), { ssr: false })
 const SequencePad = dynamic(() => import('./SequencePad'), { ssr: false })
 const TicTacToePlus = dynamic(() => import('./TicTacToePlus'), { ssr: false })
 
+// Turn-based game components
+const RPSTurnBased = dynamic(() => import('./RPSTurnBased'), { ssr: false })
+const TicTacToeTurnBased = dynamic(() => import('./TicTacToeTurnBased'), { ssr: false })
+const BankerTurnBased = dynamic(() => import('./BankerTurnBased'), { ssr: false })
+
 interface GameWrapperProps {
   matchId: string
   gameSlug: string
@@ -55,6 +60,7 @@ export default function GameWrapper({ matchId, gameSlug, gameSeed, userId, lang 
 
   // Render game based on slug
   switch (gameSlug) {
+    // Time-based games (simultaneous play)
     case 'banker-game':
       return <BankerGame matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
     case 'memory-game':
@@ -70,6 +76,15 @@ export default function GameWrapper({ matchId, gameSlug, gameSeed, userId, lang 
       return <SequencePad matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
     case 'tic-tac-toe-plus':
       return <TicTacToePlus matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+
+    // Turn-based games (sequential play)
+    case 'rps-turn-based':
+      return <RPSTurnBased matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+    case 'tictactoe-turn-based':
+      return <TicTacToeTurnBased matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+    case 'banker-turn-based':
+      return <BankerTurnBased matchId={matchId} seed={gameSeed} userId={userId} lang={lang} onResultSubmitted={handleResultSubmitted} />
+
     default:
       return (
         <div style={{ textAlign: 'center', padding: '40px 20px' }}>
@@ -78,3 +93,4 @@ export default function GameWrapper({ matchId, gameSlug, gameSeed, userId, lang 
       )
   }
 }
+
