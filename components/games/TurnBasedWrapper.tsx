@@ -34,7 +34,15 @@ export default function TurnBasedWrapper({
     useEffect(() => {
         const pollState = async () => {
             try {
-                const token = localStorage.getItem('token')
+                // Get token from localStorage - use the correct key
+                const user = JSON.parse(localStorage.getItem('user') || '{}')
+                const token = user.token || localStorage.getItem('token')
+
+                if (!token) {
+                    console.error('No authentication token found')
+                    return
+                }
+
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/turn-based/${matchId}/state`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -104,7 +112,15 @@ export default function TurnBasedWrapper({
 
     const handleSubmitMove = async (moveData: any) => {
         try {
-            const token = localStorage.getItem('token')
+            // Get token from localStorage
+            const user = JSON.parse(localStorage.getItem('user') || '{}')
+            const token = user.token || localStorage.getItem('token')
+
+            if (!token) {
+                console.error('No authentication token found')
+                return
+            }
+
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/turn-based/${matchId}/move`, {
                 method: 'POST',
                 headers: {
