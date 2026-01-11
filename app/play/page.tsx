@@ -16,6 +16,11 @@ function PlayContent() {
   const searchParams = useSearchParams()
   const matchId = searchParams.get('match')
 
+  // DEBUG: Log URL and extracted matchId
+  console.log('PLAY PAGE - URL:', window.location.href)
+  console.log('PLAY PAGE - searchParams.get("match"):', matchId)
+  console.log('PLAY PAGE - All search params:', Array.from(searchParams.entries()))
+
   const [user, setUser] = useState<User | null>(null)
   const [match, setMatch] = useState<any>(null)
   const [lang, setLang] = useState<'fr' | 'ar'>('fr')

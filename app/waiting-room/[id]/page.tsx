@@ -98,7 +98,9 @@ export default function WaitingRoomPage({ params }: { params: { id: string } }) 
                     clearInterval(pollIntervalRef.current)
                     pollIntervalRef.current = null
                 }
-                router.push(`/play?match=${params.id}`)
+                const redirectUrl = `/play?match=${params.id}`
+                console.log('WAITING ROOM REDIRECT:', redirectUrl, 'params.id:', params.id)
+                router.push(redirectUrl)
             } else if (response.match.status === 'CANCELLED') {
                 if (pollIntervalRef.current) {
                     clearInterval(pollIntervalRef.current)
