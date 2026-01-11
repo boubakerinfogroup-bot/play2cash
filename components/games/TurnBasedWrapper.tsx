@@ -30,6 +30,19 @@ export default function TurnBasedWrapper({
     const pollIntervalRef = useRef<NodeJS.Timeout | null>(null)
     const warningIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
+    // Debug logging
+    console.log('TurnBasedWrapper - matchId:', matchId, 'userId:', userId)
+
+    // Early return if matchId is missing
+    if (!matchId || matchId === '') {
+        return (
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'red' }}>
+                <h2>ERROR: Match ID is missing!</h2>
+                <p>matchId received: "{matchId}"</p>
+            </div>
+        )
+    }
+
     // Poll game state
     useEffect(() => {
         const pollState = async () => {
