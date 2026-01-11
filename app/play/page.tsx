@@ -59,7 +59,8 @@ function PlayContent() {
 
     if (matchId) {
       loadMatch(matchId)
-    } else {
+    } else if (!match) {
+      // Only redirect if we don't have a match loaded yet
       router.push('/')
     }
   }, [matchId, router])
